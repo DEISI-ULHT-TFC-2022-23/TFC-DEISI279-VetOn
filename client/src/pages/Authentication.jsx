@@ -9,7 +9,7 @@ export default function Authentication() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   // const [image, setImage] = useState("");
-  const [isRegisterOrLogin, setIsRegisterOrLogin] = useState("register");
+  const [isRegisterOrLogin, setIsRegisterOrLogin] = useState("login");
   const { setUsername: setLoggedInUsername, setUserId } =
     useContext(UserContext);
 
@@ -59,27 +59,27 @@ export default function Authentication() {
           placeholder="password"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
-        {/* <input
-                    value={image}
-                    onChange={(ev) => setImage(ev.target.value)}
-                    type="file"
-                    className="block w-full rounded-sm p-2 mb-2"
-                /> */}
         <button className="bg-green-500 text-white block w-full rounded-sm p-2">
           {isRegisterOrLogin === "register" ? "Registar" : "Login"}
         </button>
         {isRegisterOrLogin === "register" && (
           <div className="text-center mt-2">
-            Ja tem conta?
-            <button onClick={() => setIsRegisterOrLogin("login")}>
+            Ja tem conta?&nbsp;
+            <button
+              className="font-semibold underline"
+              onClick={() => setIsRegisterOrLogin("login")}
+            >
               Faca o Login aqui
             </button>
           </div>
         )}
         {isRegisterOrLogin === "login" && (
           <div className="text-center mt-2">
-            Nao tem conta?
-            <button onClick={() => setIsRegisterOrLogin("register")}>
+            Nao tem conta?&nbsp;
+            <button
+              className="font-semibold underline"
+              onClick={() => setIsRegisterOrLogin("register")}
+            >
               Registe-se aqui
             </button>
           </div>

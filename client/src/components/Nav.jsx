@@ -3,22 +3,26 @@ import NavSections from "./NavSections";
 import AuthenticationButton from "./AuthenticationButton";
 import AuthenticatedButtons from "./AuthenticatedButtons";
 
-export default function Nav({ username = false, onClick }) {
-  if (!username) {
+export default function Nav({ loggedIn = false, onClick }) {
+  if (!loggedIn) {
     return (
-      <nav className="flex items-center justify-between p-4 border-b border-gray-200">
-        <Logo />
-        <NavSections />
-        <AuthenticationButton />
-      </nav>
+      <div className="fixed top-0 w-full">
+        <nav className="flex items-center justify-between p-4 bg-gray-200">
+          <Logo />
+          <NavSections />
+          <AuthenticationButton />
+        </nav>
+      </div>
     );
   } else {
     return (
-      <nav className="flex items-center justify-between p-4 border-b border-gray-200">
-        <Logo />
-        <NavSections />
-        <AuthenticatedButtons onClick={onClick} />
-      </nav>
+      <div className="fixed top-0 w-full">
+        <nav className="flex items-center justify-between p-4 bg-gray-200">
+          <Logo />
+          <NavSections />
+          <AuthenticatedButtons onClick={onClick} />
+        </nav>
+      </div>
     );
   }
 }

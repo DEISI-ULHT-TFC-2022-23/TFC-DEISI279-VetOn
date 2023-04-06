@@ -1,7 +1,7 @@
 export default function NavSections() {
   return (
     <div className="flex gap-2 border border-primary rounded-full px-4 py-2">
-      <div className="flex items-center gap-1">
+      <a href="#about-us" className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -18,9 +18,9 @@ export default function NavSections() {
         </svg>
 
         <span className="font-poppins">Sobre nos</span>
-      </div>
+      </a>
       <div className="border-l border-gray-400"></div>
-      <div className="flex items-center gap-1">
+      <a href="#services" className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -37,9 +37,9 @@ export default function NavSections() {
         </svg>
 
         <span className="font-poppins">Servicos</span>
-      </div>
+      </a>
       <div className="border-l border-gray-400"></div>
-      <div className="flex items-center gap-1">
+      <a href="#doctors" className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -56,9 +56,9 @@ export default function NavSections() {
         </svg>
 
         <span className="font-poppins">Medicos</span>
-      </div>
+      </a>
       <div className="border-l border-gray-400"></div>
-      <div className="flex items-center gap-1">
+      <a href="#contacts" className="flex items-center gap-1">
         <svg
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
@@ -75,7 +75,7 @@ export default function NavSections() {
         </svg>
 
         <span className="font-poppins">Contactos</span>
-      </div>
+      </a>
     </div>
   );
 }

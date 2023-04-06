@@ -17,8 +17,8 @@ export default function Layout() {
   if (username) {
     return (
       <div>
-        <Nav username={true} onClick={logout} />
-        <Content username={true} />
+        <Nav loggedIn={true} onClick={logout} />
+        <Content loggedIn={true} />
       </div>
     );
   } else {
