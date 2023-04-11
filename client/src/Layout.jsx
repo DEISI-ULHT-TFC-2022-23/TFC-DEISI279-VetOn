@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import { UserContext } from "./UserContext";
 import Nav from "./components/Nav";
-import Content from "./components/Content";
+import ContentIndex from "./components/ContentIndex";
 import axios from "axios";
 
 export default function Layout() {
@@ -17,15 +17,15 @@ export default function Layout() {
   if (username) {
     return (
       <div>
-        <Nav loggedIn={true} onClick={logout} />
-        <Content loggedIn={true} />
+        <Nav loggedIn={true} onClick={logout} index={true} />
+        <ContentIndex loggedIn={true} />
       </div>
     );
   } else {
     return (
       <div>
         <Nav />
-        <Content />
+        <ContentIndex />
       </div>
     );
   }

@@ -13,7 +13,7 @@ export default function Dropdown({ onClick }) {
   return (
     <Menu as="div" className="relative inline-block text-left">
       <div>
-        <Menu.Button className="font-poppins inline-flex items-center justify-center w-full rounded-full px-4 py-2 border border-primary hover:bg-primary hover:text-white">
+        <Menu.Button className="font-poppins inline-flex items-center justify-center w-full rounded-full px-4 py-2 border border-primary  hover:bg-primary hover:text-white transition duration-300">
           Bem-vindo, {username}
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -58,22 +58,8 @@ export default function Dropdown({ onClick }) {
                 )}
               </Menu.Item>
             </Link>
-            <Link to={"/my-animals"}>
-              <Menu.Item>
-                {({ active }) => (
-                  <a
-                    href="#"
-                    className={classNames(
-                      active ? "bg-gray-100 text-gray-900" : "text-gray-700",
-                      "block px-4 py-2 text-sm"
-                    )}
-                  >
-                    Meus animais
-                  </a>
-                )}
-              </Menu.Item>
-            </Link>
-            <Link to={"/settings"}>
+
+            <Link to={"/edit-profile"}>
               <Menu.Item>
                 {({ active }) => (
                   <a

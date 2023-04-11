@@ -29,7 +29,7 @@ export default function Authentication() {
   }
 
   return (
-    <div className="bg-green-100 h-screen flex items-center">
+    <div className="bg-gray-300 h-screen flex items-center">
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>
         <div className="flex justify-center mb-4">
           <Link to={"/"}>
@@ -59,7 +59,7 @@ export default function Authentication() {
           placeholder="password"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
-        <button className="bg-green-500 text-white block w-full rounded-sm p-2">
+        <button className="bg-primary text-white block w-full rounded-sm p-2">
           {isRegisterOrLogin === "register" ? "Registar" : "Login"}
         </button>
         {isRegisterOrLogin === "register" && (

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-export default function Content({ loggedIn = false }) {
+export default function ContentIndex({ loggedIn = false }) {
   const [dateState, setDateState] = useState(new Date());
   useEffect(() => {
     setInterval(() => setDateState(new Date()), 30000);
@@ -37,7 +37,7 @@ export default function Content({ loggedIn = false }) {
             </div>
             <div className="font-poppins pt-16">
               {loggedIn && (
-                <Link to={"/profile"}>
+                <Link to={"/appointments"}>
                   <button className="rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
                     Agende a sua consulta
                   </button>
@@ -61,7 +61,10 @@ export default function Content({ loggedIn = false }) {
             />
           </div>
         </div>
-        <div className="flex items-center justify-center font-poppins mt-20 text-5xl" id="services">
+        <div
+          className="flex items-center justify-center font-poppins mt-20 text-5xl"
+          id="services"
+        >
           Servicos disponiveis
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
@@ -154,7 +157,10 @@ export default function Content({ loggedIn = false }) {
             </div>
           </div>
         </div>
-        <div className="flex items-center justify-center font-poppins mt-20 text-5xl" id="doctors">
+        <div
+          className="flex items-center justify-center font-poppins mt-20 text-5xl"
+          id="doctors"
+        >
           Medicos Afiliados
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-primary">
@@ -231,7 +237,10 @@ export default function Content({ loggedIn = false }) {
             ></iframe>
           </div>
           <div className="w-2/5 mt-20">
-            <div className="flex items-center font-poppins text-5xl pb-10" id="contacts">
+            <div
+              className="flex items-center font-poppins text-5xl pb-10"
+              id="contacts"
+            >
               Contacte-nos
             </div>
             <form>
