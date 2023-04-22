@@ -97,11 +97,15 @@ router.post("/login", async (req, res) => {
             console.log(error);
           }
           res.cookie("token", token, { sameSite: "none", secure: true }).json({
-            user_id: user._id
+            user_id: user._id,
           });
         }
       );
+    } else {
+      res.json({ error: "campos username ou password incorretos" });
     }
+  } else {
+    res.json({ error: "Nao existe conta com o username " + username });
   }
 });
 

@@ -12,12 +12,9 @@ export default function ResetPassword() {
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post(
-      "/authentication/reset-password/" + id + "/" + uniqueString,
-      {
-        password,
-      }
-    );
+    const res = await axios.post("/reset-password/" + id + "/" + uniqueString, {
+      password,
+    });
     if (res.data.error) {
       setMessage(null);
       setError(res.data.error);

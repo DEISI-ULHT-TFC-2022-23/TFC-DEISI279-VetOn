@@ -1,35 +1,75 @@
 import { useContext, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
-import { UserContext } from "../UserContext";
 import axios from "axios";
+import PasswordChecklist from "react-password-checklist";
+import { UserContext } from "../UserContext";
 
 export default function EditProfile() {
-  const { id } = useParams();
-  const { setUsername: setAccountUsername } = useContext(UserContext);
+  const { setUsername: setLoggedInUsername } = useContext(UserContext);
   const [email, setEmail] = useState("");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
   const [currentPassword, setCurrentPassword] = useState("");
-
-  console.log(id);
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [usernameMessage, setUsernameMessage] = useState(null);
+  const [emailMessage, setEmailMessage] = useState(null);
+  const [passwordMessage, setPasswordMessage] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
 
   async function submitEmail(event) {
     event.preventDefault();
+    const res = await axios.post("/edit-email", {
+      email,
+    });
+    if (res.data.message) {
+      {
+        setEmailMessage(res.data.message);
+      }
+    }
+    setInterval(() => {
+      setEmailMessage(null);
+    }, 3000);
+    setEmail("");
   }
 
   async function submitUsername(event) {
     event.preventDefault();
-    axios
-      .patch("/edit-username/" + id, {
-        username,
-      })
-      .then((response) => {
-        setAccountUsername(response.data.username);
-      });
+    const res = await axios.post("/edit-username", {
+      username,
+    });
+    if (res.data.message) {
+      {
+        setUsernameMessage(res.data.message);
+      }
+    }
+    setLoggedInUsername(username);
+    setInterval(() => {
+      setUsernameMessage(null);
+    }, 3000);
+    setUsername("");
   }
 
   async function submitPassword(event) {
     event.preventDefault();
+    const res = await axios.post("/edit-password", {
+      currentPassword,
+      password,
+    });
+    if (res.data.message) {
+      setPasswordMessage(res.data.message);
+    }
+    if (res.data.error) {
+      setPasswordError(res.data.error);
+    }
+    setInterval(() => {
+      setPasswordMessage(null);
+    }, 3000);
+    setInterval(() => {
+      setPasswordError(null);
+    }, 3000);
+    setPassword("");
+    setCurrentPassword("");
+    setConfirmPassword("");
   }
 
   return (
@@ -40,7 +80,11 @@ export default function EditProfile() {
             <img src="../src/assets/logo.png" alt="" />
           </Link>
         </div>
-
+        {emailMessage !== null && (
+          <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
+            {emailMessage}
+          </div>
+        )}
         <input
           value={email}
           onChange={(event) => setEmail(event.target.value)}
@@ -54,6 +98,11 @@ export default function EditProfile() {
         </button>
       </form>
       <form className="w-64 mx-auto mb-12" onSubmit={submitUsername}>
+        {usernameMessage !== null && (
+          <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
+            {usernameMessage}
+          </div>
+        )}
         <input
           value={username}
           onChange={(event) => setUsername(event.target.value)}
@@ -67,6 +116,16 @@ export default function EditProfile() {
         </button>
       </form>
       <form className="w-64 mx-auto mb-12" onSubmit={submitPassword}>
+        {passwordMessage !== null && (
+          <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
+            {passwordMessage}
+          </div>
+        )}
+        {passwordError !== null && (
+          <div className="font-poppins p-2 my-5 bg-red-500 text-white rounded-full text-center ">
+            {passwordError}
+          </div>
+        )}
         <input
           value={currentPassword}
           onChange={(event) => setCurrentPassword(event.target.value)}
@@ -82,7 +141,30 @@ export default function EditProfile() {
           className="block w-full rounded-sm p-2 mb-2 border"
         />
 
-        <button className="bg-primary text-white block w-full rounded-sm p-2">
+        <input
+          value={confirmPassword}
+          onChange={(event) => setConfirmPassword(event.target.value)}
+          type="password"
+          placeholder="Confirmar password"
+          className="block w-full rounded-sm p-2 mb-4 border"
+        />
+
+        <PasswordChecklist
+          rules={["minLength", "specialChar", "number", "capital", "match"]}
+          minLength={8}
+          value={password}
+          valueAgain={confirmPassword}
+          className="font-poppins text-sm text-black font-bold"
+          messages={{
+            minLength: "Pelo menos 8 caracteres",
+            specialChar: "Pelo menos um caracter especial",
+            number: "Pelo menos 1 numero",
+            capital: "Pelo menos uma letra maiuscula",
+            match: "As password estao iguais",
+          }}
+        />
+
+        <button className="bg-primary text-white block w-full rounded-sm p-2 mt-5">
           Alterar password
         </button>
       </form>

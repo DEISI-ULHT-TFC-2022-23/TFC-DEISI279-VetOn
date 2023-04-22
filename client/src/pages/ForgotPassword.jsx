@@ -10,7 +10,7 @@ export default function ForgotPassword() {
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post("/authentication/forgot-password", { email });
+    const res = await axios.post("/forgot-password", { email });
     if (res.data.error) {
       setMessage(null);
       setError(res.data.error);

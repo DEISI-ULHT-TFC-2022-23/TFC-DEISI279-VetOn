@@ -8,7 +8,7 @@ export default function Layout() {
   const { username, setId, setUsername } = useContext(UserContext);
 
   async function logout() {
-    await axios.get("/authentication/logout");
+    await axios.get("/logout");
     window.location.reload(true);
     setId(null);
     setUsername(null);

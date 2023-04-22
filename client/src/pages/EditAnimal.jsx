@@ -1,8 +1,9 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-export default function AddAnimal() {
+export default function EditAnimal() {
+  const { id } = useParams();
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [type, setType] = useState("");
@@ -15,7 +16,7 @@ export default function AddAnimal() {
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post("/add-animal", {
+    const res = await axios.post("/edit-animal/" + id, {
       name,
       type,
       race,
@@ -30,13 +31,6 @@ export default function AddAnimal() {
     setInterval(() => {
       setMessage(null);
     }, 3000);
-    setName("");
-    setType("");
-    setRace("");
-    setWeight("");
-    setGender("");
-    setBirthDate("");
-    setSkinType("");
   }
 
   return (
@@ -103,7 +97,7 @@ export default function AddAnimal() {
         />
 
         <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Adicionar animal
+          Editar animal
         </button>
       </form>
     </div>

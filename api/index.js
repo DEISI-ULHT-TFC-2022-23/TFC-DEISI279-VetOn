@@ -7,9 +7,6 @@ const parser = require("cookie-parser");
 const ws = require("ws");
 const fs = require("fs");
 const db = require("../api/models");
-const multer = require("multer");
-const bcrypt = require("bcryptjs");
-const nodemailer = require("nodemailer");
 
 dotenv.config();
 const app = express();
@@ -24,53 +21,6 @@ app.use(parser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
 mongoose.connect(process.env.MONGO_URL);
-
-async function getUserData(req) {
-  return new Promise((resolve, reject) => {
-    const token = req.cookies?.token;
-
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        resolve(userData);
-      });
-    } else {
-      reject("no token provided");
-    }
-  });
-}
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, __dirname + "/uploads");
-  },
-
-  filename: (req, file, cb) => {
-    cb(null, file.originalname);
-  },
-});
-
-app.get("/api/test", async (req, res) => {
-  res.json("ok");
-});
-
-app.get("/api/clients", async (req, res) => {
-  const clients = await db.User.find({});
-  res.json(clients);
-});
-
-app.get("/api/messages/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const userData = await getUserData(req);
-
-  const messages = await db.Message.find({
-    sender: { $in: [userId, userData.userId] },
-    recipient: { $in: [userId, userData.userId] },
-  }).sort({ createdAt: 1 });
-  res.json(messages);
-});
 
 const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
@@ -166,7 +116,11 @@ wss.on("connection", (connection, req) => {
   notifyAboutOnlinePeople();
 });
 
-const usersEndpoint = require("./endpoints/users");
-app.use("/api", usersEndpoint);
 const authenticationEndpoint = require("./endpoints/authentication");
 app.use("/api", authenticationEndpoint);
+const usersEndpoint = require("./endpoints/users");
+app.use("/api", usersEndpoint);
+const animalsEndpoint = require("./endpoints/animals");
+app.use("/api", animalsEndpoint);
+const chatEndpoint = require("./endpoints/chat");
+app.use("/api", chatEndpoint);
