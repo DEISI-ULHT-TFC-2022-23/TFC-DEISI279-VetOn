@@ -5,10 +5,10 @@ import ContentIndex from "./components/ContentIndex";
 import axios from "axios";
 
 export default function Layout() {
-  const { id, username, setId, setUsername } = useContext(UserContext);
+  const { username, setId, setUsername } = useContext(UserContext);
 
   async function logout() {
-    await axios.get("/logout");
+    await axios.get("/authentication/logout");
     window.location.reload(true);
     setId(null);
     setUsername(null);

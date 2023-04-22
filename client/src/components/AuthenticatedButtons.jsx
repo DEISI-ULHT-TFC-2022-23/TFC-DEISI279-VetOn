@@ -2,9 +2,15 @@ import { Link } from "react-router-dom";
 import Dropdown from "./Dropdown";
 
 export default function AuthenticatedButtons({ onClick }) {
+  function refresh() {
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 1);
+  }
+
   return (
     <div className="flex gap-4">
-      <Link to={"/chat"}>
+      <Link to={"/chat"} onClick={refresh}>
         <button
           type="button"
           className="flex items-center gap-1 font-poppins border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300"

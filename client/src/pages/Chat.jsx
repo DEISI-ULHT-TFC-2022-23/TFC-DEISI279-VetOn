@@ -34,6 +34,7 @@ export default function Chat() {
     axios.get("/clients").then((response) => {
       const offlineClientsArray = response.data.filter(
         (client) =>
+          client.type === "support" &&
           client._id !== userId &&
           !Object.keys(onlineClients).includes(client._id)
       );

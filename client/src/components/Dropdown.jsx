@@ -8,7 +8,13 @@ function classNames(...classes) {
 }
 
 export default function Dropdown({ onClick }) {
-  const { id, username } = useContext(UserContext);
+  const { userId, username } = useContext(UserContext);
+
+  function refresh() {
+    setTimeout(() => {
+      window.location.reload(false);
+    }, 1);
+  }
 
   return (
     <Menu as="div" className="relative inline-block text-left">
@@ -43,7 +49,7 @@ export default function Dropdown({ onClick }) {
       >
         <Menu.Items className="font-poppins absolute right-0 w-56 mt-4 origin-top-right bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
           <div className="py-1">
-            <Link to={"/profile"}>
+            <Link to={"/profile"} onClick={refresh}>
               <Menu.Item>
                 {({ active }) => (
                   <a

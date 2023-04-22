@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import ContentAppointments from "../components/ContentAppointments";
 
 export default function Appointments() {
-  const { id, username, setId, setUsername } = useContext(UserContext);
+  const { userId, setUserId, username, setUsername } = useContext(UserContext);
   const navigate = useNavigate();
 
   async function logout() {

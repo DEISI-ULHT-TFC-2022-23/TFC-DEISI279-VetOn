@@ -4,10 +4,12 @@ const dotenv = require("dotenv");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
 const parser = require("cookie-parser");
-const bcrypt = require("bcryptjs");
 const ws = require("ws");
 const fs = require("fs");
 const db = require("../api/models");
+const multer = require("multer");
+const bcrypt = require("bcryptjs");
+const nodemailer = require("nodemailer");
 
 dotenv.config();
 const app = express();
@@ -20,7 +22,7 @@ app.use(
 );
 app.use(parser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
-const salt = bcrypt.genSaltSync(10);
+
 mongoose.connect(process.env.MONGO_URL);
 
 async function getUserData(req) {
@@ -40,96 +42,26 @@ async function getUserData(req) {
   });
 }
 
-app.get("/test", (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, __dirname + "/uploads");
+  },
+
+  filename: (req, file, cb) => {
+    cb(null, file.originalname);
+  },
+});
+
+app.get("/api/test", async (req, res) => {
   res.json("ok");
 });
 
-app.post("/register", async (req, res) => {
-  const { email, username, password } = req.body;
-
-  try {
-    const hashedPassword = bcrypt.hashSync(password, salt);
-
-    const createdUser = await db.User.create({
-      email,
-      username,
-      password: hashedPassword,
-    });
-
-    jwt.sign(
-      { userId: createdUser._id, username },
-      process.env.JWT_SECRET,
-      {},
-      (error, token) => {
-        if (error) {
-          throw error;
-        }
-        res
-          .cookie("token", token, { sameSite: "none", secure: true })
-          .status(201)
-          .json({ user_id: createdUser._id });
-      }
-    );
-  } catch (error) {
-    if (error) {
-      throw error;
-    }
-    res.status(500).json("Utilizador nao foi criado");
-  }
-});
-
-app.post("/login", async (req, res) => {
-  const { username, password } = req.body;
-  const user = await db.User.findOne({ username });
-
-  if (user) {
-    const correctPassword = bcrypt.compareSync(password, user.password);
-
-    if (correctPassword) {
-      jwt.sign(
-        { userId: user._id, username },
-        process.env.JWT_SECRET,
-        {},
-        (error, token) => {
-          res.cookie("token", token, { sameSite: "none", secure: true }).json({
-            user_id: user._id,
-          });
-        }
-      );
-    } else {
-      res.status(422).json("Utitlizador ou password incorretas");
-    }
-  } else {
-    res.status(422).json("Utitlizador ou password incorretas");
-  }
-});
-
-app.get("/user-data", (req, res) => {
-  const token = req.cookies?.token;
-
-  try {
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        res.json(userData);
-      });
-    }
-  } catch (error) {
-    if (error) {
-      throw error;
-    }
-    res.status(401).json("no token provided");
-  }
-});
-
-app.get("/clients", async (req, res) => {
-  const clients = await db.User.find({}, { _id: 1, username: 1 });
+app.get("/api/clients", async (req, res) => {
+  const clients = await db.User.find({});
   res.json(clients);
 });
 
-app.get("/messages/:userId", async (req, res) => {
+app.get("/api/messages/:userId", async (req, res) => {
   const { userId } = req.params;
   const userData = await getUserData(req);
 
@@ -140,15 +72,8 @@ app.get("/messages/:userId", async (req, res) => {
   res.json(messages);
 });
 
-app.get("/logout", (req, res) => {
-  res
-    .cookie("token", "", { sameSite: "none", secure: true })
-    .json("Logged out");
-});
-
-const server = app.listen(4000);
-
 const jwtSecret = process.env.JWT_SECRET;
+const server = app.listen(4000);
 
 const wss = new ws.WebSocketServer({ server });
 wss.on("connection", (connection, req) => {
@@ -240,3 +165,8 @@ wss.on("connection", (connection, req) => {
 
   notifyAboutOnlinePeople();
 });
+
+const usersEndpoint = require("./endpoints/users");
+app.use("/api", usersEndpoint);
+const authenticationEndpoint = require("./endpoints/authentication");
+app.use("/api", authenticationEndpoint);
