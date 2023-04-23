@@ -6,6 +6,7 @@ import axios from "axios";
 export default function Profile() {
   const { username } = useContext(UserContext);
   const [animals, setAnimals] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   async function deleteAnimal(id) {
     await axios.delete("/delete-animal/" + id);
@@ -18,7 +19,11 @@ export default function Profile() {
     });
   }, []);
 
-  console.log(animals);
+  useEffect(() => {
+    axios.get("/user-appointments").then((response) => {
+      setAppointments(response.data.appointments);
+    });
+  }, []);
 
   return (
     <div>
@@ -85,49 +90,45 @@ export default function Profile() {
         </Link>
 
         <div className="w-full flex flex-wrap gap-8 p-4">
-          {animals &&
-            animals.map((animal) => (
-              <div
-                className="bg-gray-300 rounded-xl w-96 p-10"
-                key={animal._id}
-              >
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Nome: {animal.name}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Especie: {animal.type}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Raca: {animal.race}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Peso: {animal.weight}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Genero: {animal.gender}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Data de nascimento: {animal.birth_date}
-                </div>
-                <div className="font-poppins font-bold text-2xl pb-8">
-                  Pelagem: {animal.skin_type}
-                </div>
-                <div className="flex justify-between">
-                  <Link to={`/edit-animal/${animal._id}`}>
-                    <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-                      Editar
-                    </button>
-                  </Link>
-
-                  <button
-                    className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
-                    onClick={() => deleteAnimal(animal._id)}
-                  >
-                    Eliminar
-                  </button>
-                </div>
+          {animals.map((animal) => (
+            <div className="bg-gray-300 rounded-xl w-96 p-10" key={animal._id}>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Nome: {animal.name}
               </div>
-            ))}
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Especie: {animal.type}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Raca: {animal.race}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Peso: {animal.weight}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Genero: {animal.gender}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Data de nascimento: {animal.birth_date}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Pelagem: {animal.skin_type}
+              </div>
+              <div className="flex justify-between">
+                <Link to={`/edit-animal/${animal._id}`}>
+                  <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+                    Editar
+                  </button>
+                </Link>
+
+                <button
+                  className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                  onClick={() => deleteAnimal(animal._id)}
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
       <div className="flex flex-col items-center w-full">
@@ -154,17 +155,42 @@ export default function Profile() {
           </button>
         </Link>
         <div className=" w-full flex flex-wrap gap-8 justify-between p-4">
-          <div className="bg-gray-300 rounded-xl w-80 p-10">
-            <div className="font-poppins font-bold text-2xl pb-8">
-              Anestesias e Operacoes
+          {appointments.map((appointment) => (
+            <div
+              className="bg-gray-300 rounded-xl w-96 p-10"
+              key={appointment._id}
+            >
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Clinica: {appointment.clinic}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Animal: {appointment.pet}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Tipo de consulta: {appointment.appointmentType}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Doutor: {appointment.doctor}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Hora: {appointment.hour}
+              </div>
+              <div className="flex justify-between">
+                <Link to={`/edit-animal/${appointment._id}`}>
+                  <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+                    Editar
+                  </button>
+                </Link>
+
+                <button
+                  className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                  onClick={() => deleteAnimal(animal._id)}
+                >
+                  Eliminar
+                </button>
+              </div>
             </div>
-            <div>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-              sem lacus, dictum quis sapien sed, vestibulum volutpat urna.
-              Mauris vulputate metus nec sodales interdum. Phasellus faucibus
-              dui ac urna suscipit, eget dictum nunc viverra.
-            </div>
-          </div>
+          ))}
         </div>
       </div>
     </div>

@@ -98,6 +98,7 @@ router.post("/login", async (req, res) => {
           }
           res.cookie("token", token, { sameSite: "none", secure: true }).json({
             user_id: user._id,
+            type: user.type,
           });
         }
       );

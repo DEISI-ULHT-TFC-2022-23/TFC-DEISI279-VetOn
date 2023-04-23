@@ -4,15 +4,27 @@ const Appointment = mongoose.model(
   "Appointment",
   new mongoose.Schema(
     {
+      clinic: {
+        type: String,
+        required: true,
+      },
       pet: {
         type: String,
         required: true,
       },
-      date: {
+      appointmentType: {
         type: String,
         required: true,
       },
-      description: {
+      doctor: {
+        type: String,
+        required: true,
+      },
+      hour: {
+        type: String,
+        required: true,
+      },
+      owner: {
         type: String,
         required: true,
       },

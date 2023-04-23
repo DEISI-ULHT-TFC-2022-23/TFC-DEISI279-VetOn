@@ -38,9 +38,21 @@ export default function Authentication() {
       if (res.data.error) {
         setError(res.data.error);
       } else {
-        setUserId(res.data.id);
-        setLoggedInUsername(username);
-        navigate("/");
+        if (res.data.type === "admin") {
+          setUserId(res.data.id);
+          setLoggedInUsername(username);
+          navigate("/admin");
+        }
+        if (res.data.type === "user") {
+          setUserId(res.data.id);
+          setLoggedInUsername(username);
+          navigate("/");
+        }
+        if (res.data.type === "support") {
+          setUserId(res.data.id);
+          setLoggedInUsername(username);
+          navigate("/support");
+        }
       }
     }
   }

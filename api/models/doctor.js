@@ -19,6 +19,12 @@ const Doctor = mongoose.model(
         type: String,
         required: true,
       },
+      appointmentHours: [
+        {
+          date: Date,
+          hours: Array,
+        },
+      ],
       fb: {
         type: String,
       },
