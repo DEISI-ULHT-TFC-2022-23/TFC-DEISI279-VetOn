@@ -32,6 +32,13 @@ router.get("/user-animals", async (req, res) => {
   res.json({ animals: animals });
 });
 
+router.get("/user-animals/:username", async (req, res) => {
+  const { username } = req.params;
+  const user = await db.User.findOne({ username: username });
+  const animals = await db.Animal.find({ owner_id: user._id });
+  res.json({ animals: animals });
+});
+
 router.post("/add-animal", async (req, res) => {
   const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
   const userData = await getUserData(req);

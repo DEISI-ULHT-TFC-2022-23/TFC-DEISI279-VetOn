@@ -18,7 +18,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendResetEmail = (id, email) => {
-  const url = "http://127.0.0.1:5173";
+  const url = process.env.CLIENT;
 
   const uniqueString = uuidv4() + id;
 
@@ -103,10 +103,10 @@ router.post("/login", async (req, res) => {
         }
       );
     } else {
-      res.json({ error: "campos username ou password incorretos" });
+      res.json({ error: "Campos username ou password incorretos" });
     }
   } else {
-    res.json({ error: "Nao existe conta com o username " + username });
+    res.json({ error: "Não existe conta com o username " + username });
   }
 });
 
@@ -127,7 +127,7 @@ router.post("/forgot-password", async (req, res) => {
       sendResetEmail(userId, userEmail);
       res.json({ message: "Email enviado" });
     } else {
-      res.json({ error: "Nao existe conta com o email " + email });
+      res.json({ error: "Não existe conta com o email " + email });
     }
   } catch (error) {
     res.json({ error: error });
@@ -152,11 +152,11 @@ router.post("/reset-password/:id/:uniqueString", async (req, res) => {
           );
           res.json({ message: "Password redefinida com sucesso" });
         } else {
-          res.json({ error: "Verificacao invalida" });
+          res.json({ error: "Verificação inválida" });
         }
       });
     } else {
-      res.json({ error: "Nao foi enviado o email de verificacao" });
+      res.json({ error: "Não foi enviado o email de verificação" });
     }
   } catch (error) {
     res.json({ error: error });

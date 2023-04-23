@@ -111,9 +111,9 @@ export default function Authentication() {
               messages={{
                 minLength: "Pelo menos 8 caracteres",
                 specialChar: "Pelo menos um caracter especial",
-                number: "Pelo menos 1 numero",
-                capital: "Pelo menos uma letra maiuscula",
-                match: "As password estao iguais",
+                number: "Pelo menos 1 número",
+                capital: "Pelo menos uma caracter maiúsculo",
+                match: "As password estão iguais",
               }}
             />
           </div>
@@ -124,19 +124,19 @@ export default function Authentication() {
         </button>
         {isRegisterOrLogin === "register" && (
           <div className="text-center mt-2">
-            Ja tem conta?&nbsp;
+            Já tem conta?&nbsp;
             <button
               className="font-semibold underline"
               onClick={() => setIsRegisterOrLogin("login")}
             >
-              Faca o Login aqui
+              Faça o Login aqui
             </button>
           </div>
         )}
         {isRegisterOrLogin === "login" && (
           <div>
             <div className="text-center mt-2">
-              Nao tem conta?&nbsp;
+              Não tem conta?&nbsp;
               <button
                 className="font-semibold underline"
                 onClick={() => setIsRegisterOrLogin("register")}

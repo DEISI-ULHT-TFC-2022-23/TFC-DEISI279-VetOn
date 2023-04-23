@@ -17,7 +17,7 @@ export default function NavSections() {
           />
         </svg>
 
-        <span className="font-poppins">Sobre nos</span>
+        <span className="font-poppins">Sobre nós</span>
       </a>
       <div className="border-l border-gray-400"></div>
       <a href="#services" className="flex items-center gap-1">
@@ -36,7 +36,7 @@ export default function NavSections() {
           />
         </svg>
 
-        <span className="font-poppins">Servicos</span>
+        <span className="font-poppins">Serviços</span>
       </a>
       <div className="border-l border-gray-400"></div>
       <a href="#doctors" className="flex items-center gap-1">
@@ -55,7 +55,7 @@ export default function NavSections() {
           />
         </svg>
 
-        <span className="font-poppins">Medicos</span>
+        <span className="font-poppins">Médicos</span>
       </a>
       <div className="border-l border-gray-400"></div>
       <a href="#contacts" className="flex items-center gap-1">

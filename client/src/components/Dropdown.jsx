@@ -75,7 +75,7 @@ export default function Dropdown({ onClick }) {
                       "block px-4 py-2 text-sm"
                     )}
                   >
-                    Definicoes da conta
+                    Definições da conta
                   </a>
                 )}
               </Menu.Item>

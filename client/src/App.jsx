@@ -14,6 +14,7 @@ import EditAnimal from "./pages/EditAnimal";
 import Admin from "./pages/Admin";
 import Support from "./pages/Support";
 import AddDoctor from "./pages/AddDoctor";
+import MakeAppointmentAdmin from "./pages/MakeAppointmentAdmin";
 
 function App() {
   axios.defaults.baseURL = "http://localhost:4000/api";
@@ -37,6 +38,7 @@ function App() {
         <Route path="/edit-animal/:id" element={<EditAnimal />}></Route>
         <Route path="/chat" element={<Chat />}></Route>
         <Route path="/make-appointment" element={<MakeAppointment />}></Route>
+        <Route path="/make-appointment-admin" element={<MakeAppointmentAdmin />}></Route>
         <Route path="/add-doctor" element={<AddDoctor />}></Route>
       </Routes>
     </UserContextProvider>

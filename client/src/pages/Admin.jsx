@@ -8,12 +8,17 @@ export default function Admin() {
   const [animals, setAnimals] = useState([]);
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [appointments, setAppointments] = useState([]);
 
   async function logout() {
     await axios.get("/logout");
     window.location.reload(true);
     setId(null);
-    setUsername(null);
+  }
+
+  async function deleteAppointment(id) {
+    await axios.delete("/delete-appointment/" + id);
+    window.location.reload(false);
   }
 
   useEffect(() => {
@@ -28,10 +33,11 @@ export default function Admin() {
     });
   }, []);
 
-  async function deleteAnimal(id) {
-    await axios.delete("/delete-animal/" + id);
-    window.location.reload(false);
-  }
+  useEffect(() => {
+    axios.get("/appointments").then((response) => {
+      setAppointments(response.data.appointments);
+    });
+  }, []);
 
   useEffect(() => {
     axios.get("/user-animals").then((response) => {
@@ -77,16 +83,21 @@ export default function Admin() {
           </Link>
         </div>
         <Link to={"/"}>
-          <button onClick={logout} className="bg-primary text-white block w-full rounded-sm p-2">Logout</button>
+          <button
+            onClick={logout}
+            className="bg-primary text-white block w-full rounded-sm p-2"
+          >
+            Logout
+          </button>
         </Link>
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-animals">
-          Medicos
+          Médicos
         </div>
         <Link to={"/add-doctor"}>
           <button className="flex gap-2 border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-            Adicionar medico
+            Adicionar médico
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -173,11 +184,11 @@ export default function Admin() {
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
-          Servicos
+          Serviços
         </div>
         <Link to={"/add-service"}>
           <button className="border flex gap-2 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-            Adicionar Servico
+            Adicionar serviço
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
@@ -201,6 +212,62 @@ export default function Admin() {
                 {service.title}
               </div>
               <div>{service.description}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="flex flex-col items-center w-full">
+        <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
+          Serviços
+        </div>
+        <Link to={"/make-appointment-admin"}>
+          <button className="border flex gap-2 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+            Marcar Consulta
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-6 h-6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5m-9-6h.008v.008H12v-.008zM12 15h.008v.008H12V15zm0 2.25h.008v.008H12v-.008zM9.75 15h.008v.008H9.75V15zm0 2.25h.008v.008H9.75v-.008zM7.5 15h.008v.008H7.5V15zm0 2.25h.008v.008H7.5v-.008zm6.75-4.5h.008v.008h-.008v-.008zm0 2.25h.008v.008h-.008V15zm0 2.25h.008v.008h-.008v-.008zm2.25-4.5h.008v.008H16.5v-.008zm0 2.25h.008v.008H16.5V15z"
+              />
+            </svg>
+          </button>
+        </Link>
+        <div className=" w-full flex flex-wrap gap-8 justify-between p-4">
+          {appointments.map((appointment) => (
+            <div
+              className="bg-gray-300 rounded-xl w-96 p-10"
+              key={appointment._id}
+            >
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Clínica: {appointment.clinic}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Animal: {appointment.pet}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Tipo de consulta: {appointment.appointmentType}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Médico: {appointment.doctor}
+              </div>
+              <div className="font-poppins font-bold text-2xl pb-8">
+                Hora: {appointment.hour}
+              </div>
+              <div className="flex justify-between">
+                <button
+                  className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                  onClick={() => deleteAppointment(appointment._id)}
+                >
+                  Desmarcar
+                </button>
+              </div>
             </div>
           ))}
         </div>

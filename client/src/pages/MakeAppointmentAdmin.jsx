@@ -5,27 +5,41 @@ import AuthenticatedButtons from "../components/AuthenticatedButtons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
-export default function MakeAppointment() {
-  const { setUsername } = useContext(UserContext);
+export default function MakeAppointmentAdmin() {
+  const { setUsername: setLoggedInUsername } = useContext(UserContext);
   const [doctorName, setDoctorName] = useState("");
   const [hour, setHour] = useState("");
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [username, setUsername] = useState("");
+  const [users, setUsers] = useState([]);
   const [appointmentType, setAppointmentType] = useState("");
   const [animals, setAnimals] = useState([]);
   const [pet, setPet] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
-    axios.get("/user-animals").then((response) => {
-      setAnimals(response.data.animals);
+    axios.get("/users").then((response) => {
+      setUsers(response.data.users);
     });
   }, []);
+
+  useEffect(() => {
+    axios.get("/user-animals/" + username).then((response) => {
+      setAnimals(response.data.animals);
+    });
+  }, [username]);
 
   const inputAnimal = document.getElementById("animal");
   function onChangeAnimal() {
     var text = inputAnimal.options[inputAnimal.selectedIndex].text;
     setPet(text);
+  }
+
+  const inputUser = document.getElementById("user");
+  function onChangeUser() {
+    var text = inputUser.options[inputUser.selectedIndex].text;
+    setUsername(text);
   }
 
   const inputAppointmentType = document.getElementById("appointment_type");
@@ -49,13 +63,14 @@ export default function MakeAppointment() {
 
   async function submit(event) {
     event.preventDefault();
-    await axios.post("/add-appointment", {
+    await axios.post("/add-appointment-admin", {
+      username,
       pet,
       appointmentType,
       doctorName,
       hour,
     });
-    navigate("/profile");
+    navigate("/admin");
   }
 
   useEffect(() => {
@@ -74,7 +89,7 @@ export default function MakeAppointment() {
     await axios.get("/logout");
     window.location.reload(true);
     setId(null);
-    setUsername(null);
+    setLoggedInUsername(null);
   }
 
   return (
@@ -98,6 +113,24 @@ export default function MakeAppointment() {
             className="border border-primary rounded-full p-4"
           >
             <option>Hospital Veterinário da Universidade Lusófona</option>
+          </select>
+          <div className="mt-10 mb-5 text-center text-xl">
+            Selecione o utilizador pretendido
+          </div>
+          <select
+            name="user"
+            id="user"
+            className="border border-primary rounded-full p-4 w-96"
+            onChange={onChangeUser}
+          >
+            <option value="default" selected disabled hidden>
+              Escolha um dos utilizadores...
+            </option>
+            {users
+              .filter((user) => user.type === "user")
+              .map((user) => (
+                <option key={user._id}>{user.username}</option>
+              ))}
           </select>
           <div className="mt-10 mb-5 text-center text-xl">
             Selecione o animal pretendido

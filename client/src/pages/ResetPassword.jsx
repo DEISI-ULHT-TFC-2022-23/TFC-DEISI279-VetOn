@@ -69,9 +69,9 @@ export default function ResetPassword() {
           messages={{
             minLength: "Pelo menos 8 caracteres",
             specialChar: "Pelo menos um caracter especial",
-            number: "Pelo menos 1 numero",
-            capital: "Pelo menos uma letra maiuscula",
-            match: "As password estao iguais",
+            number: "Pelo menos 1 número",
+            capital: "Pelo menos uma caracter maiúsculo",
+            match: "As password estão iguais",
           }}
         />
         <button className="bg-primary text-white block w-full rounded-sm p-2 mt-4">

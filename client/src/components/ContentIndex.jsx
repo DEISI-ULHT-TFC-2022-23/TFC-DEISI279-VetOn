@@ -41,27 +41,21 @@ export default function ContentIndex({ loggedIn = false }) {
       <div className="ml-16 mr-10 mt-32">
         <div className="flex">
           <div className="w-1/2 ">
-            <div className="font-poppins text-3xl">Bem-vindo a</div>
-            <div className="font-poppins pt-4 text-8xl font-bold">VetOn</div>
-            <div className="font-poppins pt-4 ">
-              Lorem Ipsum is simply dummy text of the printing and industry.
-              Lorem Ipsum has been the industry's standard dummy text ever since
-              the 1500s, when an unknown printer took a galley of type and
-              scrambled it to make a type specimen book. It has survived not
-              only five centuries, but also the leap into electronic
-              typesetting, remaining essentially unchanged. It was popularised
-              in the 1960s with the release of Letraset sheets containing Lorem
-              Ipsum passages, and more recently with desktop publishing software
-              like Aldus PageMaker including versions of Lorem Ipsum. Lorem
-              Ipsum is simply dummy text of the printing and industry. Lorem
-              Ipsum has been the industry's standard dummy text ever since the
-              1500s, when an unknown printer took a galley of type and scrambled
-              it to make a type specimen book. It has survived not only five
-              centuries, but also the leap into electronic typesetting,
-              remaining essentially unchanged. It was popularised in the 1960s
-              with the release of Letraset sheets containing Lorem Ipsum
-              passages, and more recently with desktop publishing software like
-              Aldus PageMaker including versions of Lorem Ipsum.
+            <div className="font-poppins text-3xl">Bem-vindo à</div>
+            <div className="font-poppins pt-4 text-8xl font-bold mb-10">
+              VetOn
+            </div>
+            <div className="font-poppins pt-4 text-xl">
+              Sabendo que é importante garantir a saúde dos animais de estimação
+              de qualquer indivíduo a VetOn torna possível o agendamento de
+              consultas no Hospital Veterinário da Universidade Lusófona de
+              forma simples e efica. <br /> Nesta fase inicial iremos estar ao
+              dispor do Hospital Veterinário da Universidade Lusófona de forma a
+              oferecer uma maior visibilidade e colmatar a carência em aspetos
+              de logística e gerenciamento que este apresenta. <br /> Num futuro
+              próximo pretendemos ser o intermediário entre várias clínicas
+              veterinárias e você. <br />
+              <b>Estamos ao seu dispor a qualquer hora, todos os dias.</b>
             </div>
             <div className="font-poppins pt-16">
               {loggedIn && (
@@ -93,7 +87,7 @@ export default function ContentIndex({ loggedIn = false }) {
           className="flex items-center justify-center font-poppins mt-20 text-5xl"
           id="services"
         >
-          Servicos disponiveis
+          Serviços Disponíveis
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
           {services.map((service) => (
@@ -109,7 +103,7 @@ export default function ContentIndex({ loggedIn = false }) {
           className="flex items-center justify-center font-poppins mt-20 text-5xl"
           id="doctors"
         >
-          Medicos Afiliados
+          Médicos Afiliados
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-primary">
           {doctors.map((doctor) => (
@@ -400,7 +394,7 @@ export default function ContentIndex({ loggedIn = false }) {
             </div>
           </div>
           <div className="font-poppins flex items-center pt-8 gap-2">
-            <div className="text-xl pt-3">Rodrigo Simoes</div>
+            <div className="text-xl pt-3">Rodrigo Simões</div>
             <div className="flex items-center gap-2 font-poppins text-l pt-4">
               <div>
                 <svg

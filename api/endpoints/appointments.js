@@ -38,7 +38,7 @@ router.post("/add-appointment", async (req, res) => {
   const doctor = await db.Doctor.findOne({ name: doctorName });
 
   await db.Appointment.create({
-    clinic: "Hospital Veterinario da Universidade Lusofona",
+    clinic: "Hospital Veterinário da Universidade Lusófona",
     pet: pet,
     appointmentType: appointmentType,
     doctor: doctorName,
@@ -61,10 +61,49 @@ router.post("/add-appointment", async (req, res) => {
   res.json({ message: "Consulta criada com sucesso" });
 });
 
+router.post("/add-appointment-admin", async (req, res) => {
+  const { username, pet, appointmentType, doctorName, hour } = req.body;
+
+  const doctor = await db.Doctor.findOne({ name: doctorName });
+  const user = await db.User.findOne({ username: username });
+
+  await db.Appointment.create({
+    clinic: "Hospital Veterinário da Universidade Lusófona",
+    pet: pet,
+    appointmentType: appointmentType,
+    doctor: doctorName,
+    hour: hour,
+    owner: user._id,
+  });
+
+  await db.Doctor.findByIdAndUpdate(
+    doctor._id,
+    {
+      $pull: {
+        "appointmentHours.$[].hours": {
+          $in: [hour],
+        },
+      },
+    },
+    { new: true }
+  );
+
+  res.json({ message: "Consulta criada com sucesso" });
+});
+
 router.delete("/delete-appointment/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
+    const appointment = await db.Appointment.findById(id);
+    await db.Doctor.findOneAndUpdate(
+      { name: appointment.doctor },
+      {
+        $push: {
+          "appointmentHours.$[].hours": appointment.hour,
+        },
+      }
+    );
     await db.Appointment.findByIdAndDelete(id);
     res.json({ message: "Consulta eliminada com sucesso" });
   } catch (error) {

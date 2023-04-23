@@ -23,7 +23,7 @@ router.post("/add-doctor", async (req, res) => {
     insta: insta,
     appointmentHours: appointmentHours,
   });
-  res.json({ message: "Doutor criado com sucesso" });
+  res.json({ message: "Médico criado com sucesso" });
 });
 
 router.post("/remove-hours", async (req, res) => {

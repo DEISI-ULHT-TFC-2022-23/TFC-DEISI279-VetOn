@@ -101,16 +101,16 @@ export default function Profile() {
                 Nome: {animal.name}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
-                Especie: {animal.type}
+                Espécie: {animal.type}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
-                Raca: {animal.race}
+                raça: {animal.race}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
                 Peso: {animal.weight}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
-                Genero: {animal.gender}
+                Género: {animal.gender}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
                 Data de nascimento: {animal.birth_date}
@@ -166,7 +166,7 @@ export default function Profile() {
               key={appointment._id}
             >
               <div className="font-poppins font-bold text-2xl pb-8">
-                Clinica: {appointment.clinic}
+                Clínica: {appointment.clinic}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
                 Animal: {appointment.pet}
@@ -175,7 +175,7 @@ export default function Profile() {
                 Tipo de consulta: {appointment.appointmentType}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
-                Doutor: {appointment.doctor}
+                Médico: {appointment.doctor}
               </div>
               <div className="font-poppins font-bold text-2xl pb-8">
                 Hora: {appointment.hour}
