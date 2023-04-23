@@ -1,10 +1,6 @@
 # TFC - VetOn
 
-<div align="center">
-  <a href="https://github.com/rbnvsilva/VetOn">
-    <img src="/public/images/logo.png" alt="Logo" width="700" height="500">
-  </a>
-</div>
+![logo](https://user-images.githubusercontent.com/72628840/233821735-8bbfb006-935d-437a-8686-707d2c1e4ade.png)
 
 # Pré-Requisitos
 
@@ -12,21 +8,45 @@
 
 # Manual de utilização  
 
-### Container do Docker
+### Containers do Docker
 
-* Pull do container
+* Pull do container client
 ```sh
-docker pull rubenulht/veton:1.0
+docker pull rubenulht/client:3.0
 ```
 
-* Correr o container
+* Correr o container client
 ```sh
-docker run -p 80:3000 rubenulht/veton:1.0
+docker run -p 5000:5000 rubenulht/client:3.0
 ```
 
-* Abrir página
+* Pull do container api
 ```sh
-localhost
+docker pull rubenulht/api:2.0
+```
+
+* Correr o container api
+```sh
+docker run -p 4000:4000 rubenulht/api:2.0
+```
+
+* Abrir o client
+```sh
+localhost:5000
+```
+
+# Credenciais
+
+## Conta admin
+```sh
+username: admin
+password: !1A12345
+```
+
+## Conta support
+```sh
+username: support1
+password: !1A12345
 ```
 
 # Créditos
