@@ -17,7 +17,7 @@ docker pull rubenulht/client:3.0
 
 * Correr o container client
 ```sh
-docker run -p 5000:5000 rubenulht/client:3.0
+docker run -d -p 5000:5000 rubenulht/client:3.0
 ```
 
 * Pull do container api
@@ -27,7 +27,7 @@ docker pull rubenulht/api:2.0
 
 * Correr o container api
 ```sh
-docker run -p 4000:4000 rubenulht/api:2.0
+docker run -d -p 4000:4000 rubenulht/api:2.0
 ```
 
 * Abrir o client
