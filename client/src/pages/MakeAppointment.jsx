@@ -14,7 +14,6 @@ export default function MakeAppointment() {
   const [appointmentType, setAppointmentType] = useState("");
   const [animals, setAnimals] = useState([]);
   const [pet, setPet] = useState("");
-  const [message, setMessage] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -79,14 +78,14 @@ export default function MakeAppointment() {
   }
 
   return (
-    <form onSubmit={submit}>
+    <form onSubmit={submit} className="mb-28">
       <div className="fixed top-0 w-full">
         <nav className="flex items-center justify-between p-4 bg-gray-200">
           <Logo index={false} />
           <AuthenticatedButtons onClick={logout} />
         </nav>
       </div>
-      <div className="mt-52 flex flex-col items-center">
+      <div className="mt-32 flex flex-col items-center">
         <div className="text-5xl">Marque a sua consulta</div>
 
         <div>

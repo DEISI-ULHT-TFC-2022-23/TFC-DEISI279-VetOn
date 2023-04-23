@@ -61,6 +61,17 @@ router.post("/add-appointment", async (req, res) => {
   res.json({ message: "Consulta criada com sucesso" });
 });
 
+router.delete("/delete-appointment/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await db.Appointment.findByIdAndDelete(id);
+    res.json({ message: "Consulta eliminada com sucesso" });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
 router.patch("/update-hours", async (req, res) => {
   await db.Doctor.updateMany(
     {},

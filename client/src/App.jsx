@@ -34,10 +34,10 @@ function App() {
         <Route path="/support" element={<Support />}></Route>
         <Route path="/edit-profile" element={<EditProfile />}></Route>
         <Route path="/add-animal" element={<AddAnimal />}></Route>
-        <Route path="/add-doctor" element={<AddDoctor />}></Route>
         <Route path="/edit-animal/:id" element={<EditAnimal />}></Route>
         <Route path="/chat" element={<Chat />}></Route>
         <Route path="/make-appointment" element={<MakeAppointment />}></Route>
+        <Route path="/add-doctor" element={<AddDoctor />}></Route>
       </Routes>
     </UserContextProvider>
   );

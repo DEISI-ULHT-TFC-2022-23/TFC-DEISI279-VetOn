@@ -37,7 +37,7 @@ export default function EditAnimal() {
     <div className="bg-gray-300 h-screen flex items-center">
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>
         <div className="flex justify-center mb-4">
-          <Link to={"/"}>
+          <Link to={"/profile"}>
             <img src="../src/assets/logo.png" alt="" />
           </Link>
         </div>

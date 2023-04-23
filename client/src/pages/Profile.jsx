@@ -13,6 +13,11 @@ export default function Profile() {
     window.location.reload(false);
   }
 
+  async function deleteAppointment(id) {
+    await axios.delete("/delete-appointment/" + id);
+    window.location.reload(false);
+  }
+
   useEffect(() => {
     axios.get("/user-animals").then((response) => {
       setAnimals(response.data.animals);
@@ -135,7 +140,7 @@ export default function Profile() {
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
           As minhas consultas
         </div>
-        <Link to={"/appointments"}>
+        <Link to={"/make-appointment"}>
           <button className="border flex gap-2 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
             Marcar consulta
             <svg
@@ -176,17 +181,11 @@ export default function Profile() {
                 Hora: {appointment.hour}
               </div>
               <div className="flex justify-between">
-                <Link to={`/edit-animal/${appointment._id}`}>
-                  <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-                    Editar
-                  </button>
-                </Link>
-
                 <button
                   className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
-                  onClick={() => deleteAnimal(animal._id)}
+                  onClick={() => deleteAppointment(appointment._id)}
                 >
-                  Eliminar
+                  Desmarcar
                 </button>
               </div>
             </div>
