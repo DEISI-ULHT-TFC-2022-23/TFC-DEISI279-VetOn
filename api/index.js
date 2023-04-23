@@ -6,7 +6,7 @@ const cors = require("cors");
 const parser = require("cookie-parser");
 const ws = require("ws");
 const fs = require("fs");
-const db = require("../api/models");
+const db = require("./models");
 
 dotenv.config();
 const app = express();
