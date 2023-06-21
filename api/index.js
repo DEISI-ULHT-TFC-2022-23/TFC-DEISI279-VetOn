@@ -46,26 +46,26 @@ async function getUserData(req) {
   });
 }
 
-app.get("/animals", async (req, res) => {
+app.get("/api/animals", async (req, res) => {
   const animals = await db.Animal.find({});
   res.json({ animals: animals });
 });
 
-app.get("/user-animals", async (req, res) => {
+app.get("/api/user-animals", async (req, res) => {
   const userData = await getUserData(req);
 
   const animals = await db.Animal.find({ owner_id: userData.userId });
   res.json({ animals: animals });
 });
 
-app.get("/user-animals/:username", async (req, res) => {
+app.get("/api/user-animals/:username", async (req, res) => {
   const { username } = req.params;
   const user = await db.User.findOne({ username: username });
   const animals = await db.Animal.find({ owner_id: user._id });
   res.json({ animals: animals });
 });
 
-app.post("/add-animal", async (req, res) => {
+app.post("/api/add-animal", async (req, res) => {
   const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
   const userData = await getUserData(req);
 
@@ -82,7 +82,7 @@ app.post("/add-animal", async (req, res) => {
   res.json({ message: "Animal criado com sucesso" });
 });
 
-app.post("/edit-animal/:id", async (req, res) => {
+app.post("/api/edit-animal/:id", async (req, res) => {
   const { id } = req.params;
   const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
 
@@ -102,7 +102,7 @@ app.post("/edit-animal/:id", async (req, res) => {
   }
 });
 
-app.delete("/delete-animal/:id", async (req, res) => {
+app.delete("/api/delete-animal/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -134,18 +134,18 @@ async function getUserData(req) {
   });
 }
 
-app.get("/appointments", async (req, res) => {
+app.get("/api/appointments", async (req, res) => {
   const appointments = await db.Appointment.find({});
   res.json({ appointments: appointments });
 });
 
-app.get("/user-appointments", async (req, res) => {
+app.get("/api/user-appointments", async (req, res) => {
   const userData = await getUserData(req);
   const appointments = await db.Appointment.find({ owner: userData.userId });
   res.json({ appointments: appointments });
 });
 
-app.post("/add-appointment", async (req, res) => {
+app.post("/api/add-appointment", async (req, res) => {
   const userData = await getUserData(req);
   const { pet, appointmentType, doctorName, hour } = req.body;
 
@@ -175,7 +175,7 @@ app.post("/add-appointment", async (req, res) => {
   res.json({ message: "Consulta criada com sucesso" });
 });
 
-app.post("/add-appointment-admin", async (req, res) => {
+app.post("/api/add-appointment-admin", async (req, res) => {
   const { username, pet, appointmentType, doctorName, hour } = req.body;
 
   const doctor = await db.Doctor.findOne({ name: doctorName });
@@ -205,7 +205,7 @@ app.post("/add-appointment-admin", async (req, res) => {
   res.json({ message: "Consulta criada com sucesso" });
 });
 
-app.delete("/delete-appointment/:id", async (req, res) => {
+app.delete("/api/delete-appointment/:id", async (req, res) => {
   const { id } = req.params;
 
   try {
@@ -225,7 +225,7 @@ app.delete("/delete-appointment/:id", async (req, res) => {
   }
 });
 
-app.patch("/update-hours", async (req, res) => {
+app.patch("/api/update-hours", async (req, res) => {
   await db.Doctor.updateMany(
     {},
     {
@@ -286,7 +286,7 @@ const sendResetEmail = (id, email) => {
   });
 };
 
-app.post("/register", async (req, res) => {
+app.post("/api/register", async (req, res) => {
   const { email, username, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, salt);
 
@@ -322,7 +322,7 @@ app.post("/register", async (req, res) => {
   }
 });
 
-app.post("/login", async (req, res) => {
+app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
   const user = await db.User.findOne({ username });
@@ -353,13 +353,13 @@ app.post("/login", async (req, res) => {
   }
 });
 
-app.get("/logout", (req, res) => {
+app.get("/api/logout", (req, res) => {
   res
     .cookie("token", "", { sameSite: "none", secure: true })
     .json("Logged out");
 });
 
-app.post("/forgot-password", async (req, res) => {
+app.post("/api/forgot-password", async (req, res) => {
   const { email } = req.body;
 
   try {
@@ -377,7 +377,7 @@ app.post("/forgot-password", async (req, res) => {
   }
 });
 
-app.post("/reset-password/:id/:uniqueString", async (req, res) => {
+app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
   const userId = req.params.id;
   const uniqueString = req.params.uniqueString;
   const { password } = req.body;
@@ -413,12 +413,12 @@ const today = new Date();
 const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 const appointmentHours = [{ date: today, hours: hours }];
 
-app.get("/doctors", async (req, res) => {
+app.get("/api/doctors", async (req, res) => {
   const doctors = await db.Doctor.find({});
   res.json({ doctors: doctors });
 });
 
-app.post("/add-doctor", async (req, res) => {
+app.post("/api/add-doctor", async (req, res) => {
   const { name, job, description, fb, li, insta } = req.body;
 
   await db.Doctor.create({
@@ -433,7 +433,7 @@ app.post("/add-doctor", async (req, res) => {
   res.json({ message: "Médico criado com sucesso" });
 });
 
-app.post("/remove-hours", async (req, res) => {
+app.post("/api/remove-hours", async (req, res) => {
   await db.Doctor.updateMany(
     {},
     {
@@ -445,7 +445,7 @@ app.post("/remove-hours", async (req, res) => {
   res.json({ message: "Horas updated" });
 });
 
-app.post("/add-hours", async (req, res) => {
+app.post("/api/add-hours", async (req, res) => {
   await db.Doctor.updateMany(
     {},
     {
@@ -460,7 +460,7 @@ app.post("/add-hours", async (req, res) => {
 const express = require("express");
 const db = require("../models");
 
-app.get("/services", async (req, res) => {
+app.get("/api/services", async (req, res) => {
   const services = await db.Service.find({});
   res.json({ services: services });
 });
@@ -487,18 +487,18 @@ async function getUserData(req) {
   });
 }
 
-app.get("/users", async (req, res) => {
+app.get("/api/users", async (req, res) => {
   const users = await db.User.find({});
   res.json({ users: users });
 });
 
-app.get("/users/:username", async (req, res) => {
+app.get("/api/users/:username", async (req, res) => {
   const username = req.params.username;
   const user = await db.User.findOne({ username: username });
   res.json(user);
 });
 
-app.get("/user-data", (req, res) => {
+app.get("/api/user-data", (req, res) => {
   const token = req.cookies?.token;
 
   try {
@@ -518,7 +518,7 @@ app.get("/user-data", (req, res) => {
   }
 });
 
-app.post("/edit-email", async (req, res) => {
+app.post("/api/edit-email", async (req, res) => {
   const { email: newEmail } = req.body;
   const userData = await getUserData(req);
 
@@ -546,7 +546,7 @@ app.post("/edit-email", async (req, res) => {
   }
 });
 
-app.post("/edit-username", async (req, res) => {
+app.post("/api/edit-username", async (req, res) => {
   const { username: newUsername } = req.body;
   const userData = await getUserData(req);
 
@@ -575,7 +575,7 @@ app.post("/edit-username", async (req, res) => {
   }
 });
 
-app.post("/edit-password", async (req, res) => {
+app.post("/api/edit-password", async (req, res) => {
   const { currentPassword, password: newPassword } = req.body;
   const userData = await getUserData(req);
 
@@ -609,6 +609,43 @@ app.post("/edit-password", async (req, res) => {
   } catch (error) {
     res.json({ error: error });
   }
+});
+
+const express = require("express");
+const jwt = require("jsonwebtoken");
+const db = require("../models");
+
+async function getUserData(req) {
+  return new Promise((resolve, reject) => {
+    const token = req.cookies?.token;
+
+    if (token) {
+      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
+        if (error) {
+          throw error;
+        }
+        resolve(userData);
+      });
+    } else {
+      reject("no token provided");
+    }
+  });
+}
+
+app.get("/api/clients", async (req, res) => {
+  const clients = await db.User.find({});
+  res.json(clients);
+});
+
+app.get("/api/messages/:userId", async (req, res) => {
+  const { userId } = req.params;
+  const userData = await getUserData(req);
+
+  const messages = await db.Message.find({
+    sender: { $in: [userId, userData.userId] },
+    recipient: { $in: [userId, userData.userId] },
+  }).sort({ createdAt: 1 });
+  res.json(messages);
 });
 
 const wss = new ws.WebSocketServer({ server });
@@ -659,44 +696,6 @@ wss.on("connection", (connection, req) => {
       }
     }
   }
-
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const db = require("../models");
-
-async function getUserData(req) {
-  return new Promise((resolve, reject) => {
-    const token = req.cookies?.token;
-
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        resolve(userData);
-      });
-    } else {
-      reject("no token provided");
-    }
-  });
-}
-
-app.get("/clients", async (req, res) => {
-  const clients = await db.User.find({});
-  res.json(clients);
-});
-
-app.get("/messages/:userId", async (req, res) => {
-  const { userId } = req.params;
-  const userData = await getUserData(req);
-
-  const messages = await db.Message.find({
-    sender: { $in: [userId, userData.userId] },
-    recipient: { $in: [userId, userData.userId] },
-  }).sort({ createdAt: 1 });
-  res.json(messages);
-});
-
 
   connection.on("message", async (message) => {
     const messageData = JSON.parse(message.toString());
