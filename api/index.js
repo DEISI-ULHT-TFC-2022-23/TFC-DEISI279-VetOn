@@ -7,6 +7,9 @@ const parser = require("cookie-parser");
 const ws = require("ws");
 const fs = require("fs");
 const db = require("./models");
+const nodemailer = require("nodemailer");
+const { v4: uuidv4 } = require("uuid");
+const bcrypt = require("bcryptjs");
 
 dotenv.config();
 const app = express();
@@ -24,10 +27,6 @@ mongoose.connect(process.env.MONGO_URL);
 
 const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
-
-const express = require("express");
-const db = require("../models");
-const jwt = require("jsonwebtoken");
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
@@ -112,10 +111,6 @@ app.delete("/api/delete-animal/:id", async (req, res) => {
     res.json({ error: error });
   }
 });
-
-const express = require("express");
-const db = require("../models");
-const jwt = require("jsonwebtoken");
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
@@ -241,13 +236,6 @@ app.patch("/api/update-hours", async (req, res) => {
     }
   );
 });
-
-const express = require("express");
-const nodemailer = require("nodemailer");
-const { v4: uuidv4 } = require("uuid");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
-const db = require("../models");
 
 const salt = bcrypt.genSaltSync(10);
 
@@ -406,9 +394,6 @@ app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
   }
 });
 
-const express = require("express");
-const db = require("../models");
-
 const today = new Date();
 const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 const appointmentHours = [{ date: today, hours: hours }];
@@ -457,18 +442,10 @@ app.post("/api/add-hours", async (req, res) => {
   res.json({ message: "Horas updated" });
 });
 
-const express = require("express");
-const db = require("../models");
-
 app.get("/api/services", async (req, res) => {
   const services = await db.Service.find({});
   res.json({ services: services });
 });
-
-const express = require("express");
-const db = require("../models");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
@@ -610,10 +587,6 @@ app.post("/api/edit-password", async (req, res) => {
     res.json({ error: error });
   }
 });
-
-const express = require("express");
-const jwt = require("jsonwebtoken");
-const db = require("../models");
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
