@@ -23,8 +23,6 @@ app.use(
 app.use(parser());
 app.use("/uploads", express.static(__dirname + "/uploads"));
 
-mongoose.connect(process.env.MONGO_URL);
-
 const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
 
@@ -46,18 +44,20 @@ async function getUserData(req) {
 }
 
 app.get("/api/animals", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const animals = await db.Animal.find({});
   res.json({ animals: animals });
 });
 
 app.get("/api/user-animals", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
-
   const animals = await db.Animal.find({ owner_id: userData.userId });
   res.json({ animals: animals });
 });
 
 app.get("/api/user-animals/:username", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { username } = req.params;
   const user = await db.User.findOne({ username: username });
   const animals = await db.Animal.find({ owner_id: user._id });
@@ -65,9 +65,9 @@ app.get("/api/user-animals/:username", async (req, res) => {
 });
 
 app.post("/api/add-animal", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
   const userData = await getUserData(req);
-
   await db.Animal.create({
     name: name,
     type: type,
@@ -82,6 +82,7 @@ app.post("/api/add-animal", async (req, res) => {
 });
 
 app.post("/api/edit-animal/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
   const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
 
@@ -102,6 +103,7 @@ app.post("/api/edit-animal/:id", async (req, res) => {
 });
 
 app.delete("/api/delete-animal/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
 
   try {
@@ -112,35 +114,21 @@ app.delete("/api/delete-animal/:id", async (req, res) => {
   }
 });
 
-async function getUserData(req) {
-  return new Promise((resolve, reject) => {
-    const token = req.cookies?.token;
-
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        resolve(userData);
-      });
-    } else {
-      reject("no token provided");
-    }
-  });
-}
-
 app.get("/api/appointments", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const appointments = await db.Appointment.find({});
   res.json({ appointments: appointments });
 });
 
 app.get("/api/user-appointments", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
   const appointments = await db.Appointment.find({ owner: userData.userId });
   res.json({ appointments: appointments });
 });
 
 app.post("/api/add-appointment", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
   const { pet, appointmentType, doctorName, hour } = req.body;
 
@@ -171,6 +159,7 @@ app.post("/api/add-appointment", async (req, res) => {
 });
 
 app.post("/api/add-appointment-admin", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { username, pet, appointmentType, doctorName, hour } = req.body;
 
   const doctor = await db.Doctor.findOne({ name: doctorName });
@@ -201,6 +190,7 @@ app.post("/api/add-appointment-admin", async (req, res) => {
 });
 
 app.delete("/api/delete-appointment/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
 
   try {
@@ -221,6 +211,7 @@ app.delete("/api/delete-appointment/:id", async (req, res) => {
 });
 
 app.patch("/api/update-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   await db.Doctor.updateMany(
     {},
     {
@@ -249,6 +240,7 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendResetEmail = (id, email) => {
+  mongoose.connect(process.env.MONGO_URL);
   const url = process.env.CLIENT;
 
   const uniqueString = uuidv4() + id;
@@ -275,6 +267,7 @@ const sendResetEmail = (id, email) => {
 };
 
 app.post("/api/register", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { email, username, password } = req.body;
   const hashedPassword = bcrypt.hashSync(password, salt);
 
@@ -311,6 +304,7 @@ app.post("/api/register", async (req, res) => {
 });
 
 app.post("/api/login", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { username, password } = req.body;
 
   const user = await db.User.findOne({ username });
@@ -342,12 +336,14 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.get("/api/logout", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   res
     .cookie("token", "", { sameSite: "none", secure: true })
     .json("Logged out");
 });
 
 app.post("/api/forgot-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { email } = req.body;
 
   try {
@@ -366,6 +362,7 @@ app.post("/api/forgot-password", async (req, res) => {
 });
 
 app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const userId = req.params.id;
   const uniqueString = req.params.uniqueString;
   const { password } = req.body;
@@ -399,11 +396,13 @@ const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
 const appointmentHours = [{ date: today, hours: hours }];
 
 app.get("/api/doctors", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const doctors = await db.Doctor.find({});
   res.json({ doctors: doctors });
 });
 
 app.post("/api/add-doctor", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { name, job, description, fb, li, insta } = req.body;
 
   await db.Doctor.create({
@@ -419,6 +418,7 @@ app.post("/api/add-doctor", async (req, res) => {
 });
 
 app.post("/api/remove-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   await db.Doctor.updateMany(
     {},
     {
@@ -431,6 +431,7 @@ app.post("/api/remove-hours", async (req, res) => {
 });
 
 app.post("/api/add-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   await db.Doctor.updateMany(
     {},
     {
@@ -443,39 +444,26 @@ app.post("/api/add-hours", async (req, res) => {
 });
 
 app.get("/api/services", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const services = await db.Service.find({});
   res.json({ services: services });
 });
 
-async function getUserData(req) {
-  return new Promise((resolve, reject) => {
-    const token = req.cookies?.token;
-
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        resolve(userData);
-      });
-    } else {
-      reject("no token provided");
-    }
-  });
-}
-
 app.get("/api/users", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const users = await db.User.find({});
   res.json({ users: users });
 });
 
 app.get("/api/users/:username", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const username = req.params.username;
   const user = await db.User.findOne({ username: username });
   res.json(user);
 });
 
 app.get("/api/user-data", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const token = req.cookies?.token;
 
   try {
@@ -496,6 +484,7 @@ app.get("/api/user-data", (req, res) => {
 });
 
 app.post("/api/edit-email", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { email: newEmail } = req.body;
   const userData = await getUserData(req);
 
@@ -524,6 +513,7 @@ app.post("/api/edit-email", async (req, res) => {
 });
 
 app.post("/api/edit-username", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { username: newUsername } = req.body;
   const userData = await getUserData(req);
 
@@ -553,6 +543,7 @@ app.post("/api/edit-username", async (req, res) => {
 });
 
 app.post("/api/edit-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { currentPassword, password: newPassword } = req.body;
   const userData = await getUserData(req);
 
@@ -588,29 +579,14 @@ app.post("/api/edit-password", async (req, res) => {
   }
 });
 
-async function getUserData(req) {
-  return new Promise((resolve, reject) => {
-    const token = req.cookies?.token;
-
-    if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
-        if (error) {
-          throw error;
-        }
-        resolve(userData);
-      });
-    } else {
-      reject("no token provided");
-    }
-  });
-}
-
 app.get("/api/clients", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const clients = await db.User.find({});
   res.json(clients);
 });
 
 app.get("/api/messages/:userId", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { userId } = req.params;
   const userData = await getUserData(req);
 
