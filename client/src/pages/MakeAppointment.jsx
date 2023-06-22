@@ -4,10 +4,13 @@ import Logo from "../components/Logo";
 import AuthenticatedButtons from "../components/AuthenticatedButtons";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 
 export default function MakeAppointment() {
   const { setUsername } = useContext(UserContext);
   const [doctorName, setDoctorName] = useState("");
+  const [selectedDate, setSelectedDate] = useState(null);
   const [hour, setHour] = useState("");
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -32,6 +35,10 @@ export default function MakeAppointment() {
 
   const onChangeDoctor = (event) => {
     setDoctorName(event.target.value);
+  };
+
+  const handleDateChange = (date) => {
+    setSelectedDate(date);
   };
 
   const onChangeHour = (event) => {
@@ -124,7 +131,6 @@ export default function MakeAppointment() {
               <option key={service._id}>{service.title}</option>
             ))}
           </select>
-
           <div>
             {appointmentType !== "" && (
               <div>
@@ -152,6 +158,23 @@ export default function MakeAppointment() {
           </div>
           <div>
             {doctorName !== "" && (
+              <div>
+                <div className="mt-10 mb-5 text-center text-xl">
+                  Selecione uma data
+                </div>
+                <DatePicker
+                  dateFormat="dd/MM/yyy"
+                  selected={selectedDate}
+                  onChange={handleDateChange}
+                  className="border border-primary rounded-full p-4 w-96"
+                  autoFocus
+                  minDate={new Date()}
+                />
+              </div>
+            )}
+          </div>
+          <div>
+            {selectedDate !== null && (
               <div>
                 <div className="mt-10 mb-5 text-center text-xl">
                   Selecione um horário
