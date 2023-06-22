@@ -22,30 +22,21 @@ export default function MakeAppointment() {
     });
   }, []);
 
-  const inputAnimal = document.getElementById("animal");
-  function onChangeAnimal() {
-    var text = inputAnimal.options[inputAnimal.selectedIndex].text;
-    setPet(text);
-  }
+  const onChangeAnimal = (event) => {
+    setPet(event.target.value);
+  };
 
-  const inputAppointmentType = document.getElementById("appointment_type");
-  function onChangeAppointmentType() {
-    var text =
-      inputAppointmentType.options[inputAppointmentType.selectedIndex].text;
-    setAppointmentType(text);
-  }
+  const onChangeAppointmentType = (event) => {
+    setAppointmentType(event.target.value);
+  };
 
-  const inputDoctor = document.getElementById("doctor");
-  function onChangeDoctor() {
-    var text = inputDoctor.options[inputDoctor.selectedIndex].text;
-    setDoctorName(text);
-  }
+  const onChangeDoctor = (event) => {
+    setDoctorName(event.target.value);
+  };
 
-  const inputHour = document.getElementById("hour");
-  function onChangeHour() {
-    var text = inputHour.options[inputHour.selectedIndex].text;
-    setHour(text);
-  }
+  const onChangeHour = (event) => {
+    setHour(event.target.value);
+  };
 
   async function submit(event) {
     event.preventDefault();
@@ -103,12 +94,13 @@ export default function MakeAppointment() {
             Selecione o animal pretendido
           </div>
           <select
+            value={pet}
             name="animal"
             id="animal"
             className="border border-primary rounded-full p-4 w-96"
             onChange={onChangeAnimal}
           >
-            <option value="default" selected disabled hidden>
+            <option value="" disabled hidden>
               Escolha um dos seus animais...
             </option>
             {animals.map((animal) => (
@@ -119,70 +111,79 @@ export default function MakeAppointment() {
             Selecione o tipo de consulta
           </div>
           <select
+            value={appointmentType}
             name="appointment_type"
             id="appointment_type"
             className="border border-primary rounded-full p-4 w-96"
             onChange={onChangeAppointmentType}
           >
-            <option value="default" selected disabled hidden>
+            <option value="" disabled hidden>
               Escolha um tipo de consulta...
             </option>
             {services.map((service) => (
               <option key={service._id}>{service.title}</option>
             ))}
           </select>
-          <div className="mt-10 mb-5 text-center text-xl">
-            Selecione o médico
-          </div>
-          <select
-            name="doctor"
-            id="doctor"
-            className="border border-primary rounded-full p-4 w-96"
-            onChange={onChangeDoctor}
-          >
-            <option value="default" selected disabled hidden>
-              Escolha um médico...
-            </option>
-            {doctors
-              .filter((doctor) => doctor.job === appointmentType)
-              .map((doctor) => (
-                <option key={doctor._id}>{doctor.name}</option>
-              ))}
-          </select>
 
           <div>
-            <div>
-              <div className="mt-10 mb-5 text-center text-xl">
-                Selecione um horário
+            {appointmentType !== "" && (
+              <div>
+                <div className="mt-10 mb-5 text-center text-xl">
+                  Selecione o médico
+                </div>
+                <select
+                  value={doctorName}
+                  name="doctor"
+                  id="doctor"
+                  className="border border-primary rounded-full p-4 w-96"
+                  onChange={onChangeDoctor}
+                >
+                  <option value="" disabled hidden>
+                    Escolha um médico...
+                  </option>
+                  {doctors
+                    .filter((doctor) => doctor.job === appointmentType)
+                    .map((doctor) => (
+                      <option key={doctor._id}>{doctor.name}</option>
+                    ))}
+                </select>
               </div>
-              <select
-                name="hour"
-                id="hour"
-                className="border border-primary rounded-full p-4 w-96"
-                onChange={onChangeHour}
-              >
-                <option value="default" selected disabled hidden>
-                  Escolha um horário...
-                </option>
-                {doctors
-                  .filter((doctor) => doctor.job === appointmentType)
-                  .map((doctor) =>
-                    doctor.appointmentHours.map((appointment) =>
-                      appointment.hours.map((hour) => (
-                        <option key={hour}>{hour}</option>
-                      ))
-                    )
-                  )}
-              </select>
-            </div>
-          </div>
-          <div>
-            {hour !== "" && (
-              <button className="mt-10 mb-20 ml-28 rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-                Marcar consulta
-              </button>
             )}
           </div>
+          <div>
+            {doctorName !== "" && (
+              <div>
+                <div className="mt-10 mb-5 text-center text-xl">
+                  Selecione um horário
+                </div>
+                <select
+                  value={hour}
+                  name="hour"
+                  id="hour"
+                  className="border border-primary rounded-full p-4 w-96"
+                  onChange={onChangeHour}
+                >
+                  <option value="" disabled hidden>
+                    Escolha um horário...
+                  </option>
+                  {doctors
+                    .filter((doctor) => doctor.job === appointmentType)
+                    .map((doctor) =>
+                      doctor.appointmentHours.map((appointment) =>
+                        appointment.hours.map((hour) => (
+                          <option key={hour}>{hour}</option>
+                        ))
+                      )
+                    )}
+                </select>
+              </div>
+            )}
+          </div>
+          {hour !== "" && (
+            <button className="mt-10 mb-20 ml-28 rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+              Marcar consulta
+            </button>
+          )}
         </div>
       </div>
     </form>
