@@ -25,6 +25,8 @@ app.use("/uploads", express.static(__dirname + "/uploads"));
 
 const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
+const salt = bcrypt.genSaltSync(10);
+const url = process.env.CLIENT;
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
@@ -43,192 +45,7 @@ async function getUserData(req) {
   });
 }
 
-app.get("/api/animals", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const animals = await db.Animal.find({});
-  res.json({ animals: animals });
-});
-
-app.get("/api/user-animals", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserData(req);
-  const animals = await db.Animal.find({ owner_id: userData.userId });
-  res.json({ animals: animals });
-});
-
-app.get("/api/user-animals/:username", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { username } = req.params;
-  const user = await db.User.findOne({ username: username });
-  const animals = await db.Animal.find({ owner_id: user._id });
-  res.json({ animals: animals });
-});
-
-app.post("/api/add-animal", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
-  const userData = await getUserData(req);
-  await db.Animal.create({
-    name: name,
-    type: type,
-    race: race,
-    weight: weight,
-    gender: gender,
-    birth_date: birth_date,
-    skin_type: skin_type,
-    owner_id: userData.userId,
-  });
-  res.json({ message: "Animal criado com sucesso" });
-});
-
-app.post("/api/edit-animal/:id", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { id } = req.params;
-  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
-
-  try {
-    await db.Animal.findByIdAndUpdate(id, {
-      name: name,
-      type: type,
-      race: race,
-      weight: weight,
-      gender: gender,
-      birth_date: birth_date,
-      skin_type: skin_type,
-    });
-    res.json({ message: "Animal editado com sucesso" });
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-app.delete("/api/delete-animal/:id", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { id } = req.params;
-
-  try {
-    await db.Animal.findByIdAndDelete(id);
-    res.json({ message: "Animal eliminado com sucesso" });
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-app.get("/api/appointments", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const appointments = await db.Appointment.find({});
-  res.json({ appointments: appointments });
-});
-
-app.get("/api/user-appointments", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserData(req);
-  const appointments = await db.Appointment.find({ owner: userData.userId });
-  res.json({ appointments: appointments });
-});
-
-app.post("/api/add-appointment", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const userData = await getUserData(req);
-  const { pet, appointmentType, doctorName, hour } = req.body;
-
-  const doctor = await db.Doctor.findOne({ name: doctorName });
-
-  await db.Appointment.create({
-    clinic: "Hospital Veterinário da Universidade Lusófona",
-    pet: pet,
-    appointmentType: appointmentType,
-    doctor: doctorName,
-    hour: hour,
-    owner: userData.userId,
-  });
-
-  await db.Doctor.findByIdAndUpdate(
-    doctor._id,
-    {
-      $pull: {
-        "appointmentHours.$[].hours": {
-          $in: [hour],
-        },
-      },
-    },
-    { new: true }
-  );
-
-  res.json({ message: "Consulta criada com sucesso" });
-});
-
-app.post("/api/add-appointment-admin", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { username, pet, appointmentType, doctorName, hour } = req.body;
-
-  const doctor = await db.Doctor.findOne({ name: doctorName });
-  const user = await db.User.findOne({ username: username });
-
-  await db.Appointment.create({
-    clinic: "Hospital Veterinário da Universidade Lusófona",
-    pet: pet,
-    appointmentType: appointmentType,
-    doctor: doctorName,
-    hour: hour,
-    owner: user._id,
-  });
-
-  await db.Doctor.findByIdAndUpdate(
-    doctor._id,
-    {
-      $pull: {
-        "appointmentHours.$[].hours": {
-          $in: [hour],
-        },
-      },
-    },
-    { new: true }
-  );
-
-  res.json({ message: "Consulta criada com sucesso" });
-});
-
-app.delete("/api/delete-appointment/:id", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { id } = req.params;
-
-  try {
-    const appointment = await db.Appointment.findById(id);
-    await db.Doctor.findOneAndUpdate(
-      { name: appointment.doctor },
-      {
-        $push: {
-          "appointmentHours.$[].hours": appointment.hour,
-        },
-      }
-    );
-    await db.Appointment.findByIdAndDelete(id);
-    res.json({ message: "Consulta eliminada com sucesso" });
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-app.patch("/api/update-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $pop: {
-        appointmentHours: 1,
-      },
-      $push: {
-        appointmentHours: {
-          date: today,
-          hours: hours,
-        },
-      },
-    }
-  );
-});
-
-const salt = bcrypt.genSaltSync(10);
+// email stuff
 
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
@@ -241,14 +58,13 @@ const transporter = nodemailer.createTransport({
 
 const sendResetEmail = (id, email) => {
   mongoose.connect(process.env.MONGO_URL);
-  const url = process.env.CLIENT;
 
   const uniqueString = uuidv4() + id;
 
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
-    subject: "Reset Password",
+    subject: "Redefinir Password",
     html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p><b>Este link expira em 6 horas</b></p><p>Clica aqui <a href=${
       url + "/reset-password/" + id + "/" + uniqueString
     }>link</a> para a redefinires</p>`,
@@ -266,188 +82,7 @@ const sendResetEmail = (id, email) => {
   });
 };
 
-app.post("/api/register", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email, username, password } = req.body;
-  const hashedPassword = bcrypt.hashSync(password, salt);
-
-  try {
-    const createdUser = await db.User.create({
-      type: "user",
-      email,
-      username,
-      password: hashedPassword,
-    });
-
-    jwt.sign(
-      { userId: createdUser._id, username },
-      process.env.JWT_SECRET,
-      {},
-      (error, token) => {
-        if (error) {
-          console.log(error);
-        }
-        res
-          .cookie("token", token, { sameSite: "none", secure: true })
-          .json({ user_id: createdUser._id });
-      }
-    );
-  } catch (error) {
-    if (error.code === 11000) {
-      if (error.keyPattern.email === 1) {
-        res.json({ error: "Existe uma conta com o email " + email });
-      } else if (error.keyPattern.username === 1) {
-        res.json({ error: "Existe uma conta com o username " + username });
-      }
-    }
-  }
-});
-
-app.post("/api/login", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { username, password } = req.body;
-
-  const user = await db.User.findOne({ username });
-
-  if (user) {
-    const correctPassword = bcrypt.compareSync(password, user.password);
-
-    if (correctPassword) {
-      jwt.sign(
-        { userId: user._id, username },
-        process.env.JWT_SECRET,
-        {},
-        (error, token) => {
-          if (error) {
-            console.log(error);
-          }
-          res.cookie("token", token, { sameSite: "none", secure: true }).json({
-            user_id: user._id,
-            type: user.type,
-          });
-        }
-      );
-    } else {
-      res.json({ error: "Campos username ou password incorretos" });
-    }
-  } else {
-    res.json({ error: "Não existe conta com o username " + username });
-  }
-});
-
-app.get("/api/logout", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  res
-    .cookie("token", "", { sameSite: "none", secure: true })
-    .json("Logged out");
-});
-
-app.post("/api/forgot-password", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email } = req.body;
-
-  try {
-    const user = await db.User.findOne({ email: email });
-    if (user) {
-      const userId = user._id;
-      const userEmail = user.email;
-      sendResetEmail(userId, userEmail);
-      res.json({ message: "Email enviado" });
-    } else {
-      res.json({ error: "Não existe conta com o email " + email });
-    }
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const userId = req.params.id;
-  const uniqueString = req.params.uniqueString;
-  const { password } = req.body;
-  const hashedPassword = await bcrypt.hash(password, salt);
-
-  try {
-    const verification = await db.ResetVerification.findOne({ userId: userId });
-    if (verification) {
-      bcrypt.compare(uniqueString, verification.uniqueString).then((result) => {
-        if (result) {
-          db.User.updateOne({ _id: userId }, { password: hashedPassword }).then(
-            () => {
-              db.ResetVerification.deleteOne({ userId });
-            }
-          );
-          res.json({ message: "Password redefinida com sucesso" });
-        } else {
-          res.json({ error: "Verificação inválida" });
-        }
-      });
-    } else {
-      res.json({ error: "Não foi enviado o email de verificação" });
-    }
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-const today = new Date();
-const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
-const appointmentHours = [{ date: today, hours: hours }];
-
-app.get("/api/doctors", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const doctors = await db.Doctor.find({});
-  res.json({ doctors: doctors });
-});
-
-app.post("/api/add-doctor", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { name, job, description, fb, li, insta } = req.body;
-
-  await db.Doctor.create({
-    name: name,
-    job: job,
-    description: description,
-    fb: fb,
-    li: li,
-    insta: insta,
-    appointmentHours: appointmentHours,
-  });
-  res.json({ message: "Médico criado com sucesso" });
-});
-
-app.post("/api/remove-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $unset: {
-        appointmentHours: "",
-      },
-    }
-  );
-  res.json({ message: "Horas updated" });
-});
-
-app.post("/api/add-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $push: {
-        appointmentHours: appointmentHours,
-      },
-    }
-  );
-  res.json({ message: "Horas updated" });
-});
-
-app.get("/api/services", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const services = await db.Service.find({});
-  res.json({ services: services });
-});
+// user endpoints
 
 app.get("/api/users", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -578,6 +213,387 @@ app.post("/api/edit-password", async (req, res) => {
     res.json({ error: error });
   }
 });
+
+app.get("/api/user-animals", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const userData = await getUserData(req);
+  const animals = await db.Animal.find({ owner_id: userData.userId });
+  res.json({ animals: animals });
+});
+
+app.get("/api/user-animals/:username", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { username } = req.params;
+  const user = await db.User.findOne({ username: username });
+  const animals = await db.Animal.find({ owner_id: user._id });
+  res.json({ animals: animals });
+});
+
+app.get("/api/user-appointments", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const userData = await getUserData(req);
+  const appointments = await db.Appointment.find({ owner: userData.userId });
+  res.json({ appointments: appointments });
+});
+
+// animal endpoints
+
+app.get("/api/animals", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const animals = await db.Animal.find({});
+  res.json({ animals: animals });
+});
+
+app.post("/api/add-animal", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
+  const userData = await getUserData(req);
+  await db.Animal.create({
+    name: name,
+    type: type,
+    race: race,
+    weight: weight,
+    gender: gender,
+    birth_date: birth_date,
+    skin_type: skin_type,
+    owner_id: userData.userId,
+  });
+  res.json({ message: "Animal criado com sucesso" });
+});
+
+app.post("/api/edit-animal/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
+
+  try {
+    await db.Animal.findByIdAndUpdate(id, {
+      name: name,
+      type: type,
+      race: race,
+      weight: weight,
+      gender: gender,
+      birth_date: birth_date,
+      skin_type: skin_type,
+    });
+    res.json({ message: "Animal editado com sucesso" });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+app.delete("/api/delete-animal/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+
+  try {
+    await db.Animal.findByIdAndDelete(id);
+    res.json({ message: "Animal eliminado com sucesso" });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+// appointment endpoints
+
+app.get("/api/appointments", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const appointments = await db.Appointment.find({});
+  res.json({ appointments: appointments });
+});
+
+app.post("/api/add-appointment", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const userData = await getUserData(req);
+  const { pet, appointmentType, doctorName, hour } = req.body;
+
+  const doctor = await db.Doctor.findOne({ name: doctorName });
+
+  await db.Appointment.create({
+    clinic: "Hospital Veterinário da Universidade Lusófona",
+    pet: pet,
+    appointmentType: appointmentType,
+    doctor: doctorName,
+    hour: hour,
+    owner: userData.userId,
+  });
+
+  await db.Doctor.findByIdAndUpdate(
+    doctor._id,
+    {
+      $pull: {
+        "appointmentHours.$[].hours": {
+          $in: [hour],
+        },
+      },
+    },
+    { new: true }
+  );
+
+  res.json({ message: "Consulta criada com sucesso" });
+});
+
+app.post("/api/add-appointment-admin", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { username, pet, appointmentType, doctorName, hour } = req.body;
+
+  const doctor = await db.Doctor.findOne({ name: doctorName });
+  const user = await db.User.findOne({ username: username });
+
+  await db.Appointment.create({
+    clinic: "Hospital Veterinário da Universidade Lusófona",
+    pet: pet,
+    appointmentType: appointmentType,
+    doctor: doctorName,
+    hour: hour,
+    owner: user._id,
+  });
+
+  await db.Doctor.findByIdAndUpdate(
+    doctor._id,
+    {
+      $pull: {
+        "appointmentHours.$[].hours": {
+          $in: [hour],
+        },
+      },
+    },
+    { new: true }
+  );
+
+  res.json({ message: "Consulta criada com sucesso" });
+});
+
+app.delete("/api/delete-appointment/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+
+  try {
+    const appointment = await db.Appointment.findById(id);
+    await db.Doctor.findOneAndUpdate(
+      { name: appointment.doctor },
+      {
+        $push: {
+          "appointmentHours.$[].hours": appointment.hour,
+        },
+      }
+    );
+    await db.Appointment.findByIdAndDelete(id);
+    res.json({ message: "Consulta eliminada com sucesso" });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+// authentication
+
+app.post("/api/register", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { email, username, password } = req.body;
+  const hashedPassword = bcrypt.hashSync(password, salt);
+
+  try {
+    const createdUser = await db.User.create({
+      type: "user",
+      email,
+      username,
+      password: hashedPassword,
+    });
+
+    jwt.sign(
+      { userId: createdUser._id, username },
+      process.env.JWT_SECRET,
+      {},
+      (error, token) => {
+        if (error) {
+          console.log(error);
+        }
+        res
+          .cookie("token", token, { sameSite: "none", secure: true })
+          .json({ user_id: createdUser._id });
+      }
+    );
+  } catch (error) {
+    if (error.code === 11000) {
+      if (error.keyPattern.email === 1) {
+        res.json({ error: "Existe uma conta com o email " + email });
+      } else if (error.keyPattern.username === 1) {
+        res.json({ error: "Existe uma conta com o username " + username });
+      }
+    }
+  }
+});
+
+app.post("/api/login", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { username, password } = req.body;
+
+  const user = await db.User.findOne({ username });
+
+  if (user) {
+    const correctPassword = bcrypt.compareSync(password, user.password);
+
+    if (correctPassword) {
+      jwt.sign(
+        { userId: user._id, username },
+        process.env.JWT_SECRET,
+        {},
+        (error, token) => {
+          if (error) {
+            console.log(error);
+          }
+          res.cookie("token", token, { sameSite: "none", secure: true }).json({
+            user_id: user._id,
+            type: user.type,
+          });
+        }
+      );
+    } else {
+      res.json({ error: "Campos username ou password incorretos" });
+    }
+  } else {
+    res.json({ error: "Não existe conta com o username " + username });
+  }
+});
+
+app.get("/api/logout", (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  res
+    .cookie("token", "", { sameSite: "none", secure: true })
+    .json("Logged out");
+});
+
+app.post("/api/forgot-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { email } = req.body;
+
+  try {
+    const user = await db.User.findOne({ email: email });
+    if (user) {
+      const userId = user._id;
+      const userEmail = user.email;
+      sendResetEmail(userId, userEmail);
+      res.json({ message: "Email enviado" });
+    } else {
+      res.json({ error: "Não existe conta com o email " + email });
+    }
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const userId = req.params.id;
+  const uniqueString = req.params.uniqueString;
+  const { password } = req.body;
+  const hashedPassword = await bcrypt.hash(password, salt);
+
+  try {
+    const verification = await db.ResetVerification.findOne({ userId: userId });
+    if (verification) {
+      bcrypt.compare(uniqueString, verification.uniqueString).then((result) => {
+        if (result) {
+          db.User.updateOne({ _id: userId }, { password: hashedPassword }).then(
+            () => {
+              db.ResetVerification.deleteOne({ userId });
+            }
+          );
+          res.json({ message: "Password redefinida com sucesso" });
+        } else {
+          res.json({ error: "Verificação inválida" });
+        }
+      });
+    } else {
+      res.json({ error: "Não foi enviado o email de verificação" });
+    }
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+
+// doctor endpoints
+
+const today = new Date();
+const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
+const appointmentHours = [{ date: today, hours: hours }];
+
+app.get("/api/doctors", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const doctors = await db.Doctor.find({});
+  res.json({ doctors: doctors });
+});
+
+app.post("/api/add-doctor", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { name, job, description, fb, li, insta } = req.body;
+
+  await db.Doctor.create({
+    name: name,
+    job: job,
+    description: description,
+    fb: fb,
+    li: li,
+    insta: insta,
+    appointmentHours: appointmentHours,
+  });
+  res.json({ message: "Médico criado com sucesso" });
+});
+
+app.post("/api/remove-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  await db.Doctor.updateMany(
+    {},
+    {
+      $unset: {
+        appointmentHours: "",
+      },
+    }
+  );
+  res.json({ message: "Horas updated" });
+});
+
+app.post("/api/add-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  await db.Doctor.updateMany(
+    {},
+    {
+      $push: {
+        appointmentHours: appointmentHours,
+      },
+    }
+  );
+  res.json({ message: "Horas updated" });
+});
+
+app.patch("/api/update-hours", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  await db.Doctor.updateMany(
+    {},
+    {
+      $pop: {
+        appointmentHours: 1,
+      },
+      $push: {
+        appointmentHours: {
+          date: today,
+          hours: hours,
+        },
+      },
+    }
+  );
+});
+
+// services endpoints
+
+app.get("/api/services", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const services = await db.Service.find({});
+  res.json({ services: services });
+});
+
+// chat endpoints
 
 app.get("/api/clients", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
