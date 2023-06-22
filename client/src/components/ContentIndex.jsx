@@ -78,7 +78,7 @@ export default function ContentIndex({ loggedIn = false }) {
           <div className="w-1/2 bg-gray-200 rounded-tr-3xl rounded-br-3xl">
             <img
               className="pl-44 pt-10"
-              src="../src/assets/dogs.png"
+              src={"https://vet-on.s3.amazonaws.com/dogs_landing.png"}
               alt="Dogs"
             />
           </div>
@@ -218,7 +218,7 @@ export default function ContentIndex({ loggedIn = false }) {
         <div>
           <img
             className="pt-8 pb-40 pl-4"
-            src="../src/assets/ulusofona.png"
+            src={"https://vet-on.s3.amazonaws.com/lusofona_footer.png"}
             alt=""
           />
           <div className="flex font-poppins text-2xl gap-2 pl-6">

@@ -10,6 +10,8 @@ const db = require("./models");
 const nodemailer = require("nodemailer");
 const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcryptjs");
+const multer = require("multer");
+const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
 
 dotenv.config();
 const app = express();
@@ -21,12 +23,37 @@ app.use(
   })
 );
 app.use(parser());
-app.use("/uploads", express.static(__dirname + "/uploads"));
+
+const photosMiddleware = multer({ dest: "/tmp" });
 
 const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
 const salt = bcrypt.genSaltSync(10);
 const url = process.env.CLIENT;
+const bucket = "vet-on";
+
+async function uploadToS3(path, originalFilename, mimetype) {
+  const client = new S3Client({
+    region: "us-east-1",
+    credentials: {
+      accessKeyId: process.env.S3_ACCESS_KEY,
+      secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+    },
+  });
+  const parts = originalFilename.split(".");
+  const ext = parts[parts.length - 1];
+  const newFilename = Date.now() + "." + ext;
+  await client.send(
+    new PutObjectCommand({
+      Bucket: bucket,
+      Body: fs.readFileSync(path),
+      Key: newFilename,
+      ContentType: mimetype,
+      ACL: "public-read",
+    })
+  );
+  return `https://${bucket}.s3.amazonaws.com/${newFilename}`;
+}
 
 async function getUserData(req) {
   return new Promise((resolve, reject) => {
@@ -44,6 +71,20 @@ async function getUserData(req) {
     }
   });
 }
+
+app.post(
+  "/api/upload",
+  photosMiddleware.array("photo", 1),
+  async (req, res) => {
+    const uploadedFiles = [];
+    for (let i = 0; i < req.files.length; i++) {
+      const { path, originalname, mimetype } = req.files[i];
+      const url = await uploadToS3(path, originalname, mimetype);
+      uploadedFiles.push(url);
+    }
+    res.json(uploadedFiles);
+  }
+);
 
 // email stuff
 
@@ -246,8 +287,18 @@ app.get("/api/animals", async (req, res) => {
 
 app.post("/api/add-animal", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
+  const {
+    name,
+    type,
+    race,
+    weight,
+    gender,
+    birth_date,
+    skin_type,
+    addedPhotos,
+  } = req.body;
   const userData = await getUserData(req);
+
   await db.Animal.create({
     name: name,
     type: type,
@@ -256,6 +307,7 @@ app.post("/api/add-animal", async (req, res) => {
     gender: gender,
     birth_date: birth_date,
     skin_type: skin_type,
+    image: addedPhotos,
     owner_id: userData.userId,
   });
   res.json({ message: "Animal criado com sucesso" });
@@ -511,7 +563,6 @@ app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
     res.json({ error: error });
   }
 });
-
 
 // doctor endpoints
 

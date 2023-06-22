@@ -34,19 +34,19 @@ export default function Profile() {
     <div>
       <div className="bg-[#d1d4db] py-4 pl-12">
         <Link to={"/"}>
-          <img src="../src/assets/logo.png" alt="" />
+          <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
         </Link>
       </div>
       <div className="flex flex-col items-center">
         <img
           className="w-full absolute"
-          src="../src/assets/background_profile.jpg"
+          src={"https://vet-on.s3.amazonaws.com/background_profile.jpg"}
           alt="Profile Background"
         />
 
         <img
           className="top-80 relative h-64 w-64 rounded-full "
-          src={`../src/assets/default_profile.jpg`}
+          src={"https://vet-on.s3.amazonaws.com/default_profile.jpg"}
           alt="Profile Picture"
         />
 
@@ -97,6 +97,12 @@ export default function Profile() {
         <div className="w-full flex flex-wrap gap-8 p-4">
           {animals.map((animal) => (
             <div className="bg-gray-300 rounded-xl w-96 p-10" key={animal._id}>
+              <div>
+                <img
+                  className="w-full h-full object-cover"
+                  src={"http://localhost:4000/uploads/" + animal.image}
+                />
+              </div>
               <div className="font-poppins font-bold text-2xl pb-8">
                 Nome: {animal.name}
               </div>

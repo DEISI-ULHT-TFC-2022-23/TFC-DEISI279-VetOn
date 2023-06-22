@@ -33,7 +33,7 @@ const Animal = mongoose.model(
         required: true,
       },
       image: {
-        type: String,
+        type: [],
       },
       owner_id: {
         type: String,
