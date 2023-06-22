@@ -77,7 +77,7 @@ export default function EditProfile() {
       <form className="w-64 mx-auto mb-12" onSubmit={submitEmail}>
         <div className="flex justify-center mb-4">
           <Link to={"/"}>
-            <img src="../src/assets/logo.png" alt="" />
+            <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
           </Link>
         </div>
         {emailMessage !== null && (

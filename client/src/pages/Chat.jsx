@@ -132,7 +132,7 @@ export default function Chat() {
           <Link to={"/"} onClick={() => setSocketServer(null)}>
             <img
               className="py-4 pl-4"
-              src="./src/assets/logo.png"
+              src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
               alt="VetOn Logo"
             />
           </Link>

@@ -30,7 +30,7 @@ export default function ResetPassword() {
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>
         <div className="flex justify-center mb-4">
           <Link to={"/"}>
-            <img src="/src/assets/logo.png" alt="" />
+            <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
           </Link>
         </div>
 

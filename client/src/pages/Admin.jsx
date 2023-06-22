@@ -48,18 +48,18 @@ export default function Admin() {
   return (
     <div>
       <div className="bg-[#d1d4db] py-4 pl-12">
-        <img src="../src/assets/logo.png" alt="" />
+        <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
       </div>
       <div className="flex flex-col items-center">
         <img
           className="w-full absolute"
-          src="../src/assets/background_profile.jpg"
+          src={"https://vet-on.s3.amazonaws.com/background_profile.jpg"}
           alt="Profile Background"
         />
 
         <img
           className="top-80 relative h-64 w-64 rounded-full "
-          src={`../src/assets/default_profile.jpg`}
+          src={"https://vet-on.s3.amazonaws.com/default_profile.jpg"}
           alt="Profile Picture"
         />
 

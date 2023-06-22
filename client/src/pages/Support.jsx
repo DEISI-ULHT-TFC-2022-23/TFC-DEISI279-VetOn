@@ -141,7 +141,7 @@ export default function Support() {
         <div className="flex-grow">
           <img
             className="py-4 pl-4"
-            src="./src/assets/logo.png"
+            src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
             alt="VetOn Logo"
           />
 
