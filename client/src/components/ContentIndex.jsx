@@ -6,6 +6,19 @@ export default function ContentIndex({ loggedIn = false }) {
   const [dateState, setDateState] = useState(new Date());
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function submitForm() {
+    const res = await axios.post("/contact", {
+      name,
+      email,
+      message,
+    });
+
+    alert("Email enviado com sucesso");
+  }
 
   useEffect(() => {
     axios.get("/services").then((response) => {
@@ -17,7 +30,7 @@ export default function ContentIndex({ loggedIn = false }) {
     axios.get("/doctors").then((response) => {
       setDoctors(response.data.doctors);
     });
-  });
+  }, []);
 
   useEffect(() => {
     setInterval(() => setDateState(new Date()), 1000);
@@ -179,21 +192,24 @@ export default function ContentIndex({ loggedIn = false }) {
             >
               Contacte-nos
             </div>
-            <form>
+            <form onSubmit={submitForm}>
               <div className="font-poppins text-3xl pb-2">Nome</div>
               <input
                 type="text"
+                onChange={(event) => setName(event.target.value)}
                 placeholder="Introduza o seu nome"
                 className="block py-2 border-b-2 border-gray-500 w-10/12 text-black outline-none"
               />
               <div className="font-poppins text-3xl pb-2 pt-6">Email</div>
               <input
-                type="text"
+                type="email"
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="Introduza o seu email"
                 className="block py-2 border-b-2 border-gray-500 w-10/12 text-black outline-none"
               />
               <div className="font-poppins text-3xl pb-6 pt-6">Mensagem</div>
               <textarea
+                onChange={(event) => setMessage(event.target.value)}
                 className="border border-gray-500 resize-none outline-none"
                 name="mensagem"
                 id="mensagem"
