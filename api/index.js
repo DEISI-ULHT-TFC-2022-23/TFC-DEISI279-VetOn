@@ -178,7 +178,6 @@ app.post("/api/edit-email", async (req, res) => {
         }
         res
           .cookie("token", token, {
-            domain: ".vercel.app",
             path: "/",
             secure: true,
           })
@@ -203,7 +202,10 @@ app.post("/api/edit-username", async (req, res) => {
       username: newUsername,
     });
 
-    res.cookie("token", "", { sameSite: "none", secure: true });
+    res.cookie("token", token, {
+      path: "/",
+      secure: true,
+    });
     jwt.sign(
       { userId: newUser._id, username: newUsername },
       process.env.JWT_SECRET,
@@ -214,7 +216,6 @@ app.post("/api/edit-username", async (req, res) => {
         }
         res
           .cookie("token", token, {
-            domain: ".vercel.app",
             path: "/",
             secure: true,
           })
@@ -254,7 +255,6 @@ app.post("/api/edit-password", async (req, res) => {
           }
           res
             .cookie("token", token, {
-              domain: ".vercel.app",
               path: "/",
               secure: true,
             })
@@ -292,7 +292,6 @@ app.post("/api/edit-photo", async (req, res) => {
         }
         res
           .cookie("token", token, {
-            domain: ".vercel.app",
             path: "/",
             secure: true,
           })
@@ -528,7 +527,6 @@ app.post("/api/register", async (req, res) => {
         }
         res
           .cookie("token", token, {
-            domain: ".vercel.app",
             path: "/",
             secure: true,
           })
@@ -566,7 +564,6 @@ app.post("/api/login", async (req, res) => {
           }
           res
             .cookie("token", token, {
-              domain: ".vercel.app",
               path: "/",
               secure: true,
             })
@@ -588,7 +585,6 @@ app.get("/api/logout", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   res
     .cookie("token", "", {
-      domain: ".vercel.app",
       path: "/",
       secure: true,
     })
