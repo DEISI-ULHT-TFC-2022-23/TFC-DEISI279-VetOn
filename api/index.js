@@ -552,9 +552,7 @@ app.post("/api/login", async (req, res) => {
 
 app.get("/api/logout", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  res
-    .cookie("token", "", { sameSite: "none", secure: true })
-    .json("Logged out");
+  res.cookie("token", "", { expires: new Date(0) }).json("Logged out");
 });
 
 app.post("/api/forgot-password", async (req, res) => {
