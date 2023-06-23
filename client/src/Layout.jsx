@@ -2,12 +2,9 @@ import { useContext } from "react";
 import { UserContext } from "./UserContext";
 import Nav from "./components/Nav";
 import ContentIndex from "./components/ContentIndex";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 export default function Layout() {
   const { username, setUserId, setUsername } = useContext(UserContext);
-  const navigate = useNavigate();
 
   async function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";

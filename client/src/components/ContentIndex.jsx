@@ -17,7 +17,7 @@ export default function ContentIndex({ loggedIn = false }) {
     axios.get("/doctors").then((response) => {
       setDoctors(response.data.doctors);
     });
-  }, []);
+  });
 
   useEffect(() => {
     setInterval(() => setDateState(new Date()), 1000);
@@ -35,9 +35,9 @@ export default function ContentIndex({ loggedIn = false }) {
             </div>
             <div className="font-poppins pt-4 text-xl">
               Sabendo que é importante garantir a saúde dos animais de estimação
-              de qualquer indivíduo a VetOn torna possível o agendamento de
+              de qualquer indivíduo, a VetOn torna possível o agendamento de
               consultas no Hospital Veterinário da Universidade Lusófona de
-              forma simples e efica. <br /> Nesta fase inicial iremos estar ao
+              forma simples e eficaz. <br /> Nesta fase inicial iremos estar ao
               dispor do Hospital Veterinário da Universidade Lusófona de forma a
               oferecer uma maior visibilidade e colmatar a carência em aspetos
               de logística e gerenciamento que este apresenta. <br /> Num futuro
@@ -79,11 +79,18 @@ export default function ContentIndex({ loggedIn = false }) {
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
           {services.map((service) => (
-            <div className="flexbox bg-primary justify-center text-center rounded-xl w-96 p-10" key={service._id}>
+            <div
+              className="flexbox bg-primary justify-center text-center rounded-xl w-96 p-10"
+              key={service._id}
+            >
               <div className="font-poppins font-bold text-xl pb-8">
                 {service.title}
               </div>
-              <img src={service.image} alt="serviceImage" className="rounded-xl" />
+              <img
+                src={service.image}
+                alt="serviceImage"
+                className="rounded-xl"
+              />
             </div>
           ))}
         </div>

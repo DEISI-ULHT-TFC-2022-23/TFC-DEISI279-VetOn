@@ -8,7 +8,7 @@ function classNames(...classes) {
 }
 
 export default function Dropdown({ onClick }) {
-  const { userId, username } = useContext(UserContext);
+  const { username } = useContext(UserContext);
 
   function refresh() {
     setTimeout(() => {

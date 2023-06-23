@@ -2,15 +2,12 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
   const { username, setUsername, setUserId } = useContext(UserContext);
-  const [animals, setAnimals] = useState([]);
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
-  const navigate = useNavigate();
 
   async function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -39,12 +36,6 @@ export default function Admin() {
   useEffect(() => {
     axios.get("/appointments").then((response) => {
       setAppointments(response.data.appointments);
-    });
-  }, []);
-
-  useEffect(() => {
-    axios.get("/user-animals").then((response) => {
-      setAnimals(response.data.animals);
     });
   }, []);
 

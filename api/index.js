@@ -581,16 +581,6 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
-app.get("/api/logout", (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  res
-    .cookie("token", "", {
-      path: "/",
-      secure: true,
-    })
-    .json("Logged out");
-});
-
 app.post("/api/forgot-password", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { email } = req.body;

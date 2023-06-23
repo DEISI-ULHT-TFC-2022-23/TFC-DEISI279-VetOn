@@ -23,7 +23,7 @@ export default function Authentication() {
         email,
         username,
         password,
-        addedPhotos
+        addedPhotos,
       });
       if (res.data.error) {
         setError(res.data.error);

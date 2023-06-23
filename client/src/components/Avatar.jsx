@@ -1,6 +1,4 @@
 export default function Avatar({ online }) {
-  //ver como meter foto
-
   return (
     <div className="relative w-12 h-12 bg-red-200 rounded-full">
       {online && (

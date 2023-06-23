@@ -1,12 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
-  const navigate = useNavigate();
 
   async function submit(event) {
     event.preventDefault();
@@ -26,7 +25,10 @@ export default function ForgotPassword() {
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>
         <div className="flex justify-center mb-4">
           <Link to={"/"}>
-            <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
+            <img
+              src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
+              alt=""
+            />
           </Link>
         </div>
         {error !== null && (
