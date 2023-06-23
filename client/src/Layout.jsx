@@ -3,14 +3,16 @@ import { UserContext } from "./UserContext";
 import Nav from "./components/Nav";
 import ContentIndex from "./components/ContentIndex";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Layout() {
-  const { username, setId, setUsername } = useContext(UserContext);
+  const { username, setUserId, setUsername } = useContext(UserContext);
+  const navigate = useNavigate();
 
   async function logout() {
     await axios.get("/logout");
-    window.location.reload(true);
-    setId(null);
+    navigate("/authentication");
+    setUserId(null);
     setUsername(null);
   }
 

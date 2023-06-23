@@ -2,18 +2,21 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
-  const { username } = useContext(UserContext);
+  const { username, setUsername, setUserId } = useContext(UserContext);
   const [animals, setAnimals] = useState([]);
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
 
   async function logout() {
     await axios.get("/logout");
-    window.location.reload(true);
-    setId(null);
+    navigate("/authentication");
+    setUsername(null);
+    setUserId(null);
   }
 
   async function deleteAppointment(id) {
