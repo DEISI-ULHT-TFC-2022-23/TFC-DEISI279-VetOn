@@ -7,6 +7,7 @@ export default function Profile() {
   const { username } = useContext(UserContext);
   const [animals, setAnimals] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const [photo, setPhoto] = useState([]);
 
   async function deleteAnimal(id) {
     await axios.delete("/delete-animal/" + id);
@@ -30,6 +31,12 @@ export default function Profile() {
     });
   }, []);
 
+  useEffect(() => {
+    axios.get("/users/" + username).then((response) => {
+      setPhoto(response.data.image);
+    });
+  });
+
   return (
     <div>
       <div className="bg-[#d1d4db] py-4 pl-12">
@@ -46,7 +53,7 @@ export default function Profile() {
 
         <img
           className="top-80 relative h-64 w-64 rounded-full "
-          src={"https://vet-on.s3.amazonaws.com/default_profile.jpg"}
+          src={photo}
           alt="Profile Picture"
         />
 

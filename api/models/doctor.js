@@ -5,7 +5,7 @@ const Doctor = mongoose.model(
   new mongoose.Schema(
     {
       image: {
-        type: String,
+        type: [],
       },
       job: {
         type: String,

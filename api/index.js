@@ -24,10 +24,9 @@ app.use(
 );
 app.use(parser());
 
-const photosMiddleware = multer({ dest: "/tmp" });
-
-const jwtSecret = process.env.JWT_SECRET;
 const server = app.listen(4000);
+const photosMiddleware = multer({ dest: "/tmp" });
+const jwtSecret = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
 const url = process.env.CLIENT;
 const bucket = "vet-on";
@@ -255,6 +254,35 @@ app.post("/api/edit-password", async (req, res) => {
   }
 });
 
+app.post("/api/edit-photo", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { addedPhotos: newPhoto } = req.body;
+  const userData = await getUserData(req);
+
+  try {
+    const newUser = await db.User.findByIdAndUpdate(userData.userId, {
+      image: newPhoto,
+    });
+
+    jwt.sign(
+      { userId: newUser._id, username: newUser.username },
+      process.env.JWT_SECRET,
+      {},
+      (error, token) => {
+        if (error) {
+          console.log(error);
+        }
+        res.cookie("token", token, { sameSite: "none", secure: true }).json({
+          user_id: newUser._id,
+          message: "Foto alterada com sucesso",
+        });
+      }
+    );
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
 app.get("/api/user-animals", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
@@ -298,8 +326,6 @@ app.post("/api/add-animal", async (req, res) => {
     addedPhotos,
   } = req.body;
   const userData = await getUserData(req);
-
-  console.log(addedPhotos.length);
 
   let image = [];
   if (addedPhotos.length == 0) {
@@ -449,8 +475,15 @@ app.delete("/api/delete-appointment/:id", async (req, res) => {
 
 app.post("/api/register", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { email, username, password } = req.body;
+  const { email, username, password, addedPhotos } = req.body;
   const hashedPassword = bcrypt.hashSync(password, salt);
+
+  let image = [];
+  if (addedPhotos.length == 0) {
+    image = ["https://vet-on.s3.amazonaws.com/default_profile.jpg"];
+  } else {
+    image = addedPhotos;
+  }
 
   try {
     const createdUser = await db.User.create({
@@ -458,6 +491,7 @@ app.post("/api/register", async (req, res) => {
       email,
       username,
       password: hashedPassword,
+      image: image,
     });
 
     jwt.sign(

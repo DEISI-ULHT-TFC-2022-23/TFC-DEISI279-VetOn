@@ -14,7 +14,9 @@ export default function EditProfile() {
   const [usernameMessage, setUsernameMessage] = useState(null);
   const [emailMessage, setEmailMessage] = useState(null);
   const [passwordMessage, setPasswordMessage] = useState(null);
+  const [photoMessage, setPhotoMessage] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
+  const [addedPhotos, setAddedPhotos] = useState([]);
 
   async function submitEmail(event) {
     event.preventDefault();
@@ -22,9 +24,7 @@ export default function EditProfile() {
       email,
     });
     if (res.data.message) {
-      {
-        setEmailMessage(res.data.message);
-      }
+      setEmailMessage(res.data.message);
     }
     setInterval(() => {
       setEmailMessage(null);
@@ -38,9 +38,7 @@ export default function EditProfile() {
       username,
     });
     if (res.data.message) {
-      {
-        setUsernameMessage(res.data.message);
-      }
+      setUsernameMessage(res.data.message);
     }
     setLoggedInUsername(username);
     setInterval(() => {
@@ -72,12 +70,48 @@ export default function EditProfile() {
     setConfirmPassword("");
   }
 
+  async function submitPhoto(event) {
+    event.preventDefault();
+    const res = await axios.post("/edit-photo", {
+      addedPhotos,
+    });
+    if (res.data.message) {
+      setPhotoMessage(res.data.message);
+    }
+    setInterval(() => {
+      setPhotoMessage(null);
+    }, 3000);
+    setAddedPhotos([]);
+  }
+
+  function uploadPhoto(ev) {
+    const files = ev.target.files;
+    const data = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      data.append("photo", files[i]);
+    }
+
+    axios
+      .post("/upload", data, {
+        headers: { "Content-type": "multipart/form-data" },
+      })
+      .then((response) => {
+        const { data: filename } = response;
+        setAddedPhotos((prev) => {
+          return [...prev, filename];
+        });
+      });
+  }
+
   return (
     <div className="bg-gray-300 h-screen flex flex-col items-center justify-center">
       <form className="w-64 mx-auto mb-12" onSubmit={submitEmail}>
         <div className="flex justify-center mb-4">
-          <Link to={"/"}>
-            <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
+          <Link to={"/profile"}>
+            <img
+              src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
+              alt=""
+            />
           </Link>
         </div>
         {emailMessage !== null && (
@@ -163,9 +197,36 @@ export default function EditProfile() {
             match: "As password estão iguais",
           }}
         />
-
-        <button className="bg-primary text-white block w-full rounded-sm p-2 mt-5">
+        <button className="bg-primary text-white block w-full rounded-sm p-2 mt-5 mb-5">
           Alterar password
+        </button>
+      </form>
+      <form className="w-64 mx-auto mb-12" onSubmit={submitPhoto}>
+        {photoMessage !== null && (
+          <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
+            {photoMessage}
+          </div>
+        )}
+        <label className="flex justify-center gap-2 w-full rounded-sm p-2 border bg-white text-black">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="w-6 h-6"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9 8.25H7.5a2.25 2.25 0 00-2.25 2.25v9a2.25 2.25 0 002.25 2.25h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25H15m0-3l-3-3m0 0l-3 3m3-3V15"
+            />
+          </svg>
+          Escolha um ficheiro
+          <input type="file" className="hidden" onChange={uploadPhoto} />
+        </label>
+        <button className="bg-primary text-white block w-full rounded-sm p-2">
+          Alterar foto
         </button>
       </form>
     </div>

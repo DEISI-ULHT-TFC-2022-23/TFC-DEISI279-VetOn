@@ -24,7 +24,7 @@ export default function AddAnimal() {
       gender,
       birth_date,
       skin_type,
-      addedPhotos
+      addedPhotos,
     });
 
     if (res.data.message) {
@@ -55,8 +55,8 @@ export default function AddAnimal() {
         headers: { "Content-type": "multipart/form-data" },
       })
       .then((response) => {
-        const { data:filename } = response;
-        setAddedPhotos(prev => {
+        const { data: filename } = response;
+        setAddedPhotos((prev) => {
           return [...prev, filename];
         });
       });
@@ -67,7 +67,10 @@ export default function AddAnimal() {
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>
         <div className="flex justify-center mb-4">
           <Link to={"/profile"}>
-            <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
+            <img
+              src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
+              alt=""
+            />
           </Link>
         </div>
         {message !== null && (
