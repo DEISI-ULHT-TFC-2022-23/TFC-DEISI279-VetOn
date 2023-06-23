@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
@@ -12,6 +12,13 @@ export default function AddDoctor() {
   const [insta, setInsta] = useState("");
   const [message, setMessage] = useState(null);
   const [addedPhotos, setAddedPhotos] = useState([]);
+  const [services, setServices] = useState([]);
+
+  useEffect(() => {
+    axios.get("/services").then((response) => {
+      setServices(response.data.services);
+    });
+  }, []);
 
   async function submit(event) {
     event.preventDefault();
@@ -81,19 +88,27 @@ export default function AddDoctor() {
           placeholder="Nome"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
-        <input
+        <select
           value={job}
-          onChange={(event) => setJob(event.target.value)}
-          type="text"
-          placeholder="Especializacao"
+          name="appointment_type"
+          id="appointment_type"
           className="block w-full rounded-sm p-2 mb-2 border"
-        />
-        <input
+          onChange={(event) => setJob(event.target.value)}
+        >
+          <option value="" disabled hidden>
+            Especializacao
+          </option>
+          {services.map((service) => (
+            <option key={service._id}>{service.title}</option>
+          ))}
+        </select>
+        <textarea
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           type="text"
           placeholder="Descricao"
-          className="block w-full rounded-sm p-2 mb-2 border"
+          rows={8}
+          className="block w-full rounded-sm p-2 mb-2 border resize-none outline-none"
         />
         <input
           value={fb}

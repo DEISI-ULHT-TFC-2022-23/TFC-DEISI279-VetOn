@@ -1,17 +1,21 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import FacebookSVG from "../components/FacebookSVG";
+import LinkedInSVG from "../components/LinkedInSVG";
+import InstagramSVG from "../components/InstagramSVG";
 
 export default function Admin() {
   const { username, setUsername, setUserId } = useContext(UserContext);
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [appointments, setAppointments] = useState([]);
+  const navigate = useNavigate();
 
   async function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    window.location.reload();
+    navigate("/");
     setUsername(null);
     setUserId(null);
   }
@@ -86,11 +90,11 @@ export default function Admin() {
         </Link>
       </div>
       <div className="flex flex-col items-center w-full">
-        <div className="font-poppins text-5xl mt-10 mb-20" id="my-animals">
+        <div className="font-poppins text-5xl mt-10 mb-10" id="my-animals">
           Médicos
         </div>
         <Link to={"/add-doctor"}>
-          <button className="flex gap-2 border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+          <button className="flex gap-2 border mb-10 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
             Adicionar médico
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -109,14 +113,14 @@ export default function Admin() {
           </button>
         </Link>
 
-        <div className="w-full flex flex-wrap gap-8 p-4">
+        <div className="w-full flex flex-wrap gap-8 p-4 bg-gray-200">
           {doctors.map((doctor) => (
             <div
               className="bg-white rounded-xl w-80 p-10 border border-primary"
               key={doctor._id}
             >
               <div>
-                <img src="../src/assets/medico.jpg" alt="Doctor" />
+                <img src={doctor.image} alt="Doctor" className="rounded-xl" />
               </div>
               <div className="font-poppins text-l text-gray-500 pt-4">
                 {doctor.job}
@@ -128,60 +132,36 @@ export default function Admin() {
                 {doctor.description}
               </div>
               <div className="flex items-center gap-2 font-poppins text-l pt-4">
-                <div>
-                  <svg
-                    fill="#000000"
-                    width="40px"
-                    height="40px"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                {doctor.fb !== "" && (
+                  <a href={doctor.fb} target="_blank" rel="noopener noreferrer">
+                    <FacebookSVG />
+                  </a>
+                )}
+                {doctor.li !== "" && (
+                  <a href={doctor.li} target="_blank" rel="noopener noreferrer">
+                    <LinkedInSVG />
+                  </a>
+                )}
+                {doctor.insta !== "" && (
+                  <a
+                    href={doctor.insta}
+                    target="_blank"
+                    rel="noopener noreferrer"
                   >
-                    <path d="M12 2.03998C6.5 2.03998 2 6.52998 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.84998C10.44 7.33998 11.93 5.95998 14.22 5.95998C15.31 5.95998 16.45 6.14998 16.45 6.14998V8.61998H15.19C13.95 8.61998 13.56 9.38998 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96C15.9164 21.5878 18.0622 20.3855 19.6099 18.57C21.1576 16.7546 22.0054 14.4456 22 12.06C22 6.52998 17.5 2.03998 12 2.03998Z" />
-                  </svg>
-                </div>
-                <div>
-                  <svg
-                    fill="#000000"
-                    height="35px"
-                    width="35px"
-                    version="1.1"
-                    id="Layer_1"
-                    xmlns="http://www.w3.org/2000/svg"
-                    xmlnsXlink="http://www.w3.org/1999/xlink"
-                    viewBox="-143 145 512 512"
-                    xmlSpace="preserve"
-                  >
-                    <path d="M113,145c-141.4,0-256,114.6-256,256s114.6,256,256,256s256-114.6,256-256S254.4,145,113,145z M41.4,508.1H-8.5V348.4h49.9 V508.1z M15.1,328.4h-0.4c-18.1,0-29.8-12.2-29.8-27.7c0-15.8,12.1-27.7,30.5-27.7c18.4,0,29.7,11.9,30.1,27.7C45.6,316.1,33.9,328.4,15.1,328.4z M241,508.1h-56.6v-82.6c0-21.6-8.8-36.4-28.3-36.4c-14.9,0-23.2,10-27,19.6c-1.4,3.4-1.2,8.2-1.2,13.1v86.3H71.8c0,0,0.7-146.4,0-159.7h56.1v25.1c3.3-11,21.2-26.6,49.8-26.6c35.5,0,63.3,23,63.3,72.4V508.1z" />
-                  </svg>
-                </div>
-                <div>
-                  <svg
-                    width="45px"
-                    height="45px"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      d="M16.65 7.2H16.66M8 20H16C18.2091 20 20 18.2091 20 16V8C20 5.79086 18.2091 4 16 4H8C5.79086 4 4 5.79086 4 8V16C4 18.2091 5.79086 20 8 20ZM15.75 12C15.75 14.0711 14.0711 15.75 12 15.75C9.92893 15.75 8.25 14.0711 8.25 12C8.25 9.92893 9.92893 8.25 12 8.25C14.0711 8.25 15.75 9.92893 15.75 12Z"
-                      stroke="#000000"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    />
-                  </svg>
-                </div>
+                    <InstagramSVG />
+                  </a>
+                )}
               </div>
             </div>
           ))}
         </div>
       </div>
       <div className="flex flex-col items-center w-full">
-        <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
+        <div className="font-poppins text-5xl mt-10 mb-10" id="my-appointments">
           Serviços
         </div>
         <Link to={"/add-service"}>
-          <button className="border flex gap-2 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+          <button className="border flex gap-2 mb-10 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
             Adicionar serviço
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -199,20 +179,20 @@ export default function Admin() {
             </svg>
           </button>
         </Link>
-        <div className="w-full flex flex-wrap gap-8 justify-between p-4">
+        <div className="w-full flex flex-wrap gap-8 justify-between p-4 bg-gray-200">
           {services.map((service) => (
             <div className="bg-primary rounded-xl w-80 p-10" key={service._id}>
               <div className="font-poppins font-bold text-2xl pb-8">
                 {service.title}
               </div>
-              <div>{service.description}</div>
+              <img src={service.image} alt="" className="rounded-xl" />
             </div>
           ))}
         </div>
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
-          Serviços
+          Consultas
         </div>
         <Link to={"/make-appointment-admin"}>
           <button className="border flex gap-2 border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">

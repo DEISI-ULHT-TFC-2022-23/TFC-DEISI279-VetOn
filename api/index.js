@@ -691,9 +691,17 @@ app.get("/api/doctors", async (req, res) => {
 
 app.post("/api/add-doctor", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { name, job, description, fb, li, insta } = req.body;
+  const { addedPhotos, name, job, description, fb, li, insta } = req.body;
+
+  let image = [];
+  if (addedPhotos.length == 0) {
+    image = ["https://vet-on.s3.amazonaws.com/default_profile.jpg"];
+  } else {
+    image = addedPhotos;
+  }
 
   await db.Doctor.create({
+    image: image,
     name: name,
     job: job,
     description: description,
