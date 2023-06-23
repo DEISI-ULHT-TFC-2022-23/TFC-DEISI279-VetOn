@@ -6,7 +6,6 @@ export default function ContentIndex({ loggedIn = false }) {
   const [dateState, setDateState] = useState(new Date());
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
-  const [message, setMessage] = useState("");
 
   useEffect(() => {
     axios.get("/services").then((response) => {
@@ -19,17 +18,6 @@ export default function ContentIndex({ loggedIn = false }) {
       setDoctors(response.data.doctors);
     });
   }, []);
-
-  if (dateState.getHours() == 0) {
-    useEffect(() => {
-      axios.post("/remove-hours").then((response) => {
-        setMessage(response.data.message);
-      });
-      axios.post("/add-hours").then((response) => {
-        setMessage(response.data.message);
-      });
-    }, []);
-  }
 
   useEffect(() => {
     setInterval(() => setDateState(new Date()), 1000);

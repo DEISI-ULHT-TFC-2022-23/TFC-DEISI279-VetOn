@@ -357,7 +357,7 @@ app.get("/api/appointments", async (req, res) => {
 app.post("/api/add-appointment", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
-  const { pet, appointmentType, doctorName, hour } = req.body;
+  const { pet, appointmentType, doctorName, date, hour } = req.body;
 
   const doctor = await db.Doctor.findOne({ name: doctorName });
 
@@ -366,6 +366,7 @@ app.post("/api/add-appointment", async (req, res) => {
     pet: pet,
     appointmentType: appointmentType,
     doctor: doctorName,
+    date: date,
     hour: hour,
     owner: userData.userId,
   });
@@ -374,12 +375,10 @@ app.post("/api/add-appointment", async (req, res) => {
     doctor._id,
     {
       $pull: {
-        "appointmentHours.$[].hours": {
-          $in: [hour],
-        },
+        "timetable.$[day].hours": hour,
       },
     },
-    { new: true }
+    { new: true, arrayFilters: [{ "day.dayString": date }] }
   );
 
   res.json({ message: "Consulta criada com sucesso" });
@@ -566,9 +565,37 @@ app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
 
 // doctor endpoints
 
-const today = new Date();
-const hours = ["08:00", "09:00", "10:00", "11:00", "12:00"];
-const appointmentHours = [{ date: today, hours: hours }];
+function generateUpdatedTimetable() {
+  const timetable = [];
+
+  const currentDate = new Date();
+  currentDate.setHours(0, 0, 0, 0);
+
+  const currentDay = new Date(currentDate);
+
+  for (let i = 0; i < 30; i++) {
+    const day = new Date(currentDay);
+    day.setDate(currentDay.getDate() + i);
+
+    const dayString = day.toLocaleDateString("pt", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    });
+    const hours = [];
+    for (let j = 9; j <= 20; j++) {
+      if (j < 10) {
+        hours.push("0" + j + ":00");
+      } else {
+        hours.push(j + ":00");
+      }
+    }
+
+    timetable.push({ dayString, hours });
+  }
+
+  return timetable;
+}
 
 app.get("/api/doctors", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -587,53 +614,9 @@ app.post("/api/add-doctor", async (req, res) => {
     fb: fb,
     li: li,
     insta: insta,
-    appointmentHours: appointmentHours,
+    timetable: generateUpdatedTimetable(),
   });
   res.json({ message: "Médico criado com sucesso" });
-});
-
-app.post("/api/remove-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $unset: {
-        appointmentHours: "",
-      },
-    }
-  );
-  res.json({ message: "Horas updated" });
-});
-
-app.post("/api/add-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $push: {
-        appointmentHours: appointmentHours,
-      },
-    }
-  );
-  res.json({ message: "Horas updated" });
-});
-
-app.patch("/api/update-hours", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  await db.Doctor.updateMany(
-    {},
-    {
-      $pop: {
-        appointmentHours: 1,
-      },
-      $push: {
-        appointmentHours: {
-          date: today,
-          hours: hours,
-        },
-      },
-    }
-  );
 });
 
 // services endpoints

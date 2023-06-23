@@ -11,12 +11,12 @@ export default function MakeAppointment() {
   const { setUsername } = useContext(UserContext);
   const [doctorName, setDoctorName] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
-  const [hour, setHour] = useState("");
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);
   const [appointmentType, setAppointmentType] = useState("");
   const [animals, setAnimals] = useState([]);
   const [pet, setPet] = useState("");
+  const [hour, setHour] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -47,10 +47,16 @@ export default function MakeAppointment() {
 
   async function submit(event) {
     event.preventDefault();
+    const date = selectedDate.toLocaleDateString("pt", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric",
+    });
     await axios.post("/add-appointment", {
       pet,
       appointmentType,
       doctorName,
+      date,
       hour,
     });
     navigate("/profile");
@@ -164,10 +170,14 @@ export default function MakeAppointment() {
                 </div>
                 <DatePicker
                   dateFormat="dd/MM/yyy"
+                  minTime={new Date().setHours(9, 0, 0)}
+                  maxTime={new Date().setHours(20, 0, 0)}
+                  timeIntervals={60}
                   selected={selectedDate}
                   onChange={handleDateChange}
                   className="border border-primary rounded-full p-4 w-96"
                   autoFocus
+                  placeholderText="Selecione uma data e hora"
                   minDate={new Date()}
                 />
               </div>
@@ -183,7 +193,7 @@ export default function MakeAppointment() {
                   value={hour}
                   name="hour"
                   id="hour"
-                  className="border border-primary rounded-full p-4 w-96"
+                  className="border border-primary rounded-full mb-10 p-4 w-96"
                   onChange={onChangeHour}
                 >
                   <option value="" disabled hidden>
@@ -192,21 +202,33 @@ export default function MakeAppointment() {
                   {doctors
                     .filter((doctor) => doctor.job === appointmentType)
                     .map((doctor) =>
-                      doctor.appointmentHours.map((appointment) =>
-                        appointment.hours.map((hour) => (
-                          <option key={hour}>{hour}</option>
-                        ))
-                      )
+                      doctor.timetable
+                        .filter(
+                          (appointment) =>
+                            appointment.dayString ===
+                            selectedDate.toLocaleDateString("pt", {
+                              day: "numeric",
+                              month: "numeric",
+                              year: "numeric",
+                            })
+                        )
+                        .map((appointment) =>
+                          appointment.hours.map((hour) => (
+                            <option key={hour}>{hour}</option>
+                          ))
+                        )
                     )}
                 </select>
               </div>
             )}
           </div>
-          {hour !== "" && (
-            <button className="mt-10 mb-20 ml-28 rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-              Marcar consulta
-            </button>
-          )}
+          <div>
+            {hour !== "" && (
+              <button className="mt-10 mb-20 ml-28 rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+                Marcar consulta
+              </button>
+            )}
+          </div>
         </div>
       </div>
     </form>
