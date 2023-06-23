@@ -176,10 +176,16 @@ app.post("/api/edit-email", async (req, res) => {
         if (error) {
           console.log(error);
         }
-        res.cookie("token", token, { sameSite: "none", secure: true }).json({
-          user_id: newUser._id,
-          message: "Email alterado com sucesso",
-        });
+        res
+          .cookie("token", token, {
+            domain: ".vercel.app",
+            path: "/",
+            secure: true,
+          })
+          .json({
+            user_id: newUser._id,
+            message: "Email alterado com sucesso",
+          });
       }
     );
   } catch (error) {
@@ -206,10 +212,16 @@ app.post("/api/edit-username", async (req, res) => {
         if (error) {
           console.log(error);
         }
-        res.cookie("token", token, { sameSite: "none", secure: true }).json({
-          user_id: newUser._id,
-          message: "Username alterado com sucesso",
-        });
+        res
+          .cookie("token", token, {
+            domain: ".vercel.app",
+            path: "/",
+            secure: true,
+          })
+          .json({
+            user_id: newUser._id,
+            message: "Username alterado com sucesso",
+          });
       }
     );
   } catch (error) {
@@ -240,10 +252,16 @@ app.post("/api/edit-password", async (req, res) => {
           if (error) {
             console.log(error);
           }
-          res.cookie("token", token, { sameSite: "none", secure: true }).json({
-            user_id: newUser._id,
-            message: "Password alterada com sucesso",
-          });
+          res
+            .cookie("token", token, {
+              domain: ".vercel.app",
+              path: "/",
+              secure: true,
+            })
+            .json({
+              user_id: newUser._id,
+              message: "Password alterada com sucesso",
+            });
         }
       );
     } else {
@@ -272,10 +290,16 @@ app.post("/api/edit-photo", async (req, res) => {
         if (error) {
           console.log(error);
         }
-        res.cookie("token", token, { sameSite: "none", secure: true }).json({
-          user_id: newUser._id,
-          message: "Foto alterada com sucesso",
-        });
+        res
+          .cookie("token", token, {
+            domain: ".vercel.app",
+            path: "/",
+            secure: true,
+          })
+          .json({
+            user_id: newUser._id,
+            message: "Foto alterada com sucesso",
+          });
       }
     );
   } catch (error) {
@@ -503,7 +527,11 @@ app.post("/api/register", async (req, res) => {
           console.log(error);
         }
         res
-          .cookie("token", token, { sameSite: "none", secure: true })
+          .cookie("token", token, {
+            domain: ".vercel.app",
+            path: "/",
+            secure: true,
+          })
           .json({ user_id: createdUser._id });
       }
     );
@@ -536,10 +564,16 @@ app.post("/api/login", async (req, res) => {
           if (error) {
             console.log(error);
           }
-          res.cookie("token", token, { sameSite: "none", secure: true }).json({
-            user_id: user._id,
-            type: user.type,
-          });
+          res
+            .cookie("token", token, {
+              domain: ".vercel.app",
+              path: "/",
+              secure: true,
+            })
+            .json({
+              user_id: user._id,
+              type: user.type,
+            });
         }
       );
     } else {
@@ -553,7 +587,11 @@ app.post("/api/login", async (req, res) => {
 app.get("/api/logout", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   res
-    .cookie("token", "", { sameSite: "none", secure: true })
+    .cookie("token", "", {
+      domain: ".vercel.app",
+      path: "/",
+      secure: true,
+    })
     .json("Logged out");
 });
 

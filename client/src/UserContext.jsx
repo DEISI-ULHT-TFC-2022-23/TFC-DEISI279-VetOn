@@ -8,7 +8,7 @@ export function UserContextProvider({ children }) {
   const [username, setUsername] = useState(null);
 
   useEffect(() => {
-    axios.get("/user-data", { withCredentials: true }).then((response) => {
+    axios.get("/user-data").then((response) => {
       setUserId(response.data.userId);
       setUsername(response.data.username);
     });
