@@ -94,53 +94,44 @@ export default function Profile() {
           </button>
         </Link>
 
-        <div className="w-full flex flex-wrap gap-8 p-4">
-          {animals.map((animal) => (
-            <div className="bg-gray-300 rounded-xl w-96 p-10" key={animal._id}>
-              <div>
-                <img
-                  className="w-full h-full object-cover"
-                  src={"http://localhost:4000/uploads/" + animal.image}
-                />
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Nome: {animal.name}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Espécie: {animal.type}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                raça: {animal.race}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Peso: {animal.weight}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Género: {animal.gender}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Data de nascimento: {animal.birth_date}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Pelagem: {animal.skin_type}
-              </div>
-              <div className="flex justify-between">
-                <Link to={`/edit-animal/${animal._id}`}>
-                  <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
-                    Editar
-                  </button>
-                </Link>
+        {animals.length !== 0 && (
+          <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
+            {animals.map((animal) => (
+              <div
+                className="bg-white relative rounded-xl w-80 p-10"
+                key={animal._id}
+              >
+                <div>
+                  <img
+                    src={animal.image}
+                    alt="Animal"
+                    className="w-full h-full"
+                  />
+                </div>
+                <div className="font-poppins text-l text-gray-500 pt-4">
+                  {animal.type}
+                </div>
+                <div className="font-poppins font-bold text-2xl pt-4 mb-10">
+                  {animal.name}
+                </div>
+                <div className="flex justify-between gap-20 absolute bottom-0 mb-6">
+                  <Link to={`/edit-animal/${animal._id}`}>
+                    <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
+                      Editar
+                    </button>
+                  </Link>
 
-                <button
-                  className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
-                  onClick={() => deleteAnimal(animal._id)}
-                >
-                  Eliminar
-                </button>
+                  <button
+                    className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                    onClick={() => deleteAnimal(animal._id)}
+                  >
+                    Eliminar
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
@@ -165,38 +156,45 @@ export default function Profile() {
             </svg>
           </button>
         </Link>
-        <div className=" w-full flex flex-wrap gap-8 justify-between p-4">
-          {appointments.map((appointment) => (
-            <div
-              className="bg-gray-300 rounded-xl w-96 p-10"
-              key={appointment._id}
-            >
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Clínica: {appointment.clinic}
+
+        {appointments.length !== 0 && (
+          <div className="flex flex-wrap rounded-xl gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
+            {appointments.map((appointment) => (
+              <div
+                className="bg-white rounded-xl w-72 p-10 relative"
+                key={appointment._id}
+              >
+                <div className="font-poppins text-l text-gray-500 pt-4">
+                  {appointment.clinic}
+                </div>
+                <div className="font-poppins font-bold text-2xl pt-4">
+                  {appointment.appointmentType}
+                </div>
+                <div className="font-poppins font-bold text-2xl pt-4">
+                  Animal: {appointment.pet}
+                </div>
+                <div className="font-poppins text-l pt-4 mb-12">
+                  {appointment.date} as {appointment.hour}h com o Dr.
+                  {appointment.doctor}
+                </div>
+                <div className="flex justify-center mt-6 gap-4 absolute bottom-0 mb-6">
+                  <button
+                    className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300"
+                    onClick={() => deleteAppointment(appointment._id)}
+                  >
+                    Detalhes
+                  </button>
+                  <button
+                    className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                    onClick={() => deleteAppointment(appointment._id)}
+                  >
+                    Desmarcar
+                  </button>
+                </div>
               </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Animal: {appointment.pet}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Tipo de consulta: {appointment.appointmentType}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Médico: {appointment.doctor}
-              </div>
-              <div className="font-poppins font-bold text-2xl pb-8">
-                Hora: {appointment.hour}
-              </div>
-              <div className="flex justify-between">
-                <button
-                  className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
-                  onClick={() => deleteAppointment(appointment._id)}
-                >
-                  Desmarcar
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

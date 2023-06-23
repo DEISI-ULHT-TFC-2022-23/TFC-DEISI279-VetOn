@@ -79,11 +79,11 @@ export default function ContentIndex({ loggedIn = false }) {
         </div>
         <div className="flex flex-wrap gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
           {services.map((service) => (
-            <div className="bg-primary rounded-xl w-80 p-10" key={service._id}>
-              <div className="font-poppins font-bold text-2xl pb-8">
+            <div className="flexbox bg-primary justify-center text-center rounded-xl w-96 p-10" key={service._id}>
+              <div className="font-poppins font-bold text-xl pb-8">
                 {service.title}
               </div>
-              <div>{service.description}</div>
+              <img src={service.image} alt="serviceImage" className="rounded-xl" />
             </div>
           ))}
         </div>

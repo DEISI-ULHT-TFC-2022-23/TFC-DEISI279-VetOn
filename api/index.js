@@ -299,6 +299,15 @@ app.post("/api/add-animal", async (req, res) => {
   } = req.body;
   const userData = await getUserData(req);
 
+  console.log(addedPhotos.length);
+
+  let image = [];
+  if (addedPhotos.length == 0) {
+    image = ["https://vet-on.s3.amazonaws.com/default_profile.jpg"];
+  } else {
+    image = addedPhotos;
+  }
+
   await db.Animal.create({
     name: name,
     type: type,
@@ -307,7 +316,7 @@ app.post("/api/add-animal", async (req, res) => {
     gender: gender,
     birth_date: birth_date,
     skin_type: skin_type,
-    image: addedPhotos,
+    image: image,
     owner_id: userData.userId,
   });
   res.json({ message: "Animal criado com sucesso" });

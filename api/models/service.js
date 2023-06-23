@@ -8,9 +8,8 @@ const Service = mongoose.model(
         type: String,
         required: true,
       },
-      description: {
-        type: String,
-        required: true,
+      image: {
+        type: [],
       },
     },
     { timestamps: true, collection: "services" }

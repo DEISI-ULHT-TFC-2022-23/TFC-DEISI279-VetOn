@@ -22,7 +22,7 @@ const User = mongoose.model(
         required: true,
       },
       image: {
-        type: String,
+        type: [],
       },
     },
     { timestamps: true, collection: "users" }
