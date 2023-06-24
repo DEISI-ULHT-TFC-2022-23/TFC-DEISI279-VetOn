@@ -55,17 +55,19 @@ export default function EditAnimal() {
       data.append("photo", files[i]);
     }
 
-    axios
-      .post("/upload", data, {
-        headers: { "Content-type": "multipart/form-data" },
-      })
-      .then((response) => {
-        const { data: filename } = response;
-        setAddedPhotos((prev) => {
-          return [...prev, filename];
+    if (data != null) {
+      axios
+        .post("/upload", data, {
+          headers: { "Content-type": "multipart/form-data" },
+        })
+        .then((response) => {
+          const { data: filename } = response;
+          setAddedPhotos((prev) => {
+            return [...prev, filename];
+          });
+          setToggleButton(true);
         });
-        setToggleButton(true);
-      });
+    }
   }
 
   return (

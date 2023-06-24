@@ -75,13 +75,17 @@ app.post(
   "/api/upload",
   photosMiddleware.array("photo", 1),
   async (req, res) => {
-    const uploadedFiles = [];
-    for (let i = 0; i < req.files.length; i++) {
-      const { path, originalname, mimetype } = req.files[i];
-      const url = await uploadToS3(path, originalname, mimetype);
-      uploadedFiles.push(url);
+    if (req.files.length == 0) {
+      res.json("nao chegou");
+    } else {
+      const uploadedFiles = [];
+      for (let i = 0; i < req.files.length; i++) {
+        const { path, originalname, mimetype } = req.files[i];
+        const url = await uploadToS3(path, originalname, mimetype);
+        uploadedFiles.push(url);
+      }
+      res.json(uploadedFiles);
     }
-    res.json(uploadedFiles);
   }
 );
 
