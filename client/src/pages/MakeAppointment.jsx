@@ -52,12 +52,13 @@ export default function MakeAppointment() {
       month: "numeric",
       year: "numeric",
     });
-    await axios.post("/add-appointment", {
+
+    const res = await axios.post("/add-appointment", {
       pet,
       appointmentType,
       doctorName,
       date,
-      hour,
+      hour
     });
     navigate("/profile");
   }

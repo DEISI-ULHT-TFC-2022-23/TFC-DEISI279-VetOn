@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
-const ResetVerification = mongoose.model(
-  "ResetVerification",
+const Verification = mongoose.model(
+  "Verification",
   new mongoose.Schema(
     {
       userId: {
@@ -17,8 +17,8 @@ const ResetVerification = mongoose.model(
         type: Date,
       },
     },
-    { collection: "reset-verifications" }
+    { collection: "verifications" }
   )
 );
 
-module.exports = ResetVerification;
+module.exports = Verification;

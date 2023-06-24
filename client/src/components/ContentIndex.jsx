@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FacebookSVG from "./FacebookSVG";
@@ -10,8 +10,10 @@ import PhoneSVG from "./PhoneSVG";
 import CalendarSVG from "./CalendarSVG";
 import LetterSVG from "./LetterSVG";
 import GithubSVG from "./GithubSVG";
+import { UserContext } from "../UserContext";
 
 export default function ContentIndex({ loggedIn = false }) {
+  const { userId } = useContext(UserContext);
   const [dateState, setDateState] = useState(new Date());
   const [services, setServices] = useState([]);
   const [doctors, setDoctors] = useState([]);

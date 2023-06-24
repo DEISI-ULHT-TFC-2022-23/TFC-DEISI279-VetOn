@@ -23,13 +23,13 @@ export default function Profile() {
     axios.get("/user-animals").then((response) => {
       setAnimals(response.data.animals);
     });
-  }, [animals]);
+  }, []);
 
   useEffect(() => {
     axios.get("/user-appointments").then((response) => {
       setAppointments(response.data.appointments);
     });
-  }, [appointments]);
+  }, []);
 
   useEffect(() => {
     axios.get("/users/" + username).then((response) => {

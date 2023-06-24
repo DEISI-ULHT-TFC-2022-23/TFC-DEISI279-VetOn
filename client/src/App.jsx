@@ -37,7 +37,10 @@ function App() {
         <Route path="/add-animal" element={<AddAnimal />}></Route>
         <Route path="/edit-animal/:id" element={<EditAnimal />}></Route>
         <Route path="/chat" element={<Chat />}></Route>
-        <Route path="/make-appointment" element={<MakeAppointment />}></Route>
+        <Route
+          path="/make-appointment"
+          element={<MakeAppointment />}
+        ></Route>
         <Route
           path="/make-appointment-admin"
           element={<MakeAppointmentAdmin />}

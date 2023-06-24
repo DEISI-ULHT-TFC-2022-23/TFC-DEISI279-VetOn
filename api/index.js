@@ -96,14 +96,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendConfirmation = (email, message) => {
+const sendConfirmation = (pet, appointmentType, email, date, hour, doctor) => {
   mongoose.connect(process.env.MONGO_URL);
 
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
-    to: "veton.verify.users@gmail.com",
-    subject: "Recebeu um novo pedido de contacto",
-    html: `<p>Foi submetido um novo form pelo ${name} com o email ${email}</p><p><b>Mensagem:</b></p><p>${message}</p>`,
+    to: email,
+    subject: "Confirme a sua consulta",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
   };
 
   transporter.sendMail(mailOptions);
@@ -124,7 +124,7 @@ const sendContactEmail = (name, email, message) => {
 
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
-  
+
   sendContactEmail(name, email, message);
   res.json("email enviado com sucesso");
 });
@@ -144,7 +144,7 @@ const sendResetEmail = (id, email) => {
   };
 
   bcrypt.hash(uniqueString, salt).then(async (hashedUniqueString) => {
-    await db.ResetVerification.create({
+    await db.Verification.create({
       userId: id,
       uniqueString: hashedUniqueString,
       createdAt: Date.now(),
@@ -449,7 +449,8 @@ app.post("/api/add-appointment", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
   const { pet, appointmentType, doctorName, date, hour } = req.body;
-
+  const user = await db.User.findById(userData.userId);
+  sendConfirmation(pet, appointmentType, user.email, date, hour, doctorName);
   const doctor = await db.Doctor.findOne({ name: doctorName });
 
   await db.Appointment.create({
@@ -512,14 +513,17 @@ app.delete("/api/delete-appointment/:id", async (req, res) => {
 
   try {
     const appointment = await db.Appointment.findById(id);
+
     await db.Doctor.findOneAndUpdate(
       { name: appointment.doctor },
       {
         $push: {
-          "appointmentHours.$[].hours": appointment.hour,
+          "timetable.$[day].hours": appointment.hour,
         },
-      }
+      },
+      { new: true, arrayFilters: [{ "day.dayString": appointment.date }] }
     );
+
     await db.Appointment.findByIdAndDelete(id);
     res.json({ message: "Consulta eliminada com sucesso" });
   } catch (error) {
@@ -641,13 +645,13 @@ app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
   const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
-    const verification = await db.ResetVerification.findOne({ userId: userId });
+    const verification = await db.Verification.findOne({ userId: userId });
     if (verification) {
       bcrypt.compare(uniqueString, verification.uniqueString).then((result) => {
         if (result) {
           db.User.updateOne({ _id: userId }, { password: hashedPassword }).then(
             () => {
-              db.ResetVerification.deleteOne({ userId });
+              db.Verification.deleteOne({ userId });
             }
           );
           res.json({ message: "Password redefinida com sucesso" });

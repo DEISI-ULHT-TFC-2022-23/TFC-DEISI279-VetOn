@@ -5,5 +5,5 @@ module.exports = {
   Service: require("./service"),
   Appointment: require("./appointment"),
   Message: require("./message"),
-  ResetVerification: require("./reset-verification"),
+  Verification: require("./verification"),
 };
