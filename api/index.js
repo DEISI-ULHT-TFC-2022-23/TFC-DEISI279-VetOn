@@ -88,8 +88,6 @@ app.post(
   }
 );
 
-// email stuff
-
 const transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 465,
@@ -97,92 +95,6 @@ const transporter = nodemailer.createTransport({
     user: process.env.MAILER_EMAIL,
     pass: process.env.MAILER_PASSWORD,
   },
-});
-
-const sendConfirmation = async (
-  pet,
-  appointmentType,
-  email,
-  date,
-  hour,
-  doctor
-) => {
-  const mailOptions = {
-    from: "veton.verify.users@gmail.com",
-    to: email,
-    subject: "Marcou uma consulta com a VetOn",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
-  };
-
-  await transporter.sendMail(mailOptions);
-};
-
-const sendConfirmationDelete = async (
-  pet,
-  appointmentType,
-  email,
-  date,
-  hour,
-  doctor
-) => {
-  const mailOptions = {
-    from: "veton.verify.users@gmail.com",
-    to: email,
-    subject: "Desmarcou uma das suas consultas",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
-  };
-
-  await transporter.sendMail(mailOptions);
-};
-
-const sendContactEmail = async (name, email, message) => {
-  const mailOptions = {
-    from: "veton.verify.users@gmail.com",
-    to: "veton.verify.users@gmail.com",
-    subject: "Recebeu um novo pedido de contacto",
-    html: `<p>Foi submetido um novo form pelo ${name} com o email ${email}</p><p><b>Mensagem:</b></p><p>${message}</p>`,
-  };
-
-  await transporter.sendMail(mailOptions);
-};
-
-app.post("/api/contact", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { name, email, message } = req.body;
-  await sendContactEmail(name, email, message);
-  res.json("email enviado com sucesso");
-});
-
-const sendResetEmail = async (id, email) => {
-  const mailOptions = {
-    from: "veton.verify.users@gmail.com",
-    to: email,
-    subject: "Redefinir Password",
-    html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p><b>Este link expira em 6 horas</b></p><p>Clica aqui <a href=${
-      url + "/reset-password/" + id
-    }>link</a> para a redefinires</p>`,
-  };
-
-  await transporter.sendMail(mailOptions);
-};
-
-app.post("/api/forgot-password", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email } = req.body;
-
-  try {
-    const user = await db.User.findOne({ email: email });
-    if (user) {
-      const userId = user._id;
-      const userEmail = user.email;
-      await sendResetEmail(userId, userEmail);
-      res.json({ message: "Email enviado" });
-    } else {
-      res.json({ error: "Não existe conta com o email " + email });
-    }
-  } catch (error) {
-    res.json({ error: error });
-  }
 });
 
 // user endpoints
@@ -486,6 +398,24 @@ app.get("/api/appointments", async (req, res) => {
   res.json({ appointments: appointments });
 });
 
+const sendConfirmation = async (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Marcou uma consulta com a VetOn",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 app.post("/api/add-appointment", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
@@ -547,6 +477,24 @@ app.post("/api/add-appointment-admin", async (req, res) => {
 
   res.json({ message: "Consulta criada com sucesso" });
 });
+
+const sendConfirmationDelete = async (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Desmarcou uma das suas consultas",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
 
 app.delete("/api/delete-appointment/:id", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
@@ -699,6 +647,38 @@ app.post("/api/login", async (req, res) => {
   }
 });
 
+const sendResetEmail = async (id, email) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Redefinir Password",
+    html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p><b>Este link expira em 6 horas</b></p><p>Clica aqui <a href=${
+      url + "/reset-password/" + id
+    }>link</a> para a redefinires</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+app.post("/api/forgot-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { email } = req.body;
+
+  try {
+    const user = await db.User.findOne({ email: email });
+    if (user) {
+      const userId = user._id;
+      const userEmail = user.email;
+      await sendResetEmail(userId, userEmail);
+      res.json({ message: "Email enviado" });
+    } else {
+      res.json({ error: "Não existe conta com o email " + email });
+    }
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
 app.post("/api/reset-password/:id", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userId = req.params.id;
@@ -783,6 +763,26 @@ app.get("/api/services", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const services = await db.Service.find({});
   res.json({ services: services });
+});
+
+// random
+
+const sendContactEmail = async (name, email, message) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: "veton.verify.users@gmail.com",
+    subject: "Recebeu um novo pedido de contacto",
+    html: `<p>Foi submetido um novo form pelo ${name} com o email ${email}</p><p><b>Mensagem:</b></p><p>${message}</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+app.post("/api/contact", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { name, email, message } = req.body;
+  await sendContactEmail(name, email, message);
+  res.json("email enviado com sucesso");
 });
 
 // chat endpoints
