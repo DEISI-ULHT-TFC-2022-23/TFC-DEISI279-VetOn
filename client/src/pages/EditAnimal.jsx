@@ -1,50 +1,52 @@
-import { useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { Link, useNavigate, useParams } from "react-router-dom";
 
 export default function EditAnimal() {
   const { id } = useParams();
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [type, setType] = useState("");
-  const [race, setRace] = useState("");
   const [weight, setWeight] = useState("");
-  const [gender, setGender] = useState("");
   const [addedPhotos, setAddedPhotos] = useState([]);
-  const [birth_date, setBirthDate] = useState("");
   const [skin_type, setSkinType] = useState("");
   const [message, setMessage] = useState(null);
+  const skins = ["Curta", "Longa"];
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    axios.get("/animals/" + id).then((response) => {
+      setWeight(response.data.animal.weight);
+      setAddedPhotos(response.data.animal.image);
+      setSkinType(response.data.animal.skin_type);
+    });
+  }, []);
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post("/edit-animal/" + id, {
-      name,
-      type,
-      race,
-      weight,
-      gender,
-      birth_date,
-      skin_type,
-      addedPhotos,
-    });
+    if (weight == "" || skin_type == "") {
+      alert("Nenhum dos campos pode ser vazio");
+    } else {
+      const res = await axios.post("/edit-animal/" + id, {
+        weight,
+        skin_type,
+        addedPhotos,
+      });
 
-    if (res.data.message) {
-      setMessage(res.data.message);
+      if (res.data.message) {
+        setMessage(res.data.message);
+        navigate("/profile");
+        window.location.reload(true);
+      }
+      setInterval(() => {
+        setMessage(null);
+      }, 3000);
     }
-    setInterval(() => {
-      setMessage(null);
-    }, 3000);
-    setName("");
-    setType("");
-    setRace("");
-    setWeight("");
-    setGender("");
-    setBirthDate("");
-    setSkinType("");
-    setAddedPhotos([]);
   }
 
+  const onChangeSkin = (event) => {
+    setSkinType(event.target.value);
+  };
+
   function uploadPhoto(ev) {
+    setAddedPhotos([]);
     const files = ev.target.files;
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -80,54 +82,26 @@ export default function EditAnimal() {
           </div>
         )}
         <input
-          value={name}
-          onChange={(event) => setName(event.target.value)}
-          type="text"
-          placeholder="Nome"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
-          value={type}
-          onChange={(event) => setType(event.target.value)}
-          type="text"
-          placeholder="Especie"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
-          value={race}
-          onChange={(event) => setRace(event.target.value)}
-          type="text"
-          placeholder="Raca"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
-          value={weight}
+          value={weight || ""}
           onChange={(event) => setWeight(event.target.value)}
-          type="text"
-          placeholder="Peso"
+          type="number"
+          placeholder="Peso (kg)"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
         />
-        <input
-          value={gender}
-          onChange={(event) => setGender(event.target.value)}
-          type="text"
-          placeholder="Genero"
+        <select
+          value={skin_type || ""}
+          name="skin"
+          id="skin"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
-          value={birth_date}
-          onChange={(event) => setBirthDate(event.target.value)}
-          type="text"
-          placeholder="Data de nascimento"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
-          value={skin_type}
-          onChange={(event) => setSkinType(event.target.value)}
-          type="text"
-          placeholder="Pelagem"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
+          onChange={onChangeSkin}
+        >
+          <option value="" disabled hidden>
+            Escolha um tipo de pelagem
+          </option>
+          {skins.map((skin) => (
+            <option key={skin}>{skin}</option>
+          ))}
+        </select>
         <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 border bg-white text-black">
           <svg
             xmlns="http://www.w3.org/2000/svg"

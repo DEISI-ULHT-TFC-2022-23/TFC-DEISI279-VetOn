@@ -246,7 +246,7 @@ export default function ContentIndex({ loggedIn = false }) {
             </div>
           </div>
           <div className="flex items-center gap-2 pt-8">
-            <CalendarSVG />
+            <CalendarSVG className={"w-12 h-12"}/>
             <div className="block font-poppins">
               <div className="text-sm">
                 Aberto <b>24H</b>, todos os dias

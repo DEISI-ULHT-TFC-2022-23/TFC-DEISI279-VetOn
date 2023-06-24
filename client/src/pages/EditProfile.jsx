@@ -20,68 +20,85 @@ export default function EditProfile() {
 
   async function submitEmail(event) {
     event.preventDefault();
-    const res = await axios.post("/edit-email", {
-      email,
-    });
-    if (res.data.message) {
-      setEmailMessage(res.data.message);
+
+    if (email == "") {
+      alert("Preencha o campo corretamente");
+    } else {
+      const res = await axios.post("/edit-email", {
+        email,
+      });
+      if (res.data.message) {
+        setEmailMessage(res.data.message);
+      }
+      setInterval(() => {
+        setEmailMessage(null);
+      }, 3000);
+      setEmail("");
     }
-    setInterval(() => {
-      setEmailMessage(null);
-    }, 3000);
-    setEmail("");
   }
 
   async function submitUsername(event) {
     event.preventDefault();
-    const res = await axios.post("/edit-username", {
-      username,
-    });
-    if (res.data.message) {
-      setUsernameMessage(res.data.message);
+    if (username == "") {
+      alert("Preencha o campo corretamente");
+    } else {
+      const res = await axios.post("/edit-username", {
+        username,
+      });
+      if (res.data.message) {
+        setUsernameMessage(res.data.message);
+      }
+      setLoggedInUsername(username);
+      setInterval(() => {
+        setUsernameMessage(null);
+      }, 3000);
+      setUsername("");
     }
-    setLoggedInUsername(username);
-    setInterval(() => {
-      setUsernameMessage(null);
-    }, 3000);
-    setUsername("");
   }
 
   async function submitPassword(event) {
     event.preventDefault();
-    const res = await axios.post("/edit-password", {
-      currentPassword,
-      password,
-    });
-    if (res.data.message) {
-      setPasswordMessage(res.data.message);
+    if (currentPassword == "" || password == "") {
+      alert("Preencha os campos corretamente");
+    } else {
+      const res = await axios.post("/edit-password", {
+        currentPassword,
+        password,
+      });
+      if (res.data.message) {
+        setPasswordMessage(res.data.message);
+      }
+      if (res.data.error) {
+        setPasswordError(res.data.error);
+      }
+      setInterval(() => {
+        setPasswordMessage(null);
+      }, 3000);
+      setInterval(() => {
+        setPasswordError(null);
+      }, 3000);
+      setPassword("");
+      setCurrentPassword("");
+      setConfirmPassword("");
     }
-    if (res.data.error) {
-      setPasswordError(res.data.error);
-    }
-    setInterval(() => {
-      setPasswordMessage(null);
-    }, 3000);
-    setInterval(() => {
-      setPasswordError(null);
-    }, 3000);
-    setPassword("");
-    setCurrentPassword("");
-    setConfirmPassword("");
   }
 
   async function submitPhoto(event) {
     event.preventDefault();
-    const res = await axios.post("/edit-photo", {
-      addedPhotos,
-    });
-    if (res.data.message) {
-      setPhotoMessage(res.data.message);
+    if (addedPhotos.length == 0) {
+      alert("Selecione uma foto");
+    } else {
+      const res = await axios.post("/edit-photo", {
+        addedPhotos,
+      });
+      if (res.data.message) {
+        setPhotoMessage(res.data.message);
+      }
+      setInterval(() => {
+        setPhotoMessage(null);
+      }, 3000);
+      setAddedPhotos([]);
     }
-    setInterval(() => {
-      setPhotoMessage(null);
-    }, 3000);
-    setAddedPhotos([]);
   }
 
   function uploadPhoto(ev) {

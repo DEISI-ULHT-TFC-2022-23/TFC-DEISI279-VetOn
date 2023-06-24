@@ -1,6 +1,7 @@
 import { useState, useContext } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
+import ReactDatePicker from "react-datepicker";
 
 export default function AddAnimal() {
   const navigate = useNavigate();
@@ -13,6 +14,8 @@ export default function AddAnimal() {
   const [birth_date, setBirthDate] = useState("");
   const [skin_type, setSkinType] = useState("");
   const [message, setMessage] = useState(null);
+  const genders = ["Macho", "Femea"];
+  const skins = ["Curta", "Longa"];
 
   async function submit(event) {
     event.preventDefault();
@@ -34,6 +37,7 @@ export default function AddAnimal() {
     setInterval(() => {
       setMessage(null);
       navigate("/profile");
+      window.location.reload(true);
     }, 2000);
 
     setName("");
@@ -45,6 +49,18 @@ export default function AddAnimal() {
     setSkinType("");
     setAddedPhotos([]);
   }
+
+  const handleDateChange = (date) => {
+    setBirthDate(date);
+  };
+
+  const onChangeGender = (event) => {
+    setGender(event.target.value);
+  };
+
+  const onChangeSkin = (event) => {
+    setSkinType(event.target.value);
+  };
 
   function uploadPhoto(ev) {
     const files = ev.target.files;
@@ -105,31 +121,47 @@ export default function AddAnimal() {
         <input
           value={weight}
           onChange={(event) => setWeight(event.target.value)}
-          type="text"
-          placeholder="Peso"
+          type="number"
+          placeholder="Peso (kg)"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
         />
-        <input
+        <select
           value={gender}
-          onChange={(event) => setGender(event.target.value)}
-          type="text"
-          placeholder="Genero"
+          name="gender"
+          id="gender"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
+          onChange={onChangeGender}
+        >
+          <option value="" disabled hidden>
+            Escolha um genero
+          </option>
+          {genders.map((gender) => (
+            <option key={gender}>{gender}</option>
+          ))}
+        </select>
+        <ReactDatePicker
+          dateFormat="dd/MM/yyyy"
+          timeIntervals={60}
+          selected={birth_date}
+          onChange={handleDateChange}
+          className="block w-64 rounded-sm p-2 mb-2 border placeholder:text-black"
+          placeholderText="Selecione uma data"
+          maxDate={new Date()}
         />
-        <input
-          value={birth_date}
-          onChange={(event) => setBirthDate(event.target.value)}
-          type="text"
-          placeholder="Data de nascimento"
-          className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
-        <input
+        <select
           value={skin_type}
-          onChange={(event) => setSkinType(event.target.value)}
-          type="text"
-          placeholder="Pelagem"
+          name="skin"
+          id="skin"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
-        />
+          onChange={onChangeSkin}
+        >
+          <option value="" disabled hidden>
+            Escolha um tipo de pelagem
+          </option>
+          {skins.map((skin) => (
+            <option key={skin}>{skin}</option>
+          ))}
+        </select>
         <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 border bg-white text-black">
           <svg
             xmlns="http://www.w3.org/2000/svg"

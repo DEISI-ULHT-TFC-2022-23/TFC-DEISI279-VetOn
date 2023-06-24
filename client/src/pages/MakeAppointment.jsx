@@ -171,14 +171,12 @@ export default function MakeAppointment() {
                 </div>
                 <DatePicker
                   dateFormat="dd/MM/yyy"
-                  minTime={new Date().setHours(9, 0, 0)}
-                  maxTime={new Date().setHours(20, 0, 0)}
                   timeIntervals={60}
                   selected={selectedDate}
                   onChange={handleDateChange}
                   className="border border-primary rounded-full p-4 w-96"
                   autoFocus
-                  placeholderText="Selecione uma data e hora"
+                  placeholderText="Selecione uma data"
                   minDate={new Date()}
                 />
               </div>

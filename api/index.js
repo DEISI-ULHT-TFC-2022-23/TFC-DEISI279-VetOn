@@ -255,10 +255,6 @@ app.post("/api/edit-username", async (req, res) => {
       username: newUsername,
     });
 
-    res.cookie("token", token, {
-      path: "/",
-      secure: true,
-    });
     jwt.sign(
       { userId: newUser._id, username: newUsername },
       process.env.JWT_SECRET,
@@ -389,6 +385,13 @@ app.get("/api/animals", async (req, res) => {
   res.json({ animals: animals });
 });
 
+app.get("/api/animals/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+  const animal = await db.Animal.findById(id);
+  res.json({ animal: animal });
+});
+
 app.post("/api/add-animal", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const {
@@ -427,21 +430,29 @@ app.post("/api/add-animal", async (req, res) => {
 app.post("/api/edit-animal/:id", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { id } = req.params;
-  const { name, type, race, weight, gender, birth_date, skin_type } = req.body;
+  const { weight, skin_type, addedPhotos } = req.body;
 
-  try {
-    await db.Animal.findByIdAndUpdate(id, {
-      name: name,
-      type: type,
-      race: race,
-      weight: weight,
-      gender: gender,
-      birth_date: birth_date,
-      skin_type: skin_type,
-    });
-    res.json({ message: "Animal editado com sucesso" });
-  } catch (error) {
-    res.json({ error: error });
+  if (addedPhotos.length == 0) {
+    try {
+      await db.Animal.findByIdAndUpdate(id, {
+        weight: weight,
+        skin_type: skin_type,
+      });
+      res.json({ message: "Animal editado com sucesso" });
+    } catch (error) {
+      res.json({ error: error });
+    }
+  } else {
+    try {
+      await db.Animal.findByIdAndUpdate(id, {
+        weight: weight,
+        skin_type: skin_type,
+        image: addedPhotos,
+      });
+      res.json({ message: "Animal editado com sucesso" });
+    } catch (error) {
+      res.json({ error: error });
+    }
   }
 });
 
@@ -615,9 +626,9 @@ app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
   const user = await db.User.findOne({ username });
-  const failedAttempts = user.failedAttempts;
 
   if (user) {
+    const failedAttempts = user.failedAttempts;
     const correctPassword = bcrypt.compareSync(password, user.password);
 
     if (correctPassword) {
@@ -674,7 +685,7 @@ app.post("/api/login", async (req, res) => {
       }
     }
   } else {
-    res.json({ error: "Não existe conta com o username " + username });
+    res.json({ error: "Campos username ou password incorretos" });
   }
 });
 

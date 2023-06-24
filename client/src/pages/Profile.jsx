@@ -2,6 +2,11 @@ import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import MaleSVG from "../components/MaleSVG";
+import FemaleSVG from "../components/FemaleSVG";
+import CalendarSVG from "../components/CalendarSVG";
+import ScaleSVG from "../components/ScaleSVG";
+import ScissorsSVG from "../components/ScissorsSVG";
 
 export default function Profile() {
   const { username } = useContext(UserContext);
@@ -57,7 +62,7 @@ export default function Profile() {
           alt="Profile Picture"
         />
 
-        <div className="flex items-center gap-2 font-poppins top-80 text-3xl z-10 relative mb-96">
+        <div className="flex items-center gap-2 mt-4 font-poppins top-80 text-3xl z-10 relative mb-96">
           {username}
           <Link to={"/edit-profile"}>
             <svg
@@ -112,14 +117,40 @@ export default function Profile() {
                   <img
                     src={animal.image}
                     alt="Animal"
-                    className="w-full h-full"
+                    className="w-full h-full rounded-xl"
                   />
                 </div>
                 <div className="font-poppins text-l text-gray-500 pt-4">
-                  {animal.type}
+                  {animal.type} • {animal.race}
                 </div>
-                <div className="font-poppins font-bold text-2xl pt-4 mb-10">
+                <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
                   {animal.name}
+                  {animal.gender == "Macho" && <MaleSVG />}
+                  {animal.gender == "Femea" && <FemaleSVG />}
+                </div>
+                <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
+                  <div className="flex gap-4">
+                    <CalendarSVG className={"w-8 h-8"} />
+                    <div className="text-xl mt-1">
+                      {animal.birth_date.split("T")[0]}
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
+                  <div className="flex gap-4">
+                    <ScaleSVG/>
+                    <div className="text-xl mt-1">
+                      {animal.weight}kg
+                    </div>
+                  </div>
+                </div>
+                <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4 mb-10">
+                  <div className="flex gap-4">
+                    <ScissorsSVG/>
+                    <div className="text-xl mt-1">
+                      {animal.skin_type}
+                    </div>
+                  </div>
                 </div>
                 <div className="flex justify-between gap-20 absolute bottom-0 mb-6">
                   <Link to={`/edit-animal/${animal._id}`}>
