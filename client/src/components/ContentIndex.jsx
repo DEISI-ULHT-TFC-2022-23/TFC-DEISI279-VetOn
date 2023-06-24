@@ -30,6 +30,9 @@ export default function ContentIndex({ loggedIn = false }) {
         email,
         message,
       });
+      setMessage("");
+      setName("");
+      setEmail("");
       alert("Email enviado com sucesso");
     }
   }
@@ -184,6 +187,7 @@ export default function ContentIndex({ loggedIn = false }) {
             <form onSubmit={submitForm}>
               <div className="font-poppins text-3xl pb-2">Nome</div>
               <input
+                value={name}
                 type="text"
                 onChange={(event) => setName(event.target.value)}
                 placeholder="Introduza o seu nome"
@@ -191,6 +195,7 @@ export default function ContentIndex({ loggedIn = false }) {
               />
               <div className="font-poppins text-3xl pb-2 pt-6">Email</div>
               <input
+                value={email}
                 type="email"
                 onChange={(event) => setEmail(event.target.value)}
                 placeholder="Introduza o seu email"
@@ -198,6 +203,7 @@ export default function ContentIndex({ loggedIn = false }) {
               />
               <div className="font-poppins text-3xl pb-6 pt-6">Mensagem</div>
               <textarea
+                value={message}
                 onChange={(event) => setMessage(event.target.value)}
                 className="border border-gray-500 resize-none outline-none"
                 name="mensagem"
