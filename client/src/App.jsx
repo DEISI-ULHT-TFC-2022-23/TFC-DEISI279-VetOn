@@ -27,7 +27,7 @@ function App() {
         <Route path="/authentication" element={<Authentication />}></Route>
         <Route path="/forgot-password" element={<ForgotPassword />}></Route>
         <Route
-          path="/reset-password/:id/:uniqueString"
+          path="/reset-password/:id"
           element={<ResetPassword />}
         ></Route>
         <Route path="/admin" element={<Admin />}></Route>

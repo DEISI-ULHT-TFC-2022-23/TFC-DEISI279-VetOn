@@ -4,7 +4,7 @@ import PasswordChecklist from "react-password-checklist";
 import axios from "axios";
 
 export default function ResetPassword() {
-  const { id, uniqueString } = useParams();
+  const { id } = useParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
@@ -12,7 +12,7 @@ export default function ResetPassword() {
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post("/reset-password/" + id + "/" + uniqueString, {
+    const res = await axios.post("/reset-password/" + id, {
       password,
     });
     if (res.data.error) {

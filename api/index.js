@@ -148,27 +148,16 @@ app.post("/api/contact", async (req, res) => {
 });
 
 const sendResetEmail = (id, email) => {
-  const uniqueString = uuidv4() + id;
-
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
     subject: "Redefinir Password",
     html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p><b>Este link expira em 6 horas</b></p><p>Clica aqui <a href=${
-      url + "/reset-password/" + id + "/" + uniqueString
+      url + "/reset-password/" + id
     }>link</a> para a redefinires</p>`,
   };
 
-  bcrypt.hash(uniqueString, salt).then(async (hashedUniqueString) => {
-    await db.Verification.create({
-      userId: id,
-      uniqueString: hashedUniqueString,
-      createdAt: Date.now(),
-      expiresAt: Date.now() + 21600000,
-    });
-
-    await transporter.sendMail(mailOptions);
-  });
+  transporter.sendMail(mailOptions);
 };
 
 // user endpoints
@@ -704,31 +693,15 @@ app.post("/api/forgot-password", async (req, res) => {
   }
 });
 
-app.post("/api/reset-password/:id/:uniqueString", async (req, res) => {
+app.post("/api/reset-password/:id", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userId = req.params.id;
-  const uniqueString = req.params.uniqueString;
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, salt);
 
   try {
-    const verification = await db.Verification.findOne({ userId: userId });
-    if (verification) {
-      bcrypt.compare(uniqueString, verification.uniqueString).then((result) => {
-        if (result) {
-          db.User.updateOne({ _id: userId }, { password: hashedPassword }).then(
-            () => {
-              db.Verification.deleteOne({ userId });
-            }
-          );
-          res.json({ message: "Password redefinida com sucesso" });
-        } else {
-          res.json({ error: "Verificação inválida" });
-        }
-      });
-    } else {
-      res.json({ error: "Não foi enviado o email de verificação" });
-    }
+    await db.User.updateOne({ _id: userId }, { password: hashedPassword });
+    res.json({ message: "Password redefinida com sucesso" });
   } catch (error) {
     res.json({ error: error });
   }
