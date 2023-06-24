@@ -11,6 +11,7 @@ export default function Authentication() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [toggleButton, setToggleButton] = useState(true);
   const [error, setError] = useState(null);
   const [isRegisterOrLogin, setIsRegisterOrLogin] = useState("login");
   const [addedPhotos, setAddedPhotos] = useState([]);
@@ -61,6 +62,8 @@ export default function Authentication() {
   }
 
   function uploadPhoto(ev) {
+    setAddedPhotos([]);
+    setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -76,6 +79,7 @@ export default function Authentication() {
         setAddedPhotos((prev) => {
           return [...prev, filename];
         });
+        setToggleButton(true);
       });
   }
 
@@ -141,7 +145,7 @@ export default function Authentication() {
                 match: "As password estão iguais",
               }}
             />
-            <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 border bg-white text-black">
+            <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 mt-4 border bg-white text-black">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -162,9 +166,15 @@ export default function Authentication() {
           </div>
         )}
 
-        <button className="bg-primary text-white block w-full rounded-sm p-2 mt-4">
-          {isRegisterOrLogin === "register" ? "Registar" : "Login"}
-        </button>
+        {toggleButton && (
+          <button
+            id="button"
+            className="bg-primary text-white block w-full rounded-sm p-2 mt-4"
+          >
+            {isRegisterOrLogin === "register" ? "Registar" : "Login"}
+          </button>
+        )}
+
         {isRegisterOrLogin === "register" && (
           <div className="text-center mt-2">
             Já tem conta?&nbsp;

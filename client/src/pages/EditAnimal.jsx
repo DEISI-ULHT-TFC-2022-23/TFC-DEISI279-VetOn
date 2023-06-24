@@ -8,6 +8,7 @@ export default function EditAnimal() {
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [skin_type, setSkinType] = useState("");
   const [message, setMessage] = useState(null);
+  const [toggleButton, setToggleButton] = useState(true);
   const skins = ["Curta", "Longa"];
   const navigate = useNavigate();
 
@@ -47,6 +48,7 @@ export default function EditAnimal() {
 
   function uploadPhoto(ev) {
     setAddedPhotos([]);
+    setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -62,6 +64,7 @@ export default function EditAnimal() {
         setAddedPhotos((prev) => {
           return [...prev, filename];
         });
+        setToggleButton(true);
       });
   }
 
@@ -121,9 +124,11 @@ export default function EditAnimal() {
           <input type="file" className="hidden" onChange={uploadPhoto} />
         </label>
 
-        <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Editar animal
-        </button>
+        {toggleButton && (
+          <button className="bg-primary text-white block w-full rounded-sm p-2">
+            Editar animal
+          </button>
+        )}
       </form>
     </div>
   );

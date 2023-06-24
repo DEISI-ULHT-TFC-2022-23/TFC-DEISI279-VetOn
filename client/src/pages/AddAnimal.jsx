@@ -13,6 +13,7 @@ export default function AddAnimal() {
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [birth_date, setBirthDate] = useState("");
   const [skin_type, setSkinType] = useState("");
+  const [toggleButton, setToggleButton] = useState(true);
   const [message, setMessage] = useState(null);
   const genders = ["Macho", "Femea"];
   const skins = ["Curta", "Longa"];
@@ -63,6 +64,8 @@ export default function AddAnimal() {
   };
 
   function uploadPhoto(ev) {
+    setAddedPhotos([]);
+    setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -78,6 +81,7 @@ export default function AddAnimal() {
         setAddedPhotos((prev) => {
           return [...prev, filename];
         });
+        setToggleButton(true);
       });
   }
 
@@ -181,9 +185,11 @@ export default function AddAnimal() {
           <input type="file" className="hidden" onChange={uploadPhoto} />
         </label>
 
-        <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Adicionar animal
-        </button>
+        {toggleButton && (
+          <button className="bg-primary text-white block w-full rounded-sm p-2">
+            Adicionar animal
+          </button>
+        )}
       </form>
     </div>
   );

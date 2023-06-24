@@ -102,6 +102,7 @@ export default function EditProfile() {
   }
 
   function uploadPhoto(ev) {
+    setAddedPhotos([]);
     const files = ev.target.files;
     const data = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -242,9 +243,11 @@ export default function EditProfile() {
           Escolha um ficheiro
           <input type="file" className="hidden" onChange={uploadPhoto} />
         </label>
-        <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Alterar foto
-        </button>
+        {addedPhotos.length != 0 && (
+          <button className="bg-primary text-white block w-full rounded-sm p-2">
+            Alterar foto
+          </button>
+        )}
       </form>
     </div>
   );
