@@ -84,7 +84,7 @@ app.post(
       }
       res.json(uploadedFiles);
     } catch (error) {
-      res.json(error);
+      res.json("failed");
     }
   }
 );

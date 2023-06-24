@@ -63,7 +63,7 @@ export default function AddAnimal() {
     setSkinType(event.target.value);
   };
 
-  function uploadPhoto(ev) {
+  async function uploadPhoto(ev) {
     setAddedPhotos([]);
     setToggleButton(false);
     const files = ev.target.files;
@@ -72,18 +72,22 @@ export default function AddAnimal() {
       data.append("photo", files[i]);
     }
 
-    if (data != null) {
-      axios
-        .post("/upload", data, {
-          headers: { "Content-type": "multipart/form-data" },
-        })
-        .then((response) => {
-          const { data: filename } = response;
-          setAddedPhotos((prev) => {
-            return [...prev, filename];
-          });
-          setToggleButton(true);
-        });
+    const res = await axios.post("/upload", data, {
+      headers: { "Content-type": "multipart/form-data" },
+    });
+
+    while (res == "failed") {
+      await axios.post("/upload", data, {
+        headers: { "Content-type": "multipart/form-data" },
+      });
+    }
+
+    if (res != "failed") {
+      const { data: filename } = res;
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
+      });
+      setToggleButton(true);
     }
   }
 
