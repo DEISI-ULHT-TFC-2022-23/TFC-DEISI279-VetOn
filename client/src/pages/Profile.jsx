@@ -7,6 +7,9 @@ import FemaleSVG from "../components/FemaleSVG";
 import CalendarSVG from "../components/CalendarSVG";
 import ScaleSVG from "../components/ScaleSVG";
 import ScissorsSVG from "../components/ScissorsSVG";
+import HospitalSVG from "../components/HospitalSVG";
+import PawSVG from "../components/PawSVG";
+import DoctorSVG from "../components/DoctorSVG";
 
 export default function Profile() {
   const { username } = useContext(UserContext);
@@ -138,18 +141,14 @@ export default function Profile() {
                 </div>
                 <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
                   <div className="flex gap-4">
-                    <ScaleSVG/>
-                    <div className="text-xl mt-1">
-                      {animal.weight}kg
-                    </div>
+                    <ScaleSVG />
+                    <div className="text-xl mt-1">{animal.weight}kg</div>
                   </div>
                 </div>
                 <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4 mb-10">
                   <div className="flex gap-4">
-                    <ScissorsSVG/>
-                    <div className="text-xl mt-1">
-                      {animal.skin_type}
-                    </div>
+                    <ScissorsSVG />
+                    <div className="text-xl mt-1">{animal.skin_type}</div>
                   </div>
                 </div>
                 <div className="flex justify-between gap-20 absolute bottom-0 mb-6">
@@ -199,29 +198,37 @@ export default function Profile() {
           <div className="flex flex-wrap rounded-xl gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
             {appointments.map((appointment) => (
               <div
-                className="bg-white rounded-xl w-72 p-10 relative"
+                className="bg-white rounded-xl w-96 p-10 relative"
                 key={appointment._id}
               >
                 <div className="font-poppins text-l text-gray-500 pt-4">
-                  {appointment.clinic}
+                  <div className="flex gap-4">
+                    <HospitalSVG />
+                    {appointment.clinic}
+                  </div>
                 </div>
-                <div className="font-poppins font-bold text-2xl pt-4">
+                <div className="font-poppins font-bold text-xl pt-4">
                   {appointment.appointmentType}
                 </div>
-                <div className="font-poppins font-bold text-2xl pt-4">
-                  Animal: {appointment.pet}
+                <div className="font-poppins text-2xl pt-4">
+                  <div className="flex gap-4">
+                    <PawSVG />
+                    {appointment.pet}
+                  </div>
                 </div>
-                <div className="font-poppins text-l pt-4 mb-12">
-                  {appointment.date} as {appointment.hour}h com o Dr.
-                  {appointment.doctor}
+                <div className="flex gap-2 font-poppins text-xl pt-4">
+                  <CalendarSVG className={"w-8 h-8"} />
+                  <div className="mt-1">
+                    {appointment.date} as {appointment.hour}h
+                  </div>
                 </div>
-                <div className="flex justify-center mt-6 gap-4 absolute bottom-0 mb-6">
-                  <button
-                    className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300"
-                    onClick={() => deleteAppointment(appointment._id)}
-                  >
-                    Detalhes
-                  </button>
+                <div className="flex gap-2 font-poppins text-xl pt-4 mb-12">
+                  <DoctorSVG/>
+                  <div className="mt-2">
+                    {appointment.doctor}
+                  </div>
+                </div>
+                <div className="flex mt-6 gap-4 absolute bottom-0 left-32 mb-6">
                   <button
                     className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
                     onClick={() => deleteAppointment(appointment._id)}
