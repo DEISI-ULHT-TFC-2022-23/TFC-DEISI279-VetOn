@@ -75,9 +75,7 @@ app.post(
   "/api/upload",
   photosMiddleware.array("photo", 1),
   async (req, res) => {
-    if (req.files.length == 0) {
-      res.json("nao chegou");
-    } else {
+    try {
       const uploadedFiles = [];
       for (let i = 0; i < req.files.length; i++) {
         const { path, originalname, mimetype } = req.files[i];
@@ -85,6 +83,8 @@ app.post(
         uploadedFiles.push(url);
       }
       res.json(uploadedFiles);
+    } catch (error) {
+      res.json(error);
     }
   }
 );
