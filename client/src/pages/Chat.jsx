@@ -6,7 +6,7 @@ import Client from "../components/Client";
 import { Link } from "react-router-dom";
 
 export default function Chat() {
-  const { userId, setUserId, username, setUsername } = useContext(UserContext);
+  const { userId } = useContext(UserContext);
   const [socketServer, setSocketServer] = useState(null);
   const [onlineClients, setOnlineClients] = useState({});
   const [offlineClients, setOfflineClients] = useState({});
@@ -16,7 +16,7 @@ export default function Chat() {
   const scrollDivRef = useRef();
 
   function connectToWs() {
-    const ws = new WebSocket("ws://localhost:4000");
+    const ws = new WebSocket(import.meta.env.VITE_WSS);
     setSocketServer(ws);
     ws.addEventListener("message", handleMessage);
     ws.addEventListener("close", () => {
@@ -31,8 +31,8 @@ export default function Chat() {
   }, []);
 
   useEffect(() => {
-    axios.get("/clients").then((response) => {
-      const offlineClientsArray = response.data.filter(
+    axios.get("/users").then((response) => {
+      const offlineClientsArray = response.data.users.filter(
         (client) =>
           client.type === "support" &&
           client._id !== userId &&

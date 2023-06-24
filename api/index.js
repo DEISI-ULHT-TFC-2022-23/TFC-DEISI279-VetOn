@@ -816,10 +816,10 @@ app.get("/api/services", async (req, res) => {
 
 // chat endpoints
 
-app.get("/api/clients", async (req, res) => {
+app.get("/api/support", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const clients = await db.User.find({});
-  res.json(clients);
+  const support = await db.User.find({});
+  res.json(support);
 });
 
 app.get("/api/messages/:userId", async (req, res) => {
