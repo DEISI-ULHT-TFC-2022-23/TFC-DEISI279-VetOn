@@ -23,6 +23,7 @@ app.use(
 );
 app.use(parser());
 
+app.listen(4000);
 const photosMiddleware = multer({ dest: "/tmp" });
 const jwtSecret = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
@@ -895,5 +896,3 @@ app.post("/api/contact", async (req, res) => {
 
 //   notifyAboutOnlinePeople();
 // });
-
-app.listen(4000);
