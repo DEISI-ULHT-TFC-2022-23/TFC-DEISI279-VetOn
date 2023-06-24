@@ -135,7 +135,7 @@ export default function ContentIndex({ loggedIn = false }) {
           {doctors.map((doctor) => (
             <div className="bg-white rounded-xl w-80 p-10" key={doctor._id}>
               <div>
-                <img src={doctor.image} alt="Doctor" />
+                <img className="rounded-xl" src={doctor.image} alt="Doctor" />
               </div>
               <div className="font-poppins text-l text-gray-500 pt-4">
                 {doctor.job}
