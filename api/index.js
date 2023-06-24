@@ -102,8 +102,28 @@ const sendConfirmation = (pet, appointmentType, email, date, hour, doctor) => {
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
-    subject: "Confirme a sua consulta",
+    subject: "Marcou uma consulta com a VetOn",
     html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
+  };
+
+  transporter.sendMail(mailOptions);
+};
+
+const sendConfirmationDelete = (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
+  mongoose.connect(process.env.MONGO_URL);
+
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Desmarcou uma das suas consultas",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
   };
 
   transporter.sendMail(mailOptions);
@@ -513,7 +533,15 @@ app.delete("/api/delete-appointment/:id", async (req, res) => {
 
   try {
     const appointment = await db.Appointment.findById(id);
-
+    const user = await db.User.findById(appointment.owner);
+    sendConfirmationDelete(
+      appointment.pet,
+      appointment.appointmentType,
+      user.email,
+      appointment.date,
+      appointment.hour,
+      appointment.doctor
+    );
     await db.Doctor.findOneAndUpdate(
       { name: appointment.doctor },
       {
@@ -552,6 +580,7 @@ app.post("/api/register", async (req, res) => {
       username,
       password: hashedPassword,
       image: image,
+      failedAttempts: 0,
     });
 
     jwt.sign(
@@ -586,32 +615,63 @@ app.post("/api/login", async (req, res) => {
   const { username, password } = req.body;
 
   const user = await db.User.findOne({ username });
+  const failedAttempts = user.failedAttempts;
 
   if (user) {
     const correctPassword = bcrypt.compareSync(password, user.password);
 
     if (correctPassword) {
-      jwt.sign(
-        { userId: user._id, username },
-        process.env.JWT_SECRET,
-        {},
-        (error, token) => {
-          if (error) {
-            console.log(error);
+      if (failedAttempts >= 3) {
+        res.json({
+          error:
+            "Conta bloqueada.\nEntre em contacto connosco atraves da seccao de contacto",
+        });
+      } else {
+        jwt.sign(
+          { userId: user._id, username },
+          process.env.JWT_SECRET,
+          {},
+          (error, token) => {
+            if (error) {
+              console.log(error);
+            }
+            res
+              .cookie("token", token, {
+                path: "/",
+                secure: true,
+              })
+              .json({
+                user_id: user._id,
+                type: user.type,
+              });
           }
-          res
-            .cookie("token", token, {
-              path: "/",
-              secure: true,
-            })
-            .json({
-              user_id: user._id,
-              type: user.type,
-            });
-        }
-      );
+        );
+        await db.User.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              failedAttempts: 0,
+            },
+          }
+        );
+      }
     } else {
-      res.json({ error: "Campos username ou password incorretos" });
+      if (failedAttempts >= 3) {
+        res.json({
+          error:
+            "Conta bloqueada.\nEntre em contacto connosco atraves da seccao de contacto",
+        });
+      } else {
+        await db.User.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              failedAttempts: user.failedAttempts + 1,
+            },
+          }
+        );
+        res.json({ error: "Campos username ou password incorretos" });
+      }
     }
   } else {
     res.json({ error: "Não existe conta com o username " + username });

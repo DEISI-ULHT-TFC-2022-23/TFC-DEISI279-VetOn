@@ -24,6 +24,9 @@ const User = mongoose.model(
       image: {
         type: [],
       },
+      failedAttempts: {
+        type: Number,
+      },
     },
     { timestamps: true, collection: "users" }
   )
