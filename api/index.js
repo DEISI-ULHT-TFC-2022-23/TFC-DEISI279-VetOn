@@ -119,7 +119,6 @@ const sendConfirmationDelete = (
   hour,
   doctor
 ) => {
-
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
@@ -168,7 +167,7 @@ const sendResetEmail = (id, email) => {
       expiresAt: Date.now() + 21600000,
     });
 
-    transporter.sendMail(mailOptions);
+    await transporter.sendMail(mailOptions);
   });
 };
 
