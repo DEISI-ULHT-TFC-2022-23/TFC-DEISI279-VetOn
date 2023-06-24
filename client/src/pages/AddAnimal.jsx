@@ -77,7 +77,7 @@ export default function AddAnimal() {
     });
 
     while (res == "failed") {
-      await axios.post("/upload", data, {
+      res = await axios.post("/upload", data, {
         headers: { "Content-type": "multipart/form-data" },
       });
     }
