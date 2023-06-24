@@ -8,7 +8,6 @@ const ws = require("ws");
 const fs = require("fs");
 const db = require("./models");
 const nodemailer = require("nodemailer");
-const { v4: uuidv4 } = require("uuid");
 const bcrypt = require("bcryptjs");
 const multer = require("multer");
 const { S3Client, PutObjectCommand } = require("@aws-sdk/client-s3");
@@ -100,7 +99,14 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-const sendConfirmation = (pet, appointmentType, email, date, hour, doctor) => {
+const sendConfirmation = async (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
@@ -108,10 +114,10 @@ const sendConfirmation = (pet, appointmentType, email, date, hour, doctor) => {
     html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
   };
 
-  transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
-const sendConfirmationDelete = (
+const sendConfirmationDelete = async (
   pet,
   appointmentType,
   email,
@@ -126,10 +132,10 @@ const sendConfirmationDelete = (
     html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
   };
 
-  transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
-const sendContactEmail = (name, email, message) => {
+const sendContactEmail = async (name, email, message) => {
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: "veton.verify.users@gmail.com",
@@ -137,17 +143,17 @@ const sendContactEmail = (name, email, message) => {
     html: `<p>Foi submetido um novo form pelo ${name} com o email ${email}</p><p><b>Mensagem:</b></p><p>${message}</p>`,
   };
 
-  transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
 
 app.post("/api/contact", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { name, email, message } = req.body;
-  sendContactEmail(name, email, message);
+  await sendContactEmail(name, email, message);
   res.json("email enviado com sucesso");
 });
 
-const sendResetEmail = (id, email) => {
+const sendResetEmail = async (id, email) => {
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
@@ -157,8 +163,27 @@ const sendResetEmail = (id, email) => {
     }>link</a> para a redefinires</p>`,
   };
 
-  transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions);
 };
+
+app.post("/api/forgot-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { email } = req.body;
+
+  try {
+    const user = await db.User.findOne({ email: email });
+    if (user) {
+      const userId = user._id;
+      const userEmail = user.email;
+      await sendResetEmail(userId, userEmail);
+      res.json({ message: "Email enviado" });
+    } else {
+      res.json({ error: "Não existe conta com o email " + email });
+    }
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
 
 // user endpoints
 
@@ -671,25 +696,6 @@ app.post("/api/login", async (req, res) => {
     }
   } else {
     res.json({ error: "Campos username ou password incorretos" });
-  }
-});
-
-app.post("/api/forgot-password", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { email } = req.body;
-
-  try {
-    const user = await db.User.findOne({ email: email });
-    if (user) {
-      const userId = user._id;
-      const userEmail = user.email;
-      sendResetEmail(userId, userEmail);
-      res.json({ message: "Email enviado" });
-    } else {
-      res.json({ error: "Não existe conta com o email " + email });
-    }
-  } catch (error) {
-    res.json({ error: error });
   }
 });
 
