@@ -10,7 +10,7 @@ export default function AuthenticatedButtons({ onClick }) {
 
   return (
     <div className="flex gap-4">
-      <Link to={"/chat"} onClick={refresh}>
+      {/* <Link to={"/chat"} onClick={refresh}>
         <button
           type="button"
           className="flex items-center gap-1 font-poppins border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300"
@@ -31,7 +31,7 @@ export default function AuthenticatedButtons({ onClick }) {
           </svg>
           Chat
         </button>
-      </Link>
+      </Link> */}
       <div>
         <Dropdown onClick={onClick} />
       </div>

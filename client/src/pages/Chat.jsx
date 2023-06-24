@@ -16,7 +16,7 @@ export default function Chat() {
   const scrollDivRef = useRef();
 
   function connectToWs() {
-    const ws = new WebSocket(import.meta.env.VITE_WSS);
+    const ws = new WebSocket("ws://localhost:4000");
     setSocketServer(ws);
     ws.addEventListener("message", handleMessage);
     ws.addEventListener("close", () => {

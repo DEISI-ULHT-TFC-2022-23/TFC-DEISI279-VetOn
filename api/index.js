@@ -24,7 +24,6 @@ app.use(
 );
 app.use(parser());
 
-const server = app.listen(4000);
 const photosMiddleware = multer({ dest: "/tmp" });
 const jwtSecret = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
@@ -59,7 +58,7 @@ async function getUserData(req) {
     const token = req.cookies?.token;
 
     if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
+      jwt.verify(token, jwtSecret, {}, (error, userData) => {
         if (error) {
           throw error;
         }
@@ -75,6 +74,7 @@ app.post(
   "/api/upload",
   photosMiddleware.array("photo", 1),
   async (req, res) => {
+    mongoose.connect(process.env.MONGO_URL);
     try {
       const uploadedFiles = [];
       for (let i = 0; i < req.files.length; i++) {
@@ -101,8 +101,6 @@ const transporter = nodemailer.createTransport({
 });
 
 const sendConfirmation = (pet, appointmentType, email, date, hour, doctor) => {
-  mongoose.connect(process.env.MONGO_URL);
-
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
@@ -121,7 +119,6 @@ const sendConfirmationDelete = (
   hour,
   doctor
 ) => {
-  mongoose.connect(process.env.MONGO_URL);
 
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
@@ -134,8 +131,6 @@ const sendConfirmationDelete = (
 };
 
 const sendContactEmail = (name, email, message) => {
-  mongoose.connect(process.env.MONGO_URL);
-
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: "veton.verify.users@gmail.com",
@@ -147,15 +142,13 @@ const sendContactEmail = (name, email, message) => {
 };
 
 app.post("/api/contact", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
   const { name, email, message } = req.body;
-
   sendContactEmail(name, email, message);
   res.json("email enviado com sucesso");
 });
 
 const sendResetEmail = (id, email) => {
-  mongoose.connect(process.env.MONGO_URL);
-
   const uniqueString = uuidv4() + id;
 
   const mailOptions = {
@@ -200,7 +193,7 @@ app.get("/api/user-data", (req, res) => {
 
   try {
     if (token) {
-      jwt.verify(token, process.env.JWT_SECRET, {}, (error, userData) => {
+      jwt.verify(token, jwtSecret, {}, (error, userData) => {
         if (error) {
           throw error;
         }
@@ -227,7 +220,7 @@ app.post("/api/edit-email", async (req, res) => {
 
     jwt.sign(
       { userId: newUser._id, username: newUser.username },
-      process.env.JWT_SECRET,
+      jwtSecret,
       {},
       (error, token) => {
         if (error) {
@@ -261,7 +254,7 @@ app.post("/api/edit-username", async (req, res) => {
 
     jwt.sign(
       { userId: newUser._id, username: newUsername },
-      process.env.JWT_SECRET,
+      jwtSecret,
       {},
       (error, token) => {
         if (error) {
@@ -300,7 +293,7 @@ app.post("/api/edit-password", async (req, res) => {
       });
       jwt.sign(
         { userId: newUser._id, username: newUser.username },
-        process.env.JWT_SECRET,
+        jwtSecret,
         {},
         (error, token) => {
           if (error) {
@@ -337,7 +330,7 @@ app.post("/api/edit-photo", async (req, res) => {
 
     jwt.sign(
       { userId: newUser._id, username: newUser.username },
-      process.env.JWT_SECRET,
+      jwtSecret,
       {},
       (error, token) => {
         if (error) {
@@ -600,7 +593,7 @@ app.post("/api/register", async (req, res) => {
 
     jwt.sign(
       { userId: createdUser._id, username },
-      process.env.JWT_SECRET,
+      jwtSecret,
       {},
       (error, token) => {
         if (error) {
@@ -644,7 +637,7 @@ app.post("/api/login", async (req, res) => {
       } else {
         jwt.sign(
           { userId: user._id, username },
-          process.env.JWT_SECRET,
+          jwtSecret,
           {},
           (error, token) => {
             if (error) {
@@ -816,111 +809,113 @@ app.get("/api/services", async (req, res) => {
 
 // chat endpoints
 
-app.get("/api/support", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const support = await db.User.find({});
-  res.json(support);
-});
+// app.get("/api/support", async (req, res) => {
+//   mongoose.connect(process.env.MONGO_URL);
+//   const support = await db.User.find({});
+//   res.json(support);
+// });
 
-app.get("/api/messages/:userId", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { userId } = req.params;
-  const userData = await getUserData(req);
+// app.get("/api/messages/:userId", async (req, res) => {
+//   mongoose.connect(process.env.MONGO_URL);
+//   const { userId } = req.params;
+//   const userData = await getUserData(req);
 
-  const messages = await db.Message.find({
-    sender: { $in: [userId, userData.userId] },
-    recipient: { $in: [userId, userData.userId] },
-  }).sort({ createdAt: 1 });
-  res.json(messages);
-});
+//   const messages = await db.Message.find({
+//     sender: { $in: [userId, userData.userId] },
+//     recipient: { $in: [userId, userData.userId] },
+//   }).sort({ createdAt: 1 });
+//   res.json(messages);
+// });
+//
+// const wss = new ws.WebSocketServer({ server });
+// wss.on("connection", (connection, req) => {
+//   function notifyAboutOnlinePeople() {
+//     [...wss.clients].forEach((client) => {
+//       client.send(
+//         JSON.stringify({
+//           online: [...wss.clients].map((c) => ({
+//             userId: c.userId,
+//             username: c.username,
+//           })),
+//         })
+//       );
+//     });
+//   }
 
-const wss = new ws.WebSocketServer({ server });
-wss.on("connection", (connection, req) => {
-  function notifyAboutOnlinePeople() {
-    [...wss.clients].forEach((client) => {
-      client.send(
-        JSON.stringify({
-          online: [...wss.clients].map((c) => ({
-            userId: c.userId,
-            username: c.username,
-          })),
-        })
-      );
-    });
-  }
+//   connection.isAlive = true;
 
-  connection.isAlive = true;
+//   connection.timer = setInterval(() => {
+//     connection.ping();
+//     connection.deathTimer = setTimeout(() => {
+//       connection.isAlive = false;
+//       clearInterval(connection.timer);
+//       connection.terminate();
+//       notifyAboutOnlinePeople();
+//     }, 1000);
+//   }, 5000);
 
-  connection.timer = setInterval(() => {
-    connection.ping();
-    connection.deathTimer = setTimeout(() => {
-      connection.isAlive = false;
-      clearInterval(connection.timer);
-      connection.terminate();
-      notifyAboutOnlinePeople();
-    }, 1000);
-  }, 5000);
+//   connection.on("pong", () => {
+//     clearTimeout(connection.deathTimer);
+//   });
 
-  connection.on("pong", () => {
-    clearTimeout(connection.deathTimer);
-  });
+//   const cookies = req.headers.cookie;
+//   if (cookies) {
+//     const tokenCookieString = cookies
+//       .split(";")
+//       .find((str) => str.startsWith("token="));
+//     if (tokenCookieString) {
+//       const token = tokenCookieString.split("=")[1];
+//       if (token) {
+//         jwt.verify(token, jwtSecret, {}, (err, userData) => {
+//           if (err) throw err;
+//           const { userId, username } = userData;
+//           connection.userId = userId;
+//           connection.username = username;
+//         });
+//       }
+//     }
+//   }
 
-  const cookies = req.headers.cookie;
-  if (cookies) {
-    const tokenCookieString = cookies
-      .split(";")
-      .find((str) => str.startsWith("token="));
-    if (tokenCookieString) {
-      const token = tokenCookieString.split("=")[1];
-      if (token) {
-        jwt.verify(token, jwtSecret, {}, (err, userData) => {
-          if (err) throw err;
-          const { userId, username } = userData;
-          connection.userId = userId;
-          connection.username = username;
-        });
-      }
-    }
-  }
+//   connection.on("message", async (message) => {
+//     const messageData = JSON.parse(message.toString());
+//     const { recipient, text, file } = messageData;
+//     let filename = null;
 
-  connection.on("message", async (message) => {
-    const messageData = JSON.parse(message.toString());
-    const { recipient, text, file } = messageData;
-    let filename = null;
+//     if (file) {
+//       const parts = file.name.split(".");
+//       const ext = parts[parts.length - 1];
+//       filename = Date.now() + "." + ext;
+//       const path = __dirname + "/uploads/" + filename;
+//       const bufferData = new Buffer(file.data.split(",")[1], "base64");
+//       fs.writeFile(path, bufferData, () => {
+//         console.log("file saved:" + path);
+//       });
+//     }
 
-    if (file) {
-      const parts = file.name.split(".");
-      const ext = parts[parts.length - 1];
-      filename = Date.now() + "." + ext;
-      const path = __dirname + "/uploads/" + filename;
-      const bufferData = new Buffer(file.data.split(",")[1], "base64");
-      fs.writeFile(path, bufferData, () => {
-        console.log("file saved:" + path);
-      });
-    }
+//     if (recipient && (text || file)) {
+//       const messageDoc = await db.Message.create({
+//         sender: connection.userId,
+//         recipient,
+//         text,
+//         file: file ? filename : null,
+//       });
+//       [...wss.clients]
+//         .filter((c) => c.userId === recipient)
+//         .forEach((c) =>
+//           c.send(
+//             JSON.stringify({
+//               text,
+//               sender: connection.userId,
+//               recipient,
+//               file: file ? filename : null,
+//               _id: messageDoc._id,
+//             })
+//           )
+//         );
+//     }
+//   });
 
-    if (recipient && (text || file)) {
-      const messageDoc = await db.Message.create({
-        sender: connection.userId,
-        recipient,
-        text,
-        file: file ? filename : null,
-      });
-      [...wss.clients]
-        .filter((c) => c.userId === recipient)
-        .forEach((c) =>
-          c.send(
-            JSON.stringify({
-              text,
-              sender: connection.userId,
-              recipient,
-              file: file ? filename : null,
-              _id: messageDoc._id,
-            })
-          )
-        );
-    }
-  });
+//   notifyAboutOnlinePeople();
+// });
 
-  notifyAboutOnlinePeople();
-});
+app.listen(4000);
