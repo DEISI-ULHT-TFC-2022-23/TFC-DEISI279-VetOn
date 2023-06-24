@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import FacebookSVG from "./FacebookSVG";
 import LinkedInSVG from "./LinkedInSVG";
@@ -18,15 +18,20 @@ export default function ContentIndex({ loggedIn = false }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
-  async function submitForm() {
-    const res = await axios.post("/contact", {
-      name,
-      email,
-      message,
-    });
-
-    alert("Email enviado com sucesso");
+  async function submitForm(event) {
+    event.preventDefault();
+    if (name == "" || email == "" || message == "") {
+      alert("Preencha todos os campos do formulario");
+    } else {
+      const res = await axios.post("/contact", {
+        name,
+        email,
+        message,
+      });
+      alert("Email enviado com sucesso");
+    }
   }
 
   useEffect(() => {

@@ -30,9 +30,12 @@ export default function AddAnimal() {
     if (res.data.message) {
       setMessage(res.data.message);
     }
+
     setInterval(() => {
       setMessage(null);
-    }, 3000);
+      navigate("/profile");
+    }, 2000);
+
     setName("");
     setType("");
     setRace("");

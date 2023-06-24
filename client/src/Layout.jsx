@@ -6,7 +6,7 @@ import ContentIndex from "./components/ContentIndex";
 export default function Layout() {
   const { username, setUserId, setUsername } = useContext(UserContext);
 
-  async function logout() {
+  function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     window.location.reload();
     setUserId(null);

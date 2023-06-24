@@ -3,7 +3,7 @@ import { UserContext } from "../UserContext";
 import { uniqBy } from "lodash";
 import axios from "axios";
 import Client from "../components/Client";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function Support() {
   const { userId: loggedUserId, setUsername } = useContext(UserContext);
@@ -14,12 +14,13 @@ export default function Support() {
   const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const scrollDivRef = useRef();
+  const navigate = useNavigate();
 
-  async function logout() {
-    await axios.get("/logout");
-    window.location.reload(true);
-    setId(null);
+  function logout() {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    navigate("/");
     setUsername(null);
+    setUserId(null);
   }
 
   function connectToWs() {

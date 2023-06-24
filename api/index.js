@@ -96,6 +96,19 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+const sendConfirmation = (email, message) => {
+  mongoose.connect(process.env.MONGO_URL);
+
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: "veton.verify.users@gmail.com",
+    subject: "Recebeu um novo pedido de contacto",
+    html: `<p>Foi submetido um novo form pelo ${name} com o email ${email}</p><p><b>Mensagem:</b></p><p>${message}</p>`,
+  };
+
+  transporter.sendMail(mailOptions);
+};
+
 const sendContactEmail = (name, email, message) => {
   mongoose.connect(process.env.MONGO_URL);
 
@@ -111,6 +124,7 @@ const sendContactEmail = (name, email, message) => {
 
 app.post("/api/contact", async (req, res) => {
   const { name, email, message } = req.body;
+  
   sendContactEmail(name, email, message);
   res.json("email enviado com sucesso");
 });
