@@ -8,6 +8,7 @@ export default function EditAnimal() {
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [skin_type, setSkinType] = useState("");
   const [message, setMessage] = useState(null);
+  const [error, setError] = useState(null);
   const [toggleButton, setToggleButton] = useState(true);
   const skins = ["Curta", "Longa"];
   const navigate = useNavigate();
@@ -23,7 +24,10 @@ export default function EditAnimal() {
   async function submit(event) {
     event.preventDefault();
     if (weight == "" || skin_type == "") {
-      alert("Nenhum dos campos pode ser vazio");
+      setError("Preencha os campos corretamente");
+      setInterval(() => {
+        setError(null);
+      }, 2000);
     } else {
       const res = await axios.post("/edit-animal/" + id, {
         weight,
@@ -33,12 +37,12 @@ export default function EditAnimal() {
 
       if (res.data.message) {
         setMessage(res.data.message);
-        navigate("/profile");
-        window.location.reload(true);
+        setInterval(() => {
+          setMessage(null);
+          navigate("/profile");
+          window.location.reload(true);
+        }, 2000);
       }
-      setInterval(() => {
-        setMessage(null);
-      }, 3000);
     }
   }
 
@@ -77,6 +81,11 @@ export default function EditAnimal() {
         {message !== null && (
           <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center">
             {message}
+          </div>
+        )}
+        {error !== null && (
+          <div className="font-poppins p-2 my-5 bg-red-500 text-white rounded-full text-center ">
+            {error}
           </div>
         )}
         <input

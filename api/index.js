@@ -96,19 +96,6 @@ const transporter = nodemailer.createTransport({
 
 // user endpoints
 
-app.get("/api/users", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const users = await db.User.find({});
-  res.json({ users: users });
-});
-
-app.get("/api/users/:username", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const username = req.params.username;
-  const user = await db.User.findOne({ username: username });
-  res.json(user);
-});
-
 app.get("/api/user-data", (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const token = req.cookies?.token;
@@ -128,6 +115,19 @@ app.get("/api/user-data", (req, res) => {
     }
     res.status(401).json("no token provided");
   }
+});
+
+app.get("/api/users", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const users = await db.User.find({});
+  res.json({ users: users });
+});
+
+app.get("/api/users/:username", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const username = req.params.username;
+  const user = await db.User.findOne({ username: username });
+  res.json(user);
 });
 
 app.post("/api/edit-email", async (req, res) => {
@@ -175,53 +175,20 @@ app.post("/api/edit-username", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { username: newUsername } = req.body;
   const userData = await getUserData(req);
+  const oldUser = await db.User.findById(userData.userId);
 
-  try {
-    const newUser = await db.User.findByIdAndUpdate(userData.userId, {
-      username: newUsername,
-    });
-
-    jwt.sign(
-      { userId: newUser._id, username: newUsername },
-      jwtSecret,
-      {},
-      (error, token) => {
-        if (error) {
-          console.log(error);
-        }
-        res
-          .cookie("token", token, {
-            path: "/",
-            secure: true,
-          })
-          .json({
-            user_id: newUser._id,
-            message: "Username alterado com sucesso",
-          });
-      }
-    );
-  } catch (error) {
-    res.json({ error: error });
-  }
-});
-
-app.post("/api/edit-password", async (req, res) => {
-  mongoose.connect(process.env.MONGO_URL);
-  const { currentPassword, password: newPassword } = req.body;
-  const userData = await getUserData(req);
-
-  try {
-    const user = await db.User.findById(userData.userId);
-
-    const correctPassword = bcrypt.compareSync(currentPassword, user.password);
-
-    if (correctPassword) {
-      const hashedPassword = bcrypt.hashSync(newPassword, salt);
+  if (newUsername == "") {
+    res.json({ error: "Preencha o campo corretamente" });
+  } else if (newUsername == oldUser.username) {
+    res.json({ error: "Nao pode mudar para o mesmo username" });
+  } else {
+    try {
       const newUser = await db.User.findByIdAndUpdate(userData.userId, {
-        password: hashedPassword,
+        username: newUsername,
       });
+
       jwt.sign(
-        { userId: newUser._id, username: newUser.username },
+        { userId: newUser._id, username: newUsername },
         jwtSecret,
         {},
         (error, token) => {
@@ -235,15 +202,64 @@ app.post("/api/edit-password", async (req, res) => {
             })
             .json({
               user_id: newUser._id,
-              message: "Password alterada com sucesso",
+              message: "Username alterado com sucesso",
             });
         }
       );
-    } else {
-      res.json({ error: "password atual incorreta" });
+    } catch (error) {
+      res.json({ error: error });
     }
-  } catch (error) {
-    res.json({ error: error });
+  }
+});
+
+app.post("/api/edit-password", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { currentPassword, password: newPassword } = req.body;
+  const userData = await getUserData(req);
+
+  if (newPassword == "" || currentPassword == "") {
+    res.json({ error: "Preencha os campos corretamente" });
+  } else if (newPassword == currentPassword) {
+    res.json({ error: "Nao pode mudar para a mesma password" });
+  } else {
+    try {
+      const user = await db.User.findById(userData.userId);
+
+      const correctPassword = bcrypt.compareSync(
+        currentPassword,
+        user.password
+      );
+
+      if (correctPassword) {
+        const hashedPassword = bcrypt.hashSync(newPassword, salt);
+        const newUser = await db.User.findByIdAndUpdate(userData.userId, {
+          password: hashedPassword,
+        });
+        jwt.sign(
+          { userId: newUser._id, username: newUser.username },
+          jwtSecret,
+          {},
+          (error, token) => {
+            if (error) {
+              console.log(error);
+            }
+            res
+              .cookie("token", token, {
+                path: "/",
+                secure: true,
+              })
+              .json({
+                user_id: newUser._id,
+                message: "Password alterada com sucesso",
+              });
+          }
+        );
+      } else {
+        res.json({ error: "Password atual incorreta" });
+      }
+    } catch (error) {
+      res.json({ error: error });
+    }
   }
 });
 
@@ -400,6 +416,13 @@ app.get("/api/appointments", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const appointments = await db.Appointment.find({});
   res.json({ appointments: appointments });
+});
+
+app.get("/api/appointments/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+  const appointment = await db.Appointment.findById(id);
+  res.json({ appointment: appointment });
 });
 
 const sendConfirmation = async (
@@ -901,7 +924,7 @@ app.post("/api/contact", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { name, email, message } = req.body;
   await sendContactEmail(name, email, message);
-  res.json("email enviado com sucesso");
+  res.json({ message: "Email enviado com sucesso" });
 });
 
 // chat endpoints

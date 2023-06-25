@@ -20,22 +20,32 @@ export default function ContentIndex({ loggedIn = false }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [message, setMessage] = useState("");
+  const [contactMessage, setContactMessage] = useState(null);
+  const [contactError, setContactError] = useState(null);
   const navigate = useNavigate();
 
   async function submitForm(event) {
     event.preventDefault();
     if (name == "" || email == "" || message == "") {
-      alert("Preencha todos os campos do formulario");
+      setContactError("Preencha todos os campos do formulario");
+      setInterval(() => {
+        setContactError(null);
+      }, 2000);
     } else {
       const res = await axios.post("/contact", {
         name,
         email,
         message,
       });
+      if (res.data.message) {
+        setContactMessage(res.data.message);
+      }
+      setInterval(() => {
+        setContactMessage(null);
+      }, 2000);
       setMessage("");
       setName("");
       setEmail("");
-      alert("Email enviado com sucesso");
     }
   }
 
@@ -213,10 +223,21 @@ export default function ContentIndex({ loggedIn = false }) {
                 cols="80"
                 rows="10"
               ></textarea>
-              <div className="pt-8 pl-4">
+
+              <div className="flex gap-10 pt-8 pl-4">
                 <button className="border border-primary px-4 py-2 rounded-full hover:bg-primary hover:text-white transition duration-300">
                   Submeter
                 </button>
+                {contactMessage !== null && (
+                  <div className="font-poppins p-2 bg-primary text-white rounded-full text-center ">
+                    {contactMessage}
+                  </div>
+                )}
+                {contactError !== null && (
+                  <div className="font-poppins p-2 bg-red-500 text-white rounded-full text-center w-96">
+                    {contactError}
+                  </div>
+                )}
               </div>
             </form>
           </div>
@@ -246,7 +267,7 @@ export default function ContentIndex({ loggedIn = false }) {
             </div>
           </div>
           <div className="flex items-center gap-2 pt-8">
-            <CalendarSVG className={"w-12 h-12"}/>
+            <CalendarSVG className={"w-12 h-12"} />
             <div className="block font-poppins">
               <div className="text-sm">
                 Aberto <b>24H</b>, todos os dias

@@ -233,7 +233,7 @@ export default function Profile() {
                 <div className="flex gap-2 font-poppins text-xl pt-4">
                   <CalendarSVG className={"w-8 h-8"} />
                   <div className="mt-1">
-                    {appointment.date} as {appointment.hour}h
+                    {appointment.date} às {appointment.hour}h
                   </div>
                 </div>
                 <div className="flex gap-2 font-poppins text-xl pt-4 mb-12">

@@ -38,6 +38,7 @@ export default function AddDoctor() {
     setInterval(() => {
       setMessage(null);
       navigate("/admin");
+      window.location.reload(true);
     }, 1500);
 
     setName("");

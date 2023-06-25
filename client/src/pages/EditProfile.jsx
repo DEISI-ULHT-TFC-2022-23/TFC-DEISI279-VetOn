@@ -12,11 +12,14 @@ export default function EditProfile() {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [usernameMessage, setUsernameMessage] = useState(null);
+  const [usernameError, setUsernameError] = useState(null);
   const [emailMessage, setEmailMessage] = useState(null);
-  const [passwordMessage, setPasswordMessage] = useState(null);
-  const [photoMessage, setPhotoMessage] = useState(null);
-  const [passwordError, setPasswordError] = useState(null);
   const [emailError, setEmailError] = useState(null);
+  const [photoMessage, setPhotoMessage] = useState(null);
+  const [photoError, setPhotoError] = useState(null);
+  const [passwordMessage, setPasswordMessage] = useState(null);
+  const [passwordError, setPasswordError] = useState(null);
+
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [toggleButton, setToggleButton] = useState(true);
 
@@ -43,54 +46,54 @@ export default function EditProfile() {
 
   async function submitUsername(event) {
     event.preventDefault();
-    if (username == "") {
-      alert("Preencha o campo corretamente");
-    } else {
-      const res = await axios.post("/edit-username", {
-        username,
-      });
-      if (res.data.message) {
-        setUsernameMessage(res.data.message);
-      }
-      setLoggedInUsername(username);
-      setInterval(() => {
-        setUsernameMessage(null);
-      }, 3000);
-      setUsername("");
+    const res = await axios.post("/edit-username", {
+      username,
+    });
+    if (res.data.message) {
+      setUsernameMessage(res.data.message);
     }
+    if (res.data.error) {
+      setUsernameError(res.data.error);
+    }
+    setInterval(() => {
+      setUsernameError(null);
+    }, 2000);
+    setInterval(() => {
+      setUsernameMessage(null);
+    }, 2000);
+    setUsername("");
   }
 
   async function submitPassword(event) {
     event.preventDefault();
-    if (currentPassword == "" || password == "") {
-      alert("Preencha os campos corretamente");
-    } else {
-      const res = await axios.post("/edit-password", {
-        currentPassword,
-        password,
-      });
-      if (res.data.message) {
-        setPasswordMessage(res.data.message);
-      }
-      if (res.data.error) {
-        setPasswordError(res.data.error);
-      }
-      setInterval(() => {
-        setPasswordMessage(null);
-      }, 3000);
-      setInterval(() => {
-        setPasswordError(null);
-      }, 3000);
-      setPassword("");
-      setCurrentPassword("");
-      setConfirmPassword("");
+    const res = await axios.post("/edit-password", {
+      currentPassword,
+      password,
+    });
+    if (res.data.message) {
+      setPasswordMessage(res.data.message);
     }
+    if (res.data.error) {
+      setPasswordError(res.data.error);
+    }
+    setInterval(() => {
+      setPasswordError(null);
+    }, 2000);
+    setInterval(() => {
+      setPasswordMessage(null);
+    }, 2000);
+    setCurrentPassword("");
+    setPassword("");
+    setConfirmPassword("");
   }
 
   async function submitPhoto(event) {
     event.preventDefault();
     if (addedPhotos.length == 0) {
-      alert("Selecione uma foto");
+      setPhotoError("Selecione uma foto");
+      setInterval(() => {
+        setPhotoError(null);
+      }, 2000);
     } else {
       const res = await axios.post("/edit-photo", {
         addedPhotos,
@@ -100,7 +103,7 @@ export default function EditProfile() {
       }
       setInterval(() => {
         setPhotoMessage(null);
-      }, 3000);
+      }, 2000);
       setAddedPhotos([]);
     }
   }
@@ -159,6 +162,11 @@ export default function EditProfile() {
         {usernameMessage !== null && (
           <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
             {usernameMessage}
+          </div>
+        )}
+        {usernameError !== null && (
+          <div className="font-poppins p-2 my-5 bg-red-500 text-white rounded-full text-center ">
+            {usernameError}
           </div>
         )}
         <input
@@ -229,6 +237,11 @@ export default function EditProfile() {
         {photoMessage !== null && (
           <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
             {photoMessage}
+          </div>
+        )}
+        {photoError !== null && (
+          <div className="font-poppins p-2 my-5 bg-red-500 text-white rounded-full text-center ">
+            {photoError}
           </div>
         )}
         <label className="flex justify-center gap-2 w-full rounded-sm p-2 border bg-white text-black">

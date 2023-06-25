@@ -8,7 +8,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 
 export default function MakeAppointment() {
-  const { setUsername } = useContext(UserContext);
+  const { setUsername, setUserId } = useContext(UserContext);
   const [doctorName, setDoctorName] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [services, setServices] = useState([]);
@@ -19,7 +19,16 @@ export default function MakeAppointment() {
   const [hour, setHour] = useState("");
   const [currentHour, setCurrentHour] = useState("");
   const [currentDate, setCurrentDate] = useState("");
+  const [appointmentMessage, setAppointmentMessage] = useState(null);
+  const [appointmentError, setAppointmentError] = useState(null);
   const navigate = useNavigate();
+
+  function logout() {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setUsername(null);
+    setUserId(null);
+    navigate("/");
+  }
 
   useEffect(() => {
     const currentDateFull = new Date();
@@ -71,9 +80,6 @@ export default function MakeAppointment() {
       "" +
       currentDate.getFullYear();
 
-    console.log(selectedDateString);
-    console.log(currentDateString);
-
     if (selectedDateString === currentDateString) {
       if (hour > currentHour) {
         const date = selectedDate.toLocaleDateString("pt", {
@@ -89,9 +95,19 @@ export default function MakeAppointment() {
           date,
           hour,
         });
-        navigate("/profile");
+
+        if (res.data.message) {
+          setAppointmentMessage(res.data.message);
+        }
+        setInterval(() => {
+          setAppointmentMessage(null);
+          navigate("/profile");
+        }, 2000);
       } else {
-        alert("nao e possivel marcar para horas que ja passaram");
+        setAppointmentError("Nao e possivel marcar para horas passadas");
+        setInterval(() => {
+          setAppointmentError(null);
+        }, 2000);
       }
     } else {
       const date = selectedDate.toLocaleDateString("pt", {
@@ -107,7 +123,14 @@ export default function MakeAppointment() {
         date,
         hour,
       });
-      navigate("/profile");
+
+      if (res.data.message) {
+        setAppointmentMessage(res.data.message);
+      }
+      setInterval(() => {
+        setAppointmentMessage(null);
+        navigate("/profile");
+      }, 2000);
     }
   }
 
@@ -122,13 +145,6 @@ export default function MakeAppointment() {
       setDoctors(response.data.doctors);
     });
   }, []);
-
-  async function logout() {
-    await axios.get("/logout");
-    window.location.reload(true);
-    setId(null);
-    setUsername(null);
-  }
 
   return (
     <form onSubmit={submit} className="mb-28">
@@ -274,6 +290,16 @@ export default function MakeAppointment() {
               <button className="mt-10 mb-20 ml-28 rounded-full border border-primary px-4 py-2 hover:bg-primary hover:text-white transition duration-300">
                 Marcar consulta
               </button>
+            )}
+            {appointmentMessage !== null && (
+              <div className="font-poppins p-2 bg-primary text-white rounded-full text-center ">
+                {appointmentMessage}
+              </div>
+            )}
+            {appointmentError !== null && (
+              <div className="font-poppins p-2 bg-red-500 text-white rounded-full text-center w-96">
+                {appointmentError}
+              </div>
             )}
           </div>
         </div>
