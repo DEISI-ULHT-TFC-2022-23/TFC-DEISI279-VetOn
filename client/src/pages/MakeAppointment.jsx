@@ -17,7 +17,16 @@ export default function MakeAppointment() {
   const [animals, setAnimals] = useState([]);
   const [pet, setPet] = useState("");
   const [hour, setHour] = useState("");
+  const [currentHour, setCurrentHour] = useState("");
+  const [currentDate, setCurrentDate] = useState("");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const currentDateFull = new Date();
+    setCurrentDate(currentDateFull);
+    const currentDateHour = currentDateFull.getHours();
+    setCurrentHour(currentDateHour + ":00");
+  }, [currentHour]);
 
   useEffect(() => {
     axios.get("/user-animals").then((response) => {
@@ -47,20 +56,59 @@ export default function MakeAppointment() {
 
   async function submit(event) {
     event.preventDefault();
-    const date = selectedDate.toLocaleDateString("pt", {
-      day: "numeric",
-      month: "numeric",
-      year: "numeric",
-    });
 
-    const res = await axios.post("/add-appointment", {
-      pet,
-      appointmentType,
-      doctorName,
-      date,
-      hour
-    });
-    navigate("/profile");
+    const selectedDateString =
+      selectedDate.getDate() +
+      "" +
+      selectedDate.getMonth() +
+      "" +
+      selectedDate.getFullYear();
+
+    const currentDateString =
+      currentDate.getDate() +
+      "" +
+      currentDate.getMonth() +
+      "" +
+      currentDate.getFullYear();
+
+    console.log(selectedDateString);
+    console.log(currentDateString);
+
+    if (selectedDateString === currentDateString) {
+      if (hour > currentHour) {
+        const date = selectedDate.toLocaleDateString("pt", {
+          day: "numeric",
+          month: "numeric",
+          year: "numeric",
+        });
+
+        const res = await axios.post("/add-appointment", {
+          pet,
+          appointmentType,
+          doctorName,
+          date,
+          hour,
+        });
+        navigate("/profile");
+      } else {
+        alert("nao e possivel marcar para horas que ja passaram");
+      }
+    } else {
+      const date = selectedDate.toLocaleDateString("pt", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+      });
+
+      const res = await axios.post("/add-appointment", {
+        pet,
+        appointmentType,
+        doctorName,
+        date,
+        hour,
+      });
+      navigate("/profile");
+    }
   }
 
   useEffect(() => {
@@ -212,9 +260,9 @@ export default function MakeAppointment() {
                             })
                         )
                         .map((appointment) =>
-                          appointment.hours.map((hour) => (
-                            <option key={hour}>{hour}</option>
-                          ))
+                          appointment.hours
+                            .sort()
+                            .map((hour) => <option key={hour}>{hour}</option>)
                         )
                     )}
                 </select>

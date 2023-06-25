@@ -23,7 +23,7 @@ app.use(
 );
 app.use(parser());
 
-app.listen(4000);
+const server = app.listen(4000);
 const photosMiddleware = multer({ dest: "/tmp" });
 const jwtSecret = process.env.JWT_SECRET;
 const salt = bcrypt.genSaltSync(10);
@@ -134,33 +134,40 @@ app.post("/api/edit-email", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const { email: newEmail } = req.body;
   const userData = await getUserData(req);
+  const oldUser = await db.User.findById(userData.userId);
 
-  try {
-    const newUser = await db.User.findByIdAndUpdate(userData.userId, {
-      email: newEmail,
-    });
+  if (newEmail == "") {
+    res.json({ error: "Preencha o campo corretamente" });
+  } else if (newEmail == oldUser.email) {
+    res.json({ error: "Nao pode mudar para o mesmo email" });
+  } else {
+    try {
+      const newUser = await db.User.findByIdAndUpdate(userData.userId, {
+        email: newEmail,
+      });
 
-    jwt.sign(
-      { userId: newUser._id, username: newUser.username },
-      jwtSecret,
-      {},
-      (error, token) => {
-        if (error) {
-          console.log(error);
+      jwt.sign(
+        { userId: newUser._id, username: newUser.username },
+        jwtSecret,
+        {},
+        (error, token) => {
+          if (error) {
+            console.log(error);
+          }
+          res
+            .cookie("token", token, {
+              path: "/",
+              secure: true,
+            })
+            .json({
+              user_id: newUser._id,
+              message: "Email alterado com sucesso",
+            });
         }
-        res
-          .cookie("token", token, {
-            path: "/",
-            secure: true,
-          })
-          .json({
-            user_id: newUser._id,
-            message: "Email alterado com sucesso",
-          });
-      }
-    );
-  } catch (error) {
-    res.json({ error: error });
+      );
+    } catch (error) {
+      res.json({ error: error });
+    }
   }
 });
 
@@ -413,6 +420,24 @@ const sendConfirmation = async (
   await transporter.sendMail(mailOptions);
 };
 
+const sendConfirmationAdmin = async (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Marcou uma consulta com a VetOn",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 app.post("/api/add-appointment", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const userData = await getUserData(req);
@@ -446,16 +471,24 @@ app.post("/api/add-appointment", async (req, res) => {
 
 app.post("/api/add-appointment-admin", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
-  const { username, pet, appointmentType, doctorName, hour } = req.body;
+  const { username, pet, appointmentType, doctorName, date, hour } = req.body;
 
   const doctor = await db.Doctor.findOne({ name: doctorName });
   const user = await db.User.findOne({ username: username });
-
+  sendConfirmationAdmin(
+    pet,
+    appointmentType,
+    user.email,
+    date,
+    hour,
+    doctorName
+  );
   await db.Appointment.create({
     clinic: "Hospital Veterinário da Universidade Lusófona",
     pet: pet,
     appointmentType: appointmentType,
     doctor: doctorName,
+    date: date,
     hour: hour,
     owner: user._id,
   });
@@ -464,12 +497,10 @@ app.post("/api/add-appointment-admin", async (req, res) => {
     doctor._id,
     {
       $pull: {
-        "appointmentHours.$[].hours": {
-          $in: [hour],
-        },
+        "timetable.$[day].hours": hour,
       },
     },
-    { new: true }
+    { new: true, arrayFilters: [{ "day.dayString": date }] }
   );
 
   res.json({ message: "Consulta criada com sucesso" });
@@ -501,6 +532,56 @@ app.delete("/api/delete-appointment/:id", async (req, res) => {
     const appointment = await db.Appointment.findById(id);
     const user = await db.User.findById(appointment.owner);
     sendConfirmationDelete(
+      appointment.pet,
+      appointment.appointmentType,
+      user.email,
+      appointment.date,
+      appointment.hour,
+      appointment.doctor
+    );
+    await db.Doctor.findOneAndUpdate(
+      { name: appointment.doctor },
+      {
+        $push: {
+          "timetable.$[day].hours": appointment.hour,
+        },
+      },
+      { new: true, arrayFilters: [{ "day.dayString": appointment.date }] }
+    );
+
+    await db.Appointment.findByIdAndDelete(id);
+    res.json({ message: "Consulta eliminada com sucesso" });
+  } catch (error) {
+    res.json({ error: error });
+  }
+});
+
+const sendConfirmationDeleteAdmin = async (
+  pet,
+  appointmentType,
+  email,
+  date,
+  hour,
+  doctor
+) => {
+  const mailOptions = {
+    from: "veton.verify.users@gmail.com",
+    to: email,
+    subject: "Foi desmarcada uma das suas consultas",
+    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
+app.delete("/api/delete-appointment-admin/:id", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { id } = req.params;
+
+  try {
+    const appointment = await db.Appointment.findById(id);
+    const user = await db.User.findById(appointment.owner);
+    sendConfirmationDeleteAdmin(
       appointment.pet,
       appointment.appointmentType,
       user.email,
@@ -741,17 +822,40 @@ app.post("/api/add-doctor", async (req, res) => {
     image = addedPhotos;
   }
 
-  await db.Doctor.create({
-    image: image,
-    name: name,
-    job: job,
-    description: description,
-    fb: fb,
-    li: li,
-    insta: insta,
-    timetable: generateUpdatedTimetable(),
-  });
-  res.json({ message: "Médico criado com sucesso" });
+  const randomUsername =
+    name.split(" ")[1].toLowerCase() +
+    "" +
+    Math.floor(Math.random() * 2000).toString();
+
+  const hashedPassword = bcrypt.hashSync(randomUsername, salt);
+  try {
+    await db.User.create({
+      type: "doctor",
+      email: randomUsername + "@veton.com",
+      username: randomUsername,
+      password: hashedPassword,
+      image: image,
+      failedAttempts: 0,
+    });
+
+    await db.Doctor.create({
+      username: randomUsername,
+      image: image,
+      name: name,
+      job: job,
+      description: description,
+      fb: fb,
+      li: li,
+      insta: insta,
+      timetable: generateUpdatedTimetable(),
+    });
+
+    res.json({
+      message: "Médico criado com sucesso",
+    });
+  } catch (error) {
+    res.json(error);
+  }
 });
 
 // services endpoints
@@ -760,6 +864,24 @@ app.get("/api/services", async (req, res) => {
   mongoose.connect(process.env.MONGO_URL);
   const services = await db.Service.find({});
   res.json({ services: services });
+});
+
+app.post("/api/add-service", async (req, res) => {
+  mongoose.connect(process.env.MONGO_URL);
+  const { name, addedPhotos } = req.body;
+
+  let image = [];
+  if (addedPhotos.length == 0) {
+    image = ["https://vet-on.s3.amazonaws.com/default_profile.jpg"];
+  } else {
+    image = addedPhotos;
+  }
+
+  await db.Service.create({
+    name: name,
+    image: image,
+  });
+  res.json({ message: "Servico criado com sucesso" });
 });
 
 // random
@@ -801,7 +923,7 @@ app.post("/api/contact", async (req, res) => {
 //   }).sort({ createdAt: 1 });
 //   res.json(messages);
 // });
-//
+
 // const wss = new ws.WebSocketServer({ server });
 // wss.on("connection", (connection, req) => {
 //   function notifyAboutOnlinePeople() {

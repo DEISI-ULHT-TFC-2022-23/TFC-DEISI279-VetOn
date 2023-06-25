@@ -12,10 +12,16 @@ import PawSVG from "../components/PawSVG";
 import DoctorSVG from "../components/DoctorSVG";
 
 export default function Profile() {
-  const { username } = useContext(UserContext);
+  const { setUsername, setUserId, username } = useContext(UserContext);
   const [animals, setAnimals] = useState([]);
   const [appointments, setAppointments] = useState([]);
   const [photo, setPhoto] = useState([]);
+
+  function logout() {
+    document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    setUsername(null);
+    setUserId(null);
+  }
 
   async function deleteAnimal(id) {
     await axios.delete("/delete-animal/" + id);
@@ -47,12 +53,12 @@ export default function Profile() {
 
   return (
     <div>
-      <div className="bg-[#d1d4db] py-4 pl-12">
+      <div className="flex justify-between bg-[#d1d4db] py-4 pl-12">
         <Link to={"/"}>
           <img src={"https://vet-on.s3.amazonaws.com/logo_small.png"} alt="" />
         </Link>
       </div>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center z-0">
         <img
           className="w-full absolute"
           src={"https://vet-on.s3.amazonaws.com/background_profile.jpg"}
@@ -60,7 +66,7 @@ export default function Profile() {
         />
 
         <img
-          className="top-80 relative h-64 w-64 rounded-full "
+          className="top-80 relative h-64 w-64 rounded-full"
           src={photo}
           alt="Profile Picture"
         />
@@ -84,6 +90,14 @@ export default function Profile() {
             </svg>
           </Link>
         </div>
+        <Link to={"/"}>
+          <button
+            onClick={logout}
+            className="bg-primary text-white block w-full rounded-sm p-2"
+          >
+            Logout
+          </button>
+        </Link>
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-animals">
@@ -170,7 +184,7 @@ export default function Profile() {
           </div>
         )}
       </div>
-      <div className="flex flex-col items-center w-full">
+      <div className="flex flex-col items-center w-full h-96">
         <div className="font-poppins text-5xl mt-10 mb-20" id="my-appointments">
           As minhas consultas
         </div>
@@ -223,10 +237,8 @@ export default function Profile() {
                   </div>
                 </div>
                 <div className="flex gap-2 font-poppins text-xl pt-4 mb-12">
-                  <DoctorSVG/>
-                  <div className="mt-2">
-                    {appointment.doctor}
-                  </div>
+                  <DoctorSVG />
+                  <div className="mt-2">{appointment.doctor}</div>
                 </div>
                 <div className="flex mt-6 gap-4 absolute bottom-0 left-32 mb-6">
                   <button

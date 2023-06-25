@@ -16,26 +16,29 @@ export default function EditProfile() {
   const [passwordMessage, setPasswordMessage] = useState(null);
   const [photoMessage, setPhotoMessage] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
+  const [emailError, setEmailError] = useState(null);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [toggleButton, setToggleButton] = useState(true);
 
   async function submitEmail(event) {
     event.preventDefault();
 
-    if (email == "") {
-      alert("Preencha o campo corretamente");
-    } else {
-      const res = await axios.post("/edit-email", {
-        email,
-      });
-      if (res.data.message) {
-        setEmailMessage(res.data.message);
-      }
-      setInterval(() => {
-        setEmailMessage(null);
-      }, 3000);
-      setEmail("");
+    const res = await axios.post("/edit-email", {
+      email,
+    });
+    if (res.data.message) {
+      setEmailMessage(res.data.message);
     }
+    if (res.data.error) {
+      setEmailError(res.data.error);
+    }
+    setInterval(() => {
+      setEmailError(null);
+    }, 2000);
+    setInterval(() => {
+      setEmailMessage(null);
+    }, 2000);
+    setEmail("");
   }
 
   async function submitUsername(event) {
@@ -133,6 +136,11 @@ export default function EditProfile() {
         {emailMessage !== null && (
           <div className="font-poppins p-2 my-5 bg-primary text-white rounded-full text-center ">
             {emailMessage}
+          </div>
+        )}
+        {emailError !== null && (
+          <div className="font-poppins p-2 my-5 bg-red-500 text-white rounded-full text-center ">
+            {emailError}
           </div>
         )}
         <input

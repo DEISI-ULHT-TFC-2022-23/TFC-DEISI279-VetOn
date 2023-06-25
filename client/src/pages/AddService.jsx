@@ -2,17 +2,10 @@ import { useState, useContext, useEffect } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 
-export default function AddDoctor() {
+export default function AddService() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
-  const [job, setJob] = useState("");
-  const [description, setDescription] = useState("");
-  const [fb, setFb] = useState("");
-  const [li, setLi] = useState("");
-  const [insta, setInsta] = useState("");
   const [message, setMessage] = useState(null);
-  const [addedPhotos, setAddedPhotos] = useState([]);
-  const [services, setServices] = useState([]);
   const [toggleButton, setToggleButton] = useState(true);
 
   useEffect(() => {
@@ -23,29 +16,17 @@ export default function AddDoctor() {
 
   async function submit(event) {
     event.preventDefault();
-    const res = await axios.post("/add-doctor", {
-      addedPhotos,
+    const res = await axios.post("/add-service", {
       name,
-      job,
-      description,
-      fb,
-      li,
-      insta,
+      addedPhotos,
     });
     if (res.data.message) {
       setMessage(res.data.message);
     }
     setInterval(() => {
       setMessage(null);
-      navigate("/admin");
-    }, 1500);
-
+    }, 3000);
     setName("");
-    setJob("");
-    setDescription("");
-    setFb("");
-    setLi("");
-    setInsta("");
     setAddedPhotos([]);
   }
 
@@ -86,50 +67,7 @@ export default function AddDoctor() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           type="text"
-          placeholder="Nome"
-          className="block w-full rounded-sm p-2 mb-2 border"
-        />
-        <select
-          value={job}
-          name="appointment_type"
-          id="appointment_type"
-          className="block w-full rounded-sm p-2 mb-2 border"
-          onChange={(event) => setJob(event.target.value)}
-        >
-          <option value="" disabled hidden>
-            Especializacao
-          </option>
-          {services.map((service) => (
-            <option key={service._id}>{service.title}</option>
-          ))}
-        </select>
-        <textarea
-          value={description}
-          onChange={(event) => setDescription(event.target.value)}
-          type="text"
-          placeholder="Descricao"
-          rows={8}
-          className="block w-full rounded-sm p-2 mb-2 border resize-none outline-none"
-        />
-        <input
-          value={fb}
-          onChange={(event) => setFb(event.target.value)}
-          type="text"
-          placeholder="Link Facebook"
-          className="block w-full rounded-sm p-2 mb-2 border"
-        />
-        <input
-          value={li}
-          onChange={(event) => setLi(event.target.value)}
-          type="text"
-          placeholder="Link LinkedIn"
-          className="block w-full rounded-sm p-2 mb-2 border"
-        />
-        <input
-          value={insta}
-          onChange={(event) => setInsta(event.target.value)}
-          type="text"
-          placeholder="Link Instagram"
+          placeholder="Tipo de servico"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
         <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 border bg-white text-black">
@@ -153,7 +91,7 @@ export default function AddDoctor() {
 
         {toggleButton && (
           <button className="bg-primary text-white block w-full rounded-sm p-2">
-            Adicionar doctor
+            Adicionar servico
           </button>
         )}
       </form>

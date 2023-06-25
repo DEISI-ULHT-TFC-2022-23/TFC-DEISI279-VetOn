@@ -57,6 +57,11 @@ export default function Authentication() {
           setLoggedInUsername(username);
           navigate("/support");
         }
+        if (res.data.type === "doctor") {
+          setUserId(res.data.id);
+          setLoggedInUsername(username);
+          navigate("/doctor");
+        }
       }
     }
   }

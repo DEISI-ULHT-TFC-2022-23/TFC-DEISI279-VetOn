@@ -4,6 +4,11 @@ const Doctor = mongoose.model(
   "Doctor",
   new mongoose.Schema(
     {
+      username: {
+        type: String,
+        required: true,
+        unique: true,
+      },
       image: {
         type: [],
       },
