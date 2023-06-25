@@ -27,7 +27,7 @@ export default function ContentIndex({ loggedIn = false }) {
   async function submitForm(event) {
     event.preventDefault();
     if (name == "" || email == "" || message == "") {
-      setContactError("Preencha todos os campos do formulario");
+      setContactError("Preencha todos os campos do formulário");
       setInterval(() => {
         setContactError(null);
       }, 2000);
