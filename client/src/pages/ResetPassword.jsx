@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 import PasswordChecklist from "react-password-checklist";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ export default function ResetPassword() {
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(null);
   const [message, setMessage] = useState(null);
+  const navigate = useNavigate();
 
   async function submit(event) {
     event.preventDefault();
@@ -16,12 +17,18 @@ export default function ResetPassword() {
       password,
     });
     if (res.data.error) {
-      setMessage(null);
       setError(res.data.error);
+      setInterval(() => {
+        setError(null);
+      }, 2000);
     }
     if (res.data.message) {
-      setError(null);
       setMessage(res.data.message);
+      setInterval(() => {
+        setMessage(null);
+        navigate("/authentication");
+        window.location.reload(true);
+      }, 2000);
     }
   }
 
