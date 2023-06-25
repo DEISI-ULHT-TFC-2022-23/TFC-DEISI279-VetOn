@@ -45,7 +45,7 @@ export default function ForgotPassword() {
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           type="email"
-          placeholder="email"
+          placeholder="Email"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
 

@@ -80,7 +80,7 @@ app.post(
       const url = await uploadToS3(path, originalname, mimetype);
       res.json([url]);
     } catch (error) {
-      res.json("failed");
+      res.json({ error: "Falha ao enviar foto" });
     }
   }
 );
@@ -113,7 +113,7 @@ app.get("/api/user-data", (req, res) => {
     if (error) {
       throw error;
     }
-    res.status(401).json("no token provided");
+    res.status(401).json({ error: "no token provided" });
   }
 });
 
@@ -139,7 +139,7 @@ app.post("/api/edit-email", async (req, res) => {
   if (newEmail == "") {
     res.json({ error: "Preencha o campo corretamente" });
   } else if (newEmail == oldUser.email) {
-    res.json({ error: "Nao pode mudar para o mesmo email" });
+    res.json({ error: "Não pode mudar para o mesmo email" });
   } else {
     try {
       const newUser = await db.User.findByIdAndUpdate(userData.userId, {
@@ -180,7 +180,7 @@ app.post("/api/edit-username", async (req, res) => {
   if (newUsername == "") {
     res.json({ error: "Preencha o campo corretamente" });
   } else if (newUsername == oldUser.username) {
-    res.json({ error: "Nao pode mudar para o mesmo username" });
+    res.json({ error: "Não pode mudar para o mesmo username" });
   } else {
     try {
       const newUser = await db.User.findByIdAndUpdate(userData.userId, {
@@ -220,7 +220,7 @@ app.post("/api/edit-password", async (req, res) => {
   if (newPassword == "" || currentPassword == "") {
     res.json({ error: "Preencha os campos corretamente" });
   } else if (newPassword == currentPassword) {
-    res.json({ error: "Nao pode mudar para a mesma password" });
+    res.json({ error: "Não pode mudar para a mesma password" });
   } else {
     try {
       const user = await db.User.findById(userData.userId);
@@ -437,7 +437,8 @@ const sendConfirmation = async (
     from: "veton.verify.users@gmail.com",
     to: email,
     subject: "Marcou uma consulta com a VetOn",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
+    html: `<h3><b>Caro utilizador,</b></h3><p>Vimos por este meio informar que marcou uma consulta de <b>${appointmentType}</b> 
+    para o ${pet} no dia <b>${date}</b> às <b>${hour}</b> com o/a <b>Dr./Dra. ${doctor}</b></p><p>Atenciosamente,</p><p><b>Equipa VetOn</b></p>`,
   };
 
   await transporter.sendMail(mailOptions);
@@ -454,8 +455,9 @@ const sendConfirmationAdmin = async (
   const mailOptions = {
     from: "veton.verify.users@gmail.com",
     to: email,
-    subject: "Marcou uma consulta com a VetOn",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que marcou uma consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor}</p>`,
+    subject: "Foi marcada uma consulta",
+    html: `<h3><b>Caro utilizador,</b></h3><p>Vimos por este meio informar que foi marcada uma consulta de <b>${appointmentType}</b> 
+    para o ${pet} no dia <b>${date}</b> às <b>${hour}</b> com o/a <b>Dr./Dra. ${doctor}</b></p><p>Atenciosamente,</p><p><b>Equipa VetOn</b></p>`,
   };
 
   await transporter.sendMail(mailOptions);
@@ -541,7 +543,8 @@ const sendConfirmationDelete = async (
     from: "veton.verify.users@gmail.com",
     to: email,
     subject: "Desmarcou uma das suas consultas",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
+    html: `<h3><b>Caro utilizador,</b></h3><p>Vimos por este meio informar que desmarcou uma consulta de <b>${appointmentType}</b> 
+    para o ${pet} no dia <b>${date}</b> às <b>${hour}</b> com o/a <b>Dr./Dra. ${doctor}</b></p><p>Atenciosamente,</p><p><b>Equipa VetOn</b></p>`,
   };
 
   await transporter.sendMail(mailOptions);
@@ -591,7 +594,8 @@ const sendConfirmationDeleteAdmin = async (
     from: "veton.verify.users@gmail.com",
     to: email,
     subject: "Foi desmarcada uma das suas consultas",
-    html: `<p>Saudacoes</p><p>Vimos por este meio informar que a consulta de ${appointmentType} para o ${pet} no dia <b>${date}</b> as <b>${hour}</b> com o Dr./Dra. ${doctor} foi desmarcada</p>`,
+    html: `<h3><b>Caro utilizador,</b></h3><p>Vimos por este meio informar que foi desmarcada uma consulta de <b>${appointmentType}</b> 
+    para o ${pet} no dia <b>${date}</b> às <b>${hour}</b> com o/a <b>Dr./Dra. ${doctor}</b></p><p>Atenciosamente,</p><p><b>Equipa VetOn</b></p>`,
   };
 
   await transporter.sendMail(mailOptions);
@@ -694,7 +698,7 @@ app.post("/api/login", async (req, res) => {
       if (failedAttempts >= 3) {
         res.json({
           error:
-            "Conta bloqueada.\nEntre em contacto connosco atraves da seccao de contacto",
+            "Conta bloqueada.\n\nEntre em contacto connosco através da secção de contacto",
         });
       } else {
         jwt.sign(
@@ -729,7 +733,7 @@ app.post("/api/login", async (req, res) => {
       if (failedAttempts >= 3) {
         res.json({
           error:
-            "Conta bloqueada.\nEntre em contacto connosco atraves da seccao de contacto",
+            "Conta bloqueada.\n\nEntre em contacto connosco através da secção de contacto",
         });
       } else {
         await db.User.updateOne(
@@ -753,7 +757,7 @@ const sendResetEmail = async (id, email) => {
     from: "veton.verify.users@gmail.com",
     to: email,
     subject: "Redefinir Password",
-    html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p><b>Este link expira em 6 horas</b></p><p>Clica aqui <a href=${
+    html: `<p>Pediste para redefinir a password da tua conta no site da VetOn</p><p>Clica aqui <a href=${
       url + "/reset-password/" + id
     }>link</a> para a redefinires</p>`,
   };
@@ -904,7 +908,7 @@ app.post("/api/add-service", async (req, res) => {
     name: name,
     image: image,
   });
-  res.json({ message: "Servico criado com sucesso" });
+  res.json({ message: "Serviço criado com sucesso" });
 });
 
 // random

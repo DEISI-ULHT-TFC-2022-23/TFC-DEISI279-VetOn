@@ -155,7 +155,7 @@ export default function EditProfile() {
         />
 
         <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Alterar email
+          Alterar Email
         </button>
       </form>
       <form className="w-64 mx-auto mb-12" onSubmit={submitUsername}>
@@ -178,7 +178,7 @@ export default function EditProfile() {
         />
 
         <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Alterar username
+          Alterar Username
         </button>
       </form>
       <form className="w-64 mx-auto mb-12" onSubmit={submitPassword}>
@@ -225,12 +225,12 @@ export default function EditProfile() {
             minLength: "Pelo menos 8 caracteres",
             specialChar: "Pelo menos um caracter especial",
             number: "Pelo menos 1 número",
-            capital: "Pelo menos uma caracter maiúsculo",
+            capital: "Pelo menos um caracter maiúsculo",
             match: "As password estão iguais",
           }}
         />
         <button className="bg-primary text-white block w-full rounded-sm p-2 mt-5 mb-5">
-          Alterar password
+          Alterar Password
         </button>
       </form>
       <form className="w-64 mx-auto mb-12" onSubmit={submitPhoto}>

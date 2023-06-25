@@ -143,7 +143,7 @@ export default function Profile() {
                 <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
                   {animal.name}
                   {animal.gender == "Macho" && <MaleSVG />}
-                  {animal.gender == "Femea" && <FemaleSVG />}
+                  {animal.gender == "Fêmea" && <FemaleSVG />}
                 </div>
                 <div className="flex gap-4 text-center font-poppins font-bold text-2xl pt-4">
                   <div className="flex gap-4">

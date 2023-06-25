@@ -15,7 +15,7 @@ export default function AddAnimal() {
   const [skin_type, setSkinType] = useState("");
   const [toggleButton, setToggleButton] = useState(true);
   const [message, setMessage] = useState(null);
-  const genders = ["Macho", "Femea"];
+  const genders = ["Macho", "Fêmea"];
   const skins = ["Curta", "Longa"];
 
   async function submit(event) {
@@ -107,14 +107,14 @@ export default function AddAnimal() {
           value={type}
           onChange={(event) => setType(event.target.value)}
           type="text"
-          placeholder="Especie"
+          placeholder="Espécie"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
         />
         <input
           value={race}
           onChange={(event) => setRace(event.target.value)}
           type="text"
-          placeholder="Raca"
+          placeholder="Raça"
           className="block w-full rounded-sm p-2 mb-2 border placeholder:text-black"
         />
         <input
@@ -132,7 +132,7 @@ export default function AddAnimal() {
           onChange={onChangeGender}
         >
           <option value="" disabled hidden>
-            Escolha um genero
+            Escolha um género
           </option>
           {genders.map((gender) => (
             <option key={gender}>{gender}</option>
@@ -144,7 +144,7 @@ export default function AddAnimal() {
           selected={birth_date}
           onChange={handleDateChange}
           className="block w-64 rounded-sm p-2 mb-2 border placeholder:text-black"
-          placeholderText="Selecione uma data"
+          placeholderText="Data de nascimento"
           maxDate={new Date()}
         />
         <select
@@ -155,7 +155,7 @@ export default function AddAnimal() {
           onChange={onChangeSkin}
         >
           <option value="" disabled hidden>
-            Escolha um tipo de pelagem
+            Tipo de pelagem
           </option>
           {skins.map((skin) => (
             <option key={skin}>{skin}</option>

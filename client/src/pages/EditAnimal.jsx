@@ -103,7 +103,7 @@ export default function EditAnimal() {
           onChange={onChangeSkin}
         >
           <option value="" disabled hidden>
-            Escolha um tipo de pelagem
+            Tipo de pelagem
           </option>
           {skins.map((skin) => (
             <option key={skin}>{skin}</option>

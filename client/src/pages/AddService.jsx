@@ -25,7 +25,9 @@ export default function AddService() {
     }
     setInterval(() => {
       setMessage(null);
-    }, 3000);
+      navigate("/admin");
+      window.location.reload(true);
+    }, 2000);
     setName("");
     setAddedPhotos([]);
   }
@@ -67,7 +69,7 @@ export default function AddService() {
           value={name}
           onChange={(event) => setName(event.target.value)}
           type="text"
-          placeholder="Tipo de servico"
+          placeholder="Tipo de serviço"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
         <label className="flex justify-center gap-2 w-full rounded-sm p-2 mb-2 border bg-white text-black">
@@ -91,7 +93,7 @@ export default function AddService() {
 
         {toggleButton && (
           <button className="bg-primary text-white block w-full rounded-sm p-2">
-            Adicionar servico
+            Adicionar serviço
           </button>
         )}
       </form>

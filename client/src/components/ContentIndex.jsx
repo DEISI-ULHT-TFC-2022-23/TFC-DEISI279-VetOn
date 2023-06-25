@@ -181,7 +181,7 @@ export default function ContentIndex({ loggedIn = false }) {
           ))}
         </div>
         <div className="flex justify-between">
-          <div className="w-2/5 mt-20 border-4 border-primary rounded-3xl ml-20">
+          <div className="w-2/5 mt-20 rounded-3xl ml-20">
             <iframe
               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3111.24743547565!2d-9.155304684368053!3d38.75802846275171!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xd1932fc16a21773%3A0xbb910a0db57ce114!2sUniversidade%20Lus%C3%B3fona%20-%20Centro%20Universit%C3%A1rio%20Lisboa!5e0!3m2!1spt-PT!2spt!4v1680730430727!5m2!1spt-PT!2spt"
               width="711"

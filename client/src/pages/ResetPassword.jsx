@@ -52,7 +52,7 @@ export default function ResetPassword() {
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           type="password"
-          placeholder="password"
+          placeholder="Password"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
 
@@ -60,7 +60,7 @@ export default function ResetPassword() {
           value={confirmPassword}
           onChange={(event) => setConfirmPassword(event.target.value)}
           type="password"
-          placeholder="confirmar password"
+          placeholder="Confirmar password"
           className="block w-full rounded-sm p-2 mb-4 border"
         />
         <PasswordChecklist
@@ -73,7 +73,7 @@ export default function ResetPassword() {
             minLength: "Pelo menos 8 caracteres",
             specialChar: "Pelo menos um caracter especial",
             number: "Pelo menos 1 número",
-            capital: "Pelo menos uma caracter maiúsculo",
+            capital: "Pelo menos um caracter maiúsculo",
             match: "As password estão iguais",
           }}
         />

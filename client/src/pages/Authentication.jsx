@@ -104,7 +104,7 @@ export default function Authentication() {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             type="email"
-            placeholder="email"
+            placeholder="Email"
             className="block w-full rounded-sm p-2 mb-2 border"
           />
         )}
@@ -112,14 +112,14 @@ export default function Authentication() {
           value={username}
           onChange={(event) => setUsername(event.target.value)}
           type="text"
-          placeholder="username"
+          placeholder="Username"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
         <input
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           type="password"
-          placeholder="password"
+          placeholder="Password"
           className="block w-full rounded-sm p-2 mb-2 border"
         />
         {isRegisterOrLogin === "register" && (
@@ -128,7 +128,7 @@ export default function Authentication() {
               value={confirmPassword}
               onChange={(event) => setConfirmPassword(event.target.value)}
               type="password"
-              placeholder="confirmar password"
+              placeholder="Confirmar password"
               className="block w-full rounded-sm p-2 mb-4 border"
             />
             <PasswordChecklist
@@ -141,7 +141,7 @@ export default function Authentication() {
                 minLength: "Pelo menos 8 caracteres",
                 specialChar: "Pelo menos um caracter especial",
                 number: "Pelo menos 1 número",
-                capital: "Pelo menos uma caracter maiúsculo",
+                capital: "Pelo menos um caracter maiúsculo",
                 match: "As password estão iguais",
               }}
             />

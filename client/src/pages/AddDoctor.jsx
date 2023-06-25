@@ -35,11 +35,12 @@ export default function AddDoctor() {
     if (res.data.message) {
       setMessage(res.data.message);
     }
+
     setInterval(() => {
       setMessage(null);
       navigate("/admin");
       window.location.reload(true);
-    }, 1500);
+    }, 2000);
 
     setName("");
     setJob("");
@@ -98,7 +99,7 @@ export default function AddDoctor() {
           onChange={(event) => setJob(event.target.value)}
         >
           <option value="" disabled hidden>
-            Especializacao
+          Especialização
           </option>
           {services.map((service) => (
             <option key={service._id}>{service.title}</option>
@@ -108,7 +109,7 @@ export default function AddDoctor() {
           value={description}
           onChange={(event) => setDescription(event.target.value)}
           type="text"
-          placeholder="Descricao"
+          placeholder="Descrição"
           rows={8}
           className="block w-full rounded-sm p-2 mb-2 border resize-none outline-none"
         />

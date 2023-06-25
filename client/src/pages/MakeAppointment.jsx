@@ -23,6 +23,8 @@ export default function MakeAppointment() {
   const [appointmentError, setAppointmentError] = useState(null);
   const navigate = useNavigate();
 
+
+
   function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setUsername(null);
@@ -102,9 +104,10 @@ export default function MakeAppointment() {
         setInterval(() => {
           setAppointmentMessage(null);
           navigate("/profile");
+          window.location.reload(true);
         }, 2000);
       } else {
-        setAppointmentError("Nao e possivel marcar para horas passadas");
+        setAppointmentError("Não é possível marcar para horas passadas");
         setInterval(() => {
           setAppointmentError(null);
         }, 2000);
@@ -130,6 +133,7 @@ export default function MakeAppointment() {
       setInterval(() => {
         setAppointmentMessage(null);
         navigate("/profile");
+        window.location.reload(true);
       }, 2000);
     }
   }
@@ -159,7 +163,7 @@ export default function MakeAppointment() {
 
         <div>
           <div className="mt-20 mb-5 text-center text-xl">
-            Selecione o Hospital / Clinica
+            Selecione o Hospital / Clínica
           </div>
           <select
             name="clinic"
@@ -179,7 +183,7 @@ export default function MakeAppointment() {
             onChange={onChangeAnimal}
           >
             <option value="" disabled hidden>
-              Escolha um dos seus animais...
+              Escolha um dos seus animais
             </option>
             {animals.map((animal) => (
               <option key={animal._id}>{animal.name}</option>
@@ -196,7 +200,7 @@ export default function MakeAppointment() {
             onChange={onChangeAppointmentType}
           >
             <option value="" disabled hidden>
-              Escolha um tipo de consulta...
+              Escolha um tipo de consulta
             </option>
             {services.map((service) => (
               <option key={service._id}>{service.title}</option>
@@ -260,7 +264,7 @@ export default function MakeAppointment() {
                   onChange={onChangeHour}
                 >
                   <option value="" disabled hidden>
-                    Escolha um horário...
+                    Escolha um horário
                   </option>
                   {doctors
                     .filter((doctor) => doctor.job === appointmentType)
