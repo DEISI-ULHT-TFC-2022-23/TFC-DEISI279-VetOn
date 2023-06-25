@@ -79,6 +79,7 @@ export default function AddAnimal() {
       setToggleButton(true);
     });
   }
+  
   return (
     <div className="bg-gray-300 h-screen flex items-center">
       <form className="w-64 mx-auto mb-12" onSubmit={submit}>

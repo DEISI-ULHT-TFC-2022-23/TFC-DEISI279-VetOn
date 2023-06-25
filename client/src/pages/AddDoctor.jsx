@@ -13,6 +13,7 @@ export default function AddDoctor() {
   const [message, setMessage] = useState(null);
   const [addedPhotos, setAddedPhotos] = useState([]);
   const [services, setServices] = useState([]);
+  const [toogleButton, setToggleButton] = useState(true);
 
   useEffect(() => {
     axios.get("/services").then((response) => {
@@ -47,22 +48,20 @@ export default function AddDoctor() {
   }
 
   function uploadPhoto(ev) {
+    ev.preventDefault();
+    setAddedPhotos([]);
+    setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      data.append("photo", files[i]);
-    }
+    data.append("photo", files[0]);
 
-    axios
-      .post("/upload", data, {
-        headers: { "Content-type": "multipart/form-data" },
-      })
-      .then((response) => {
-        const { data: filename } = response;
-        setAddedPhotos((prev) => {
-          return [...prev, filename];
-        });
+    axios.post("/upload", data).then((response) => {
+      const { data: filename } = response;
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
       });
+      setToggleButton(true);
+    });
   }
 
   return (
@@ -150,9 +149,11 @@ export default function AddDoctor() {
           <input type="file" className="hidden" onChange={uploadPhoto} />
         </label>
 
-        <button className="bg-primary text-white block w-full rounded-sm p-2">
-          Adicionar doctor
-        </button>
+        {toggleButton && (
+          <button className="bg-primary text-white block w-full rounded-sm p-2">
+            Adicionar doctor
+          </button>
+        )}
       </form>
     </div>
   );

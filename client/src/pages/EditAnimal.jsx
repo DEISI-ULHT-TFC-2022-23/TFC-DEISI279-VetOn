@@ -47,27 +47,20 @@ export default function EditAnimal() {
   };
 
   function uploadPhoto(ev) {
+    ev.preventDefault();
     setAddedPhotos([]);
     setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      data.append("photo", files[i]);
-    }
+    data.append("photo", files[0]);
 
-    if (data != null) {
-      axios
-        .post("/upload", data, {
-          headers: { "Content-type": "multipart/form-data" },
-        })
-        .then((response) => {
-          const { data: filename } = response;
-          setAddedPhotos((prev) => {
-            return [...prev, filename];
-          });
-          setToggleButton(true);
-        });
-    }
+    axios.post("/upload", data).then((response) => {
+      const { data: filename } = response;
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
+      });
+      setToggleButton(true);
+    });
   }
 
   return (

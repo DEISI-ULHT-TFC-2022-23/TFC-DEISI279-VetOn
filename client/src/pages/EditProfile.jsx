@@ -17,6 +17,7 @@ export default function EditProfile() {
   const [photoMessage, setPhotoMessage] = useState(null);
   const [passwordError, setPasswordError] = useState(null);
   const [addedPhotos, setAddedPhotos] = useState([]);
+  const [toggleButton, setToggleButton] = useState(true);
 
   async function submitEmail(event) {
     event.preventDefault();
@@ -102,23 +103,20 @@ export default function EditProfile() {
   }
 
   function uploadPhoto(ev) {
+    ev.preventDefault();
     setAddedPhotos([]);
+    setToggleButton(false);
     const files = ev.target.files;
     const data = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      data.append("photo", files[i]);
-    }
+    data.append("photo", files[0]);
 
-    axios
-      .post("/upload", data, {
-        headers: { "Content-type": "multipart/form-data" },
-      })
-      .then((response) => {
-        const { data: filename } = response;
-        setAddedPhotos((prev) => {
-          return [...prev, filename];
-        });
+    axios.post("/upload", data).then((response) => {
+      const { data: filename } = response;
+      setAddedPhotos((prev) => {
+        return [...prev, filename];
       });
+      setToggleButton(true);
+    });
   }
 
   return (
@@ -243,7 +241,7 @@ export default function EditProfile() {
           Escolha um ficheiro
           <input type="file" className="hidden" onChange={uploadPhoto} />
         </label>
-        {addedPhotos.length != 0 && (
+        {toggleButton && (
           <button className="bg-primary text-white block w-full rounded-sm p-2">
             Alterar foto
           </button>
