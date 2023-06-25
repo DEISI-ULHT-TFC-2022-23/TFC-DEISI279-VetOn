@@ -75,14 +75,10 @@ app.post(
   photosMiddleware.array("photo", 1),
   async (req, res) => {
     mongoose.connect(process.env.MONGO_URL);
+    const { path, originalname, mimetype } = req.files[0];
     try {
-      const uploadedFiles = [];
-      for (let i = 0; i < req.files.length; i++) {
-        const { path, originalname, mimetype } = req.files[i];
-        const url = await uploadToS3(path, originalname, mimetype);
-        uploadedFiles.push(url);
-      }
-      res.json(uploadedFiles);
+      const url = await uploadToS3(path, originalname, mimetype);
+      res.json([url]);
     } catch (error) {
       res.json("failed");
     }
