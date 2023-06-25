@@ -61,6 +61,7 @@ export default function EditProfile() {
     setInterval(() => {
       setUsernameMessage(null);
     }, 2000);
+    setLoggedInUsername(username);
     setUsername("");
   }
 
@@ -108,6 +109,8 @@ export default function EditProfile() {
     }
   }
 
+  function redirect() {}
+
   function uploadPhoto(ev) {
     ev.preventDefault();
     setAddedPhotos([]);
@@ -129,7 +132,7 @@ export default function EditProfile() {
     <div className="bg-gray-300 h-screen flex flex-col items-center justify-center">
       <form className="w-64 mx-auto mb-12" onSubmit={submitEmail}>
         <div className="flex justify-center mb-4">
-          <Link to={"/profile"}>
+          <Link to={"/profile"} onClick={redirect}>
             <img
               src={"https://vet-on.s3.amazonaws.com/logo_small.png"}
               alt=""
