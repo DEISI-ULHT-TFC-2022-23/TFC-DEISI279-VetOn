@@ -19,8 +19,9 @@ export default function Admin() {
 
   function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-    setUsername(null);
     setUserId(null);
+    setUsername(null);
+    navigate("/");
   }
 
   async function deleteAppointment(id) {
@@ -67,14 +68,13 @@ export default function Admin() {
         <div className="flex items-center gap-2 font-poppins top-80 text-3xl z-10 relative mb-96">
           {username}
         </div>
-        <Link to={"/"}>
-          <button
-            onClick={logout}
-            className="bg-primary text-white block w-full rounded-sm p-2"
-          >
-            Logout
-          </button>
-        </Link>
+
+        <button
+          onClick={logout}
+          className="bg-primary text-white block rounded-sm p-2"
+        >
+          Logout
+        </button>
       </div>
       <div className="flex flex-col items-center w-full">
         <div className="font-poppins text-5xl mt-10 mb-10" id="my-animals">
