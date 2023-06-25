@@ -28,6 +28,9 @@ export default function Authentication() {
       });
       if (res.data.error) {
         setError(res.data.error);
+        setInterval(() => {
+          setError(null);
+        }, 2000);
       } else {
         setUserId(res.data.id);
         setLoggedInUsername(username);
@@ -41,6 +44,9 @@ export default function Authentication() {
       });
       if (res.data.error) {
         setError(res.data.error);
+        setInterval(() => {
+          setError(null);
+        }, 2000);
       } else {
         if (res.data.type === "admin") {
           setUserId(res.data.id);
