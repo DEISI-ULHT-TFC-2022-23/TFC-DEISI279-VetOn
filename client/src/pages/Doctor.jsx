@@ -22,79 +22,77 @@ export default function Doctor() {
   }
 
   useEffect(() => {
-    const week = [];
-    const currentDateFull = new Date();
-    var sunday = new Date(
-      currentDateFull.setDate(
-        currentDateFull.getDate() - currentDateFull.getDay()
-      )
-    );
+    var week = [];
+    var currentDateFull = new Date();
 
-    const dayString = "" + new Date(sunday).getDate();
-    const monthString = "" + (new Date(sunday).getMonth() + 1);
+    var dayString = "" + new Date(currentDateFull).getDate();
+    console.log(dayString);
+    var monthString = "" + (new Date(currentDateFull).getMonth() + 1);
     if (dayString.length == 1) {
       if (monthString.length == 1) {
         week.push(
-          `0${new Date(sunday).getDate()}/0${
-            new Date(sunday).getMonth() + 1
-          }/${new Date(sunday).getFullYear()}`
+          `0${new Date(currentDateFull).getDate()}/0${
+            new Date(currentDateFull).getMonth() + 1
+          }/${new Date(currentDateFull).getFullYear()}`
         );
       } else {
         week.push(
-          `0${new Date(sunday).getDate()}/${
-            new Date(sunday).getMonth() + 1
-          }/${new Date(sunday).getFullYear()}`
+          `0${new Date(currentDateFull).getDate()}/${
+            new Date(currentDateFull).getMonth() + 1
+          }/${new Date(currentDateFull).getFullYear()}`
         );
       }
     } else {
       if (monthString.length == 1) {
         week.push(
-          `${new Date(sunday).getDate()}/0${
-            new Date(sunday).getMonth() + 1
-          }/${new Date(sunday).getFullYear()}`
+          `${new Date().getDate()}/0${
+            new Date().getMonth() + 1
+          }/${new Date().getFullYear()}`
         );
       } else {
         week.push(
-          `${new Date(sunday).getDate()}/${
-            new Date(sunday).getMonth() + 1
-          }/${new Date(sunday).getFullYear()}`
+          `${new Date().getDate()}/${
+            new Date().getMonth() + 1
+          }/${new Date().getFullYear()}`
         );
       }
     }
 
-    while (sunday.setDate(sunday.getDate() + 1) && sunday.getDay() !== 0) {
-      const dayString = "" + new Date(sunday).getDate();
-      const monthString = "" + (new Date(sunday).getMonth() + 1);
+    for (let i = 0; i < 6; i++) {
+      currentDateFull.setDate(currentDateFull.getDate() + 1);
+      var dayString = "" + new Date(currentDateFull).getDate();
+      var monthString = "" + (new Date(currentDateFull).getMonth() + 1);
       if (dayString.length == 1) {
         if (monthString.length == 1) {
           week.push(
-            `0${new Date(sunday).getDate()}/0${
-              new Date(sunday).getMonth() + 1
-            }/${new Date(sunday).getFullYear()}`
+            `0${new Date(currentDateFull).getDate()}/0${
+              new Date(currentDateFull).getMonth() + 1
+            }/${new Date(currentDateFull).getFullYear()}`
           );
         } else {
           week.push(
-            `0${new Date(sunday).getDate()}/${
-              new Date(sunday).getMonth() + 1
-            }/${new Date(sunday).getFullYear()}`
+            `0${new Date(currentDateFull).getDate()}/${
+              new Date(currentDateFull).getMonth() + 1
+            }/${new Date(currentDateFull).getFullYear()}`
           );
         }
       } else {
         if (monthString.length == 1) {
           week.push(
-            `${new Date(sunday).getDate()}/0${
-              new Date(sunday).getMonth() + 1
-            }/${new Date(sunday).getFullYear()}`
+            `${new Date(currentDateFull).getDate()}/0${
+              new Date(currentDateFull).getMonth() + 1
+            }/${new Date(currentDateFull).getFullYear()}`
           );
         } else {
           week.push(
-            `${new Date(sunday).getDate()}/${
-              new Date(sunday).getMonth() + 1
-            }/${new Date(sunday).getFullYear()}`
+            `${new Date(currentDateFull).getDate()}/${
+              new Date(currentDateFull).getMonth() + 1
+            }/${new Date(currentDateFull).getFullYear()}`
           );
         }
       }
     }
+
     setDatas(week);
   }, []);
 
@@ -165,6 +163,9 @@ export default function Doctor() {
             Logout
           </button>
         </Link>
+      </div>
+      <div className="text-center font-poppins text-5xl mt-20 mb-10" id="my-animals">
+        Consultas nos próximos 7 dias
       </div>
       <div className="flex flex-col items-center w-full">
         {appointments.length !== 0 &&
