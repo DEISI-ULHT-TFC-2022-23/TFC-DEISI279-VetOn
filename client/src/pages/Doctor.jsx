@@ -100,7 +100,6 @@ export default function Doctor() {
 
   useEffect(() => {
     axios.get("/users/" + username).then((response) => {
-      setDoctor();
       setPhoto(response.data.image);
     });
   }, [username]);
