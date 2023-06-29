@@ -1,0 +1,5 @@
+"VetOn" é uma aplicação web que permite agendar, de uma forma simples e intuitiva, qualquer serviço prestado pelo Hospital Veterinário da Universidade Lusófona.
+O utilizador tem ao seu dispor uma página de perfil onde pode adicionar os seus animais, bem como realizar a marcação de consultas para a especialidade e horário pretendido.
+Existe também um chat onde o utilizador pode retirar dúvidas que possua com o support do nosso website.
+Em termos de administração, temos os nossos admins que conseguem modificar a landing page adicionando serviços e médicos afiliados, bem como marcar consultas a pedido dos médicos e/ou utilizadores.
+Por fim, os médicos tem uma página dedicada para que possam ver as consultas que possuem agendadas, estando estas etiquetadas como concluídas ou por fazer.
