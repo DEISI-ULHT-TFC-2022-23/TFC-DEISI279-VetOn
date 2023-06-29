@@ -789,12 +789,17 @@ app.post("/api/reset-password/:id", async (req, res) => {
   const userId = req.params.id;
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, salt);
+  const user = await db.User.findById(userId);
 
-  try {
-    await db.User.updateOne({ _id: userId }, { password: hashedPassword });
-    res.json({ message: "Password redefinida com sucesso" });
-  } catch (error) {
-    res.json({ error: error });
+  if (user.password == password) {
+    res.json({ error: "Não pode mudar para a mesma password" });
+  } else {
+    try {
+      await db.User.updateOne({ _id: userId }, { password: hashedPassword });
+      res.json({ message: "Password redefinida com sucesso" });
+    } catch (error) {
+      res.json({ error: error });
+    }
   }
 });
 

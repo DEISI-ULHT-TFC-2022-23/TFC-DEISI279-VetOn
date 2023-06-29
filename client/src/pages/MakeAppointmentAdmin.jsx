@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import Logo from "../components/Logo";
-import AuthenticatedButtons from "../components/AuthenticatedButtons";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import DatePicker from "react-datepicker";

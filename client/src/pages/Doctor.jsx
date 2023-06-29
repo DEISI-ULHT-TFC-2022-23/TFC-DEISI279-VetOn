@@ -1,19 +1,16 @@
 import { useContext, useEffect, useState } from "react";
 import { UserContext } from "../UserContext";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import axios from "axios";
 import HospitalSVG from "../components/HospitalSVG";
 import PawSVG from "../components/PawSVG";
 import CalendarSVG from "../components/CalendarSVG";
-import DoctorSVG from "../components/DoctorSVG";
 
 export default function Doctor() {
   const { setUsername, setUserId, username } = useContext(UserContext);
   const [appointments, setAppointments] = useState([]);
   const [photo, setPhoto] = useState([]);
-  const [datas, setDatas] = useState([]);
   const [doctor, setDoctor] = useState([]);
-  const navigate = useNavigate();
 
   function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
@@ -22,83 +19,8 @@ export default function Doctor() {
   }
 
   useEffect(() => {
-    var week = [];
-    var currentDateFull = new Date();
-
-    var dayString = "" + new Date(currentDateFull).getDate();
-    console.log(dayString);
-    var monthString = "" + (new Date(currentDateFull).getMonth() + 1);
-    if (dayString.length == 1) {
-      if (monthString.length == 1) {
-        week.push(
-          `0${new Date(currentDateFull).getDate()}/0${
-            new Date(currentDateFull).getMonth() + 1
-          }/${new Date(currentDateFull).getFullYear()}`
-        );
-      } else {
-        week.push(
-          `0${new Date(currentDateFull).getDate()}/${
-            new Date(currentDateFull).getMonth() + 1
-          }/${new Date(currentDateFull).getFullYear()}`
-        );
-      }
-    } else {
-      if (monthString.length == 1) {
-        week.push(
-          `${new Date().getDate()}/0${
-            new Date().getMonth() + 1
-          }/${new Date().getFullYear()}`
-        );
-      } else {
-        week.push(
-          `${new Date().getDate()}/${
-            new Date().getMonth() + 1
-          }/${new Date().getFullYear()}`
-        );
-      }
-    }
-
-    for (let i = 0; i < 6; i++) {
-      currentDateFull.setDate(currentDateFull.getDate() + 1);
-      var dayString = "" + new Date(currentDateFull).getDate();
-      var monthString = "" + (new Date(currentDateFull).getMonth() + 1);
-      if (dayString.length == 1) {
-        if (monthString.length == 1) {
-          week.push(
-            `0${new Date(currentDateFull).getDate()}/0${
-              new Date(currentDateFull).getMonth() + 1
-            }/${new Date(currentDateFull).getFullYear()}`
-          );
-        } else {
-          week.push(
-            `0${new Date(currentDateFull).getDate()}/${
-              new Date(currentDateFull).getMonth() + 1
-            }/${new Date(currentDateFull).getFullYear()}`
-          );
-        }
-      } else {
-        if (monthString.length == 1) {
-          week.push(
-            `${new Date(currentDateFull).getDate()}/0${
-              new Date(currentDateFull).getMonth() + 1
-            }/${new Date(currentDateFull).getFullYear()}`
-          );
-        } else {
-          week.push(
-            `${new Date(currentDateFull).getDate()}/${
-              new Date(currentDateFull).getMonth() + 1
-            }/${new Date(currentDateFull).getFullYear()}`
-          );
-        }
-      }
-    }
-
-    setDatas(week);
-  }, []);
-
-  useEffect(() => {
     axios.get("/users/" + username).then((response) => {
-      setPhoto(response.data.image);
+      setPhoto(response.data.image[0][0]);
     });
   }, [username]);
 
@@ -164,53 +86,69 @@ export default function Doctor() {
           </button>
         </Link>
       </div>
-      <div className="text-center font-poppins text-5xl mt-20 mb-10" id="my-animals">
-        Consultas nos próximos 7 dias
+      <div
+        className="text-center font-poppins text-5xl mt-20 mb-10"
+        id="my-animals"
+      >
+        Consultas marcadas
       </div>
-      <div className="flex flex-col items-center w-full">
-        {appointments.length !== 0 &&
-          datas.map((date) => (
-            <div className="p-12 w-full mt-20">
-              <div className="text-3xl text-center">
-                Consultas no dia {date}
-              </div>
-              <div className="flex flex-wrap rounded-xl gap-8 justify-between p-12 w-full mt-20 bg-gray-200">
-                {appointments
-                  .filter(
-                    (appointment) =>
-                      appointment.date == date && appointment.doctor == doctor
-                  )
-                  .map((appointment) => (
-                    <div
-                      className="bg-white rounded-xl w-96 p-10 relative"
-                      key={appointment._id}
-                    >
-                      <div className="font-poppins text-l text-gray-500 pt-4">
-                        <div className="flex gap-4">
-                          <HospitalSVG />
-                          {appointment.clinic}
-                        </div>
-                      </div>
-                      <div className="font-poppins font-bold text-xl pt-4">
-                        {appointment.appointmentType}
-                      </div>
-                      <div className="font-poppins text-2xl pt-4">
-                        <div className="flex gap-4">
-                          <PawSVG />
-                          {appointment.pet}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 font-poppins text-xl pt-4">
-                        <CalendarSVG className={"w-8 h-8"} />
-                        <div className="mt-1">
-                          {appointment.date} as {appointment.hour}h
-                        </div>
-                      </div>
+      <div>
+        {appointments.length !== 0 && (
+          <div className="flex flex-wrap items-center gap-20 mx-10 gap-y-0">
+            {appointments
+              .filter((appointment) => appointment.doctor == doctor)
+              .map((appointment) => (
+                <div
+                  className="border-2 bg-white rounded-xl w-96 p-10 relative mb-64"
+                  key={appointment._id}
+                >
+                  <div className="font-poppins text-l text-gray-500 pt-4">
+                    <div className="flex gap-4">
+                      <HospitalSVG />
+                      {appointment.clinic}
                     </div>
-                  ))}
-              </div>
-            </div>
-          ))}
+                  </div>
+                  <div className="font-poppins font-bold text-xl pt-4">
+                    {appointment.appointmentType}
+                  </div>
+                  <div className="font-poppins text-2xl pt-4">
+                    <div className="flex gap-4">
+                      <PawSVG />
+                      {appointment.pet}
+                    </div>
+                  </div>
+                  <div className="flex gap-2 font-poppins text-xl pt-4">
+                    <CalendarSVG className={"w-8 h-8"} />
+                    <div className="mt-1">
+                      {appointment.date} as {appointment.hour}h
+                    </div>
+                  </div>
+                  {new Date(
+                    appointment.date.split("/")[1] +
+                      "/" +
+                      appointment.date.split("/")[0] +
+                      "/" +
+                      appointment.date.split("/")[2]
+                  ).getTime() < new Date().getTime() && (
+                    <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300 mt-4 disabled cursor-default">
+                      Concluida
+                    </button>
+                  )}
+                  {new Date(
+                    appointment.date.split("/")[1] +
+                      "/" +
+                      appointment.date.split("/")[0] +
+                      "/" +
+                      appointment.date.split("/")[2]
+                  ).getTime() >= new Date().getTime() && (
+                    <button className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300 mt-4 disabled cursor-default">
+                      Por fazer
+                    </button>
+                  )}
+                </div>
+              ))}
+          </div>
+        )}
       </div>
     </div>
   );

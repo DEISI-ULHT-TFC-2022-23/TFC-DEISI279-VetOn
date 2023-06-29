@@ -23,8 +23,6 @@ export default function MakeAppointment() {
   const [appointmentError, setAppointmentError] = useState(null);
   const navigate = useNavigate();
 
-
-
   function logout() {
     document.cookie = "token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     setUsername(null);

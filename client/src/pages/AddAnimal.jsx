@@ -1,4 +1,4 @@
-import { useState, useContext } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { Link, useNavigate } from "react-router-dom";
 import ReactDatePicker from "react-datepicker";
@@ -16,7 +16,7 @@ export default function AddAnimal() {
   const [toggleButton, setToggleButton] = useState(true);
   const [message, setMessage] = useState(null);
   const genders = ["Macho", "Fêmea"];
-  const skins = ["Curta", "Longa"];
+  const skins = ["Não tem pelagem", "Curta", "Longa"];
 
   async function submit(event) {
     event.preventDefault();
