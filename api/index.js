@@ -790,8 +790,7 @@ app.post("/api/reset-password/:id", async (req, res) => {
   const { password } = req.body;
   const hashedPassword = await bcrypt.hash(password, salt);
   const user = await db.User.findById(userId);
-
-  if (user.password == password) {
+  if (bcrypt.compareSync(password, user.password)) {
     res.json({ error: "Não pode mudar para a mesma password" });
   } else {
     try {
