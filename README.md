@@ -1,12 +1,12 @@
-# TFC - VetOn
+# TFC - VetOn (https://vet-on.vercel.app)
 
 ![logo](https://user-images.githubusercontent.com/72628840/233821735-8bbfb006-935d-437a-8686-707d2c1e4ade.png)
 
-# Pré-Requisitos
+## Pré-Requisitos (para correr a solucao na sua maquina)
 
 * Download da ferramenta <a href="https://www.docker.com/get-started/">Docker Desktop</a>
 
-# Manual de utilização  
+## Manual de utilização  
 
 ### Containers do Docker
 
@@ -33,20 +33,6 @@ docker run -d -p 4000:4000 rubenulht/api:2.1
 * Abrir o client
 ```sh
 localhost:5000
-```
-
-# Credenciais
-
-## Conta admin
-```sh
-username: admin
-password: !1A12345
-```
-
-## Conta support
-```sh
-username: support1
-password: !1A12345
 ```
 
 # Créditos
