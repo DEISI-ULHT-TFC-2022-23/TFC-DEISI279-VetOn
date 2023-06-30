@@ -240,13 +240,38 @@ export default function Profile() {
                   <DoctorSVG />
                   <div className="mt-2">{appointment.doctor}</div>
                 </div>
-                <div className="flex mt-6 gap-4 absolute bottom-0 left-32 mb-6">
-                  <button
-                    className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
-                    onClick={() => deleteAppointment(appointment._id)}
-                  >
-                    Desmarcar
-                  </button>
+                <div className="absolute bottom-0 mb-6">
+                  {new Date(
+                    appointment.date.split("/")[1] +
+                      "/" +
+                      appointment.date.split("/")[0] +
+                      "/" +
+                      appointment.date.split("/")[2]
+                  ).getTime() < new Date().getTime() && (
+                    <button className="border border-primary rounded-full px-4 py-2 hover:bg-primary hover:text-white transition duration-300 mt-4 disabled cursor-default">
+                      Concluida
+                    </button>
+                  )}
+                  {new Date(
+                    appointment.date.split("/")[1] +
+                      "/" +
+                      appointment.date.split("/")[0] +
+                      "/" +
+                      appointment.date.split("/")[2]
+                  ).getTime() >= new Date().getTime() && (
+                    <div className="flex gap-24">
+                      
+                      <button className="border border-blue-400 rounded-full px-4 py-2 hover:bg-blue-400 hover:text-white transition duration-300 disabled cursor-default">
+                        Por fazer
+                      </button>
+                      <button
+                        className="border border-red-500 rounded-full px-4 py-2 hover:bg-red-500 hover:text-white transition duration-300"
+                        onClick={() => deleteAppointment(appointment._id)}
+                      >
+                        Desmarcar
+                      </button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}

@@ -184,12 +184,20 @@ export default function Chat() {
                           : "bg-white text-gray-500")
                       }
                     >
-                      {message.text}
-                      <br />
-                      <div className="text-xs text-gray-300">
-                        {message.createdAt.split("T")[0] +
-                          " " +
-                          message.createdAt.split("T")[1].split(".")[0]}
+                      <div className="text-right">{message.text}</div>
+                      <div className="flex gap-2 text-xs mt-2 text-gray-300">
+                        <div>
+                          {new Date().getDate() +
+                            "/" +
+                            (new Date().getMonth() + 1) +
+                            "/" +
+                            new Date().getFullYear()}
+                        </div>
+                        <div>
+                          {new Date().getHours() +
+                            ":" +
+                            new Date().getMinutes()}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -208,7 +216,7 @@ export default function Chat() {
               placeholder="Escreve a tua mensagem..."
               className="bg-white flex-grow border rounded-sm p-2"
             />
-            
+
             <button
               type="submit"
               className="bg-green-500 p-2 text-white rounded-sm"
