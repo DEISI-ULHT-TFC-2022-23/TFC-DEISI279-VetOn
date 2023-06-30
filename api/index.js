@@ -812,7 +812,7 @@ function generateUpdatedTimetable() {
 
   const currentDay = new Date(currentDate);
 
-  for (let i = 0; i < 30; i++) {
+  for (let i = 0; i < 365; i++) {
     const day = new Date(currentDay);
     day.setDate(currentDay.getDate() + i);
 
