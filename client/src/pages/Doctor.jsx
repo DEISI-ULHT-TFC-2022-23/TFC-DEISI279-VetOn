@@ -20,7 +20,7 @@ export default function Doctor() {
 
   useEffect(() => {
     axios.get("/users/" + username).then((response) => {
-      setPhoto(response.data.image[0][0]);
+      setPhoto(response.data.image);
     });
   }, [username]);
 
